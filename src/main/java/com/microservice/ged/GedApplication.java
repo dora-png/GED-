@@ -23,8 +23,8 @@ public class GedApplication {
 			RolesRepo approlerepository
 			) {
 		return arg -> {
-			Appusers appusers = new Appusers("ELLA BELINGA J-P", "login","1234");
-			userRepo.save(appusers);
+			//Appusers appusers = new Appusers("ROOT", "root","1234");
+			//userRepo.save(appusers);
 			//Structures s1 = new Structures("Cabinet du Maire", "CM", "Service du maire", 0, null, null, null);
 			//Structures s2 = new Structures("Service Courrier", "SC", "Gestion du courrier", 1, null, s1, null);
 			//Structures s3 = new Structures("Service Archivage", "SA", "Gestion des archive", 1, null, s2, null);

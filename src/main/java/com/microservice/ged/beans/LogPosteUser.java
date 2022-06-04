@@ -16,6 +16,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.CreationTimestamp;
+
 import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 
 @Entity
@@ -30,12 +32,13 @@ public class LogPosteUser implements Serializable {
     @Column(name = "idloguserposte", nullable = false)
     private Long idloguserposte;
     
-    @Column(name = "datedebut",columnDefinition="TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
-	@Temporal(TemporalType.DATE)
+	 @Column(name = "datecreation", nullable = false, insertable = true, updatable = false)
+	 @Temporal(TemporalType.TIMESTAMP)
+	 @CreationTimestamp
 	private Date dateDebut;
     
     @Column(name = "datefin")
-	@Temporal(TemporalType.DATE)
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date dateFin;
     
     @Column(name = "actiondo",nullable = false)
@@ -57,17 +60,15 @@ public class LogPosteUser implements Serializable {
 		// TODO Auto-generated constructor stub
 	}
 
+
+
 	/**
-	 * @param dateDebut
-	 * @param dateFin
 	 * @param actiondo
 	 * @param posteId
 	 * @param userId
 	 */
-	public LogPosteUser(Timestamp dateDebut, Timestamp dateFin, String actiondo, Postes posteId, Users userId) {
+	public LogPosteUser(String actiondo, Postes posteId, Users userId) {
 		super();
-		this.dateDebut = dateDebut;
-		this.dateFin = dateFin;
 		this.actiondo = actiondo;
 		this.posteId = posteId;
 		this.userId = userId;

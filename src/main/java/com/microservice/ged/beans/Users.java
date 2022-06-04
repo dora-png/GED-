@@ -14,6 +14,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.CreationTimestamp;
+
 @Entity
 @Table(name = "users")
 public class Users implements Serializable {
@@ -33,8 +35,9 @@ public class Users implements Serializable {
 	 @Column(name = "password", nullable = false)
 	 private String password;
 	 
-	 @Column(name = "datecreation",nullable = false)
-	 @Temporal(TemporalType.DATE)
+	 @Column(name = "datecreation", nullable = false, insertable = true, updatable = false)
+	 @Temporal(TemporalType.TIMESTAMP)
+	 @CreationTimestamp
 	 private Date dateCreation;
 
 	/**

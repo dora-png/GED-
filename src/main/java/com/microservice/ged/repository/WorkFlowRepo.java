@@ -12,7 +12,7 @@ public interface WorkFlowRepo extends JpaRepository<WorkFlow, Long>{
 	WorkFlow findBySigle(String sigle);
 	WorkFlow findByName(String name);
 	WorkFlow findByIdworkflows(Long iduser);
-	Page<WorkFlow> findByNameLike(String name, Pageable pageable);
-	Page<WorkFlow> findBySigleLike(String name, Pageable pageable);
+	Page<WorkFlow> findByNameContaining(String name, Pageable pageable);
+	Page<WorkFlow> findBySigleContaining(String name, Pageable pageable);
 
 }

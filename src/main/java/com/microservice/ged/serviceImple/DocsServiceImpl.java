@@ -1,6 +1,8 @@
 package com.microservice.ged.serviceImple;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.transaction.Transactional;
 
@@ -74,7 +76,6 @@ public class DocsServiceImpl implements DocsService {
 					if(hasRole) {
 						try {
 							LogPoste logPoste = new LogPoste(
-								new Date(),
 								"Create Document "+docs.getName(),
 								logPosteUser.getUserId().getLogin(),
 								logPosteUser.getPosteId().getName(),
@@ -118,7 +119,6 @@ public class DocsServiceImpl implements DocsService {
 					if(hasRole && docs.getCantset().equals(postes.getName())) {
 						try {
 							LogPoste logPoste = new LogPoste(
-								new Date(),
 								"Update Document "+docs.getName(),
 								logPosteUser.getUserId().getLogin(),
 								logPosteUser.getPosteId().getName(),
@@ -183,7 +183,6 @@ public class DocsServiceImpl implements DocsService {
 								workFlowPoste = workFlowPosteRepo.findByActiveTrueAndWorkflowIdAndLevel(docs.getLiasse().getWorkflowid(), workFlowPoste.getLevel()-1);
 								try {
 									LogPoste logPoste = new LogPoste(
-										new Date(),
 										"Update Document "+docs.getName(),
 										logPosteUser.getUserId().getLogin(),
 										logPosteUser.getPosteId().getName(),
@@ -215,6 +214,20 @@ public class DocsServiceImpl implements DocsService {
 	public void arhive(Docs docs, String posteName) throws Exception {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public List<Docs> lastDocOpenByPoste(String posteName) throws Exception {
+		Postes postes =  posteRepo.findByName(posteName);
+		if(postes ==null) {
+			throw new Exception("Votre poste ne vous permet pas cette action");
+		}
+		List<LogPoste> logPostes  = logPosteRepo.findTop5ByTypeAndPostename(posteName, "DOCUMENT");
+		List<Docs> docs=new ArrayList<>();
+		for(LogPoste logPoste : logPostes) {
+			docs.add(docsRepo.findByName(logPoste.getObjectname()));
+		}
+		return docs;
 	}
 
 }

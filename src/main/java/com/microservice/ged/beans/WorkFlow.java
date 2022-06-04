@@ -64,21 +64,17 @@ public class WorkFlow implements Serializable {
 		this.idworkflows = idworkflows;
 	}
 
+
 	/**
 	 * @param name
 	 * @param sigle
 	 * @param description
-	 * @param liasses
-	 * @param typeDocs
 	 */
-	public WorkFlow(String name, String sigle, String description, List<Liasses> liasses,
-			List<TypeDocs> typeDocs) {
+	public WorkFlow(String name, String sigle, String description) {
 		super();
 		this.name = name;
 		this.sigle = sigle;
 		this.description = description;
-		this.liasses = liasses;
-		this.typeDocs = typeDocs;
 	}
 
 	/**

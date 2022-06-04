@@ -21,9 +21,9 @@ public class Appusers implements Serializable {
 	    @Basic(optional = false)
 	    @Column(name = "id")
 	    private Long iduser;
-	    @Column(name = "name", columnDefinition = "VARCHAR(60) CHECK (name IN ('ROOT')")
+	    @Column(name = "name")
 	    private String name;
-	    @Column(name = "login", columnDefinition = "string CHECK (login IN ('root')")
+	    @Column(name = "login")
 	    private String login;
 	    @Column(name = "password")
 	    private String password;

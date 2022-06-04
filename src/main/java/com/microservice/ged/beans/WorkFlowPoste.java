@@ -36,8 +36,8 @@ public class WorkFlowPoste implements Serializable {
     @Column(name = "level", nullable = false)
     private int level;
     
-    @Column(name = "active", nullable = false, columnDefinition = "boolean default true")
-    private boolean active;
+    @Column(name = "active", columnDefinition = "boolean default true")
+    private boolean active = true;
 
 	/**
 	 * 
@@ -61,12 +61,11 @@ public class WorkFlowPoste implements Serializable {
 	 * @param level
 	 * @param active
 	 */
-	public WorkFlowPoste(Postes posteId, WorkFlow workflowId, int level, boolean active) {
+	public WorkFlowPoste(Postes posteId, WorkFlow workflowId, int level) {
 		super();
 		this.posteId = posteId;
 		this.workflowId = workflowId;
 		this.level = level;
-		this.active = active;
 	}
 
 	/**

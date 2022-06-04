@@ -1,5 +1,7 @@
 package com.microservice.ged.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.microservice.ged.beans.Postes;
 import com.microservice.ged.beans.WorkFlow;
 import com.microservice.ged.beans.WorkFlowPoste;
 import com.microservice.ged.service.WorkFlowService;
@@ -26,11 +29,16 @@ public class WorkFlowController {
 	@GetMapping("/workflow/all")
 	public ResponseEntity<Page<WorkFlow>> findAll(
 			@RequestParam(name = "page", defaultValue = "0") int page,
-			@RequestParam(name = "size", defaultValue = "10") int size) {
+			@RequestParam(name = "size", defaultValue = "5") int size) {
 		try {
 			Page<WorkFlow> workFlow = workFlowService.findAll(page, size);
 			if(workFlow.isEmpty()) {
-				return  ResponseEntity.noContent().build();
+				workFlow = workFlowService.defaultList(0, 5);
+				if(workFlow.isEmpty()) {
+					return  ResponseEntity.noContent().build();
+				}else {
+					return  ResponseEntity.ok().body(workFlow);
+				}
 			}else {
 				return  ResponseEntity.ok().body(workFlow);
 			}			
@@ -41,9 +49,9 @@ public class WorkFlowController {
 		
 	@GetMapping("/workflow/search-by-name")
 	public ResponseEntity<Page<WorkFlow>> searchByName(
-			@RequestParam(name = "name", defaultValue = "") String name,
+			@RequestParam(name = "name") String name,
 			@RequestParam(name = "page", defaultValue = "0") int page,
-			@RequestParam(name = "size", defaultValue = "10") int size) {
+			@RequestParam(name = "size", defaultValue = "5") int size) {
 		if(name.trim().isEmpty()) {
 			return ResponseEntity.badRequest().build();
 		}else if(name.isBlank()) {
@@ -64,9 +72,9 @@ public class WorkFlowController {
 		
 	@GetMapping("/workflow/search-by-sigle")
 	public ResponseEntity<Page<WorkFlow>> searchBySigle(
-			@RequestParam(name = "name", defaultValue = "") String sigle,
+			@RequestParam(name = "name") String sigle,
 			@RequestParam(name = "page", defaultValue = "0") int page,
-			@RequestParam(name = "size", defaultValue = "10") int size) {
+			@RequestParam(name = "size", defaultValue = "5") int size) {
 		if(sigle.trim().isEmpty()) {
 			return ResponseEntity.badRequest().build();
 		}else if(sigle.isBlank()) {
@@ -93,7 +101,7 @@ public class WorkFlowController {
 			workFlowService.add(workFlow, posteName);
 			return  ResponseEntity.ok().build();		
 		} catch (Exception e) {
-			return ResponseEntity.badRequest().build();
+			return ResponseEntity.badRequest().body(e.getLocalizedMessage());
 		}	
 	}
 
@@ -105,7 +113,7 @@ public class WorkFlowController {
 			workFlowService.update(workFlow, posteName);
 			return  ResponseEntity.ok().build();		
 		} catch (Exception e) {
-			return ResponseEntity.badRequest().build();
+			return ResponseEntity.badRequest().body(e.getLocalizedMessage());
 		}	
 	}
 
@@ -195,6 +203,41 @@ public class WorkFlowController {
 		} catch (Exception e) {
 			return ResponseEntity.badRequest().build();
 		}	
+	}
+	
+	@GetMapping("/workflow/all-by-poste")
+	public ResponseEntity<List<WorkFlowPoste>> allWorkFlowInPoste(
+			@RequestBody Postes postes,
+			@RequestParam(name = "pageName") String pageName,
+			@RequestParam(name = "page", defaultValue = "0") int page,
+			@RequestParam(name = "size", defaultValue = "10") int size) {
+		try {
+			List<WorkFlowPoste> workFlow = workFlowService.allWorkFlowInPoste(postes, pageName, page, size);
+			if(workFlow.isEmpty()) {
+				return  ResponseEntity.noContent().build();
+			}else {
+				return  ResponseEntity.ok().body(workFlow);
+			}			
+		} catch (Exception e) {
+			return ResponseEntity.badRequest().build();
+		}	
+	}
+	@GetMapping("/workflow/all-by-workflow")
+	public ResponseEntity<List<WorkFlowPoste>> allPosteInWorkFlow(
+			@RequestBody WorkFlow workFlow,
+			@RequestParam(name = "pageName") String pageName) {
+		//try {
+			System.err.println(workFlow);
+			return  ResponseEntity.noContent().build();
+	/*		List<WorkFlowPoste> workFlows = workFlowService.allPosteInWorkFlow(workFlow, pageName, page, size);
+			if(workFlows.isEmpty()) {
+				return  ResponseEntity.noContent().build();
+			}else {
+				return  ResponseEntity.ok().body(workFlows);
+			}			
+		} catch (Exception e) {
+			return ResponseEntity.badRequest().build();
+		}*/
 	}
 
 }

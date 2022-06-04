@@ -79,7 +79,6 @@ public class TypeDocsServiceImpl implements TypeDocsService {
 					if(hasRole) {
 						try {
 							LogPoste logPoste = new LogPoste(
-								new Date(),
 								"Create TypeDoc "+typeDocs.getName(),
 								logPosteUser.getUserId().getLogin(),
 								logPosteUser.getPosteId().getName(),
@@ -122,7 +121,6 @@ public class TypeDocsServiceImpl implements TypeDocsService {
 					if(hasRole) {
 						try {
 							LogPoste logPoste = new LogPoste(
-								new Date(),
 								"Update TypeDoc "+typeDocs.getName(),
 								logPosteUser.getUserId().getLogin(),
 								logPosteUser.getPosteId().getName(),
@@ -172,7 +170,6 @@ public class TypeDocsServiceImpl implements TypeDocsService {
 					if(hasRole) {
 						try {
 							LogPoste logPoste = new LogPoste(
-								new Date(),
 								"Delete TypeDocs "+typeDocs.getName(),
 								logPosteUser.getUserId().getLogin(),
 								logPosteUser.getPosteId().getName(),

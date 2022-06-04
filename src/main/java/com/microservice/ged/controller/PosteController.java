@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.microservice.ged.beans.Postes;
 import com.microservice.ged.beans.Structures;
+import com.microservice.ged.beans.Users;
+import com.microservice.ged.service.LogPosteUserService;
 import com.microservice.ged.service.PosteService;
 import com.microservice.ged.utils.PosteRoleBean;
 
@@ -23,6 +25,9 @@ public class PosteController {
 	
 	@Autowired
 	private PosteService posteservice;
+	
+	@Autowired
+	private LogPosteUserService logPosteUserService; 
 
 	@GetMapping("/postes/all")
 	public ResponseEntity<Page<Postes>> findAll(
@@ -87,6 +92,18 @@ public class PosteController {
 			@RequestBody Postes postes,
 			@RequestParam(name = "posteName") String posteName) throws Exception {
 		try {
+			//posteservice.add(postes, "Maire");
+			System.err.println(posteName);
+			System.err.println("getName "+postes.getName());
+			System.err.println("getIdposte "+postes.getIdposte());
+			System.err.println("getDescription "+postes.getDescription());
+			System.err.println("getNiveau "+postes.getNiveau());
+			System.err.println("getPosteSubalterne "+postes.getPosteSubalterne());
+			System.err.println("getPosteSuperieur "+postes.getPosteSuperieur());
+			System.err.println("getRoles().size() "+postes.getRoles().size());
+			System.err.println("getRoles() "+postes.getRoles());
+			System.err.println("getStructure "+postes.getStructure());
+			//postes.getStructure().setIdstructure((long) 1);
 			posteservice.add(postes, posteName);
 			return  ResponseEntity.ok().build();		
 		} catch (Exception e) {
@@ -168,4 +185,19 @@ public class PosteController {
 			return ResponseEntity.badRequest().build();
 		}	
 	}
+
+	@PostMapping("/postes/add-user")
+	public ResponseEntity<?> addUser(
+			@RequestBody Postes postes,
+			@RequestBody Users users,
+			@RequestParam(name = "posteName") String posteName) throws Exception {
+		try {
+			logPosteUserService.add(postes, users, posteName);
+			return  ResponseEntity.ok().build();		
+		} catch (Exception e) {
+			return ResponseEntity.badRequest().build();
+		}	
+	}
+
+
 }

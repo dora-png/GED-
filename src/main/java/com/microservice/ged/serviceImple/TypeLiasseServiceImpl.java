@@ -78,7 +78,6 @@ public class TypeLiasseServiceImpl implements TypeLiasseService {
 					if(hasRole) {
 						try {
 							LogPoste logPoste = new LogPoste(
-								new Date(),
 								"Create TypeLiasse "+typeLiasses.getName(),
 								logPosteUser.getUserId().getLogin(),
 								logPosteUser.getPosteId().getName(),
@@ -121,7 +120,6 @@ public class TypeLiasseServiceImpl implements TypeLiasseService {
 					if(hasRole) {
 						try {
 							LogPoste logPoste = new LogPoste(
-								new Date(),
 								"Update TypeLiasse "+typeLiasses.getName(),
 								logPosteUser.getUserId().getLogin(),
 								logPosteUser.getPosteId().getName(),
@@ -171,7 +169,6 @@ public class TypeLiasseServiceImpl implements TypeLiasseService {
 					if(hasRole) {
 						try {
 							LogPoste logPoste = new LogPoste(
-								new Date(),
 								"Delete TypeLiasse "+typeLiasses.getName(),
 								logPosteUser.getUserId().getLogin(),
 								logPosteUser.getPosteId().getName(),

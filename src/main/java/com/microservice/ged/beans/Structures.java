@@ -6,6 +6,7 @@
 package com.microservice.ged.beans;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -45,10 +46,10 @@ public class Structures implements Serializable {
     @Column(name = "description", nullable = false)
     private String description;
     
-    @Column(name = "level", nullable = false)
+    @Column(name = "level", nullable = false, columnDefinition = "integer default 0")
     private int level;
     
-    @OneToMany(mappedBy = "structure", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "structure", fetch = FetchType.LAZY)
 	@JsonIncludeProperties(value = { "idposte", "name", "niveau" })
 	private List<Postes> postes;
     
@@ -56,9 +57,9 @@ public class Structures implements Serializable {
 	@JsonIncludeProperties(value = { "idstructure", "name" })
 	private Structures structureSuperieur;
 
-	@OneToMany(mappedBy = "structureSuperieur")
-	@JsonIncludeProperties(value = { "idstructure", "name" })
-	private List<Structures> sousStructure;
+	@OneToMany
+	//@JsonIncludeProperties(value = { "idstructure", "name", "sigle" })
+	private List<Structures> sousStructure = new ArrayList<>();
 
 	/**
 	 * 
@@ -80,21 +81,12 @@ public class Structures implements Serializable {
 	 * @param name
 	 * @param sigle
 	 * @param description
-	 * @param level
-	 * @param postes
-	 * @param structureSuperieur
-	 * @param sousStructure
 	 */
-	public Structures(String name, String sigle, String description, int level, List<Postes> postes,
-			Structures structureSuperieur, List<Structures> sousStructure) {
+	public Structures(String name, String sigle, String description) {
 		super();
 		this.name = name;
 		this.sigle = sigle;
 		this.description = description;
-		this.level = level;
-		this.postes = postes;
-		this.structureSuperieur = structureSuperieur;
-		this.sousStructure = sousStructure;
 	}
 
 	/**

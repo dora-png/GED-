@@ -66,7 +66,6 @@ public class UserServiceImpl implements UserService {
 			if(appusers !=null) {
 				try {
 					LogPoste logPoste = new LogPoste(
-							new Date(),
 							"Creation user "+users.getName(),
 							appusers.getLogin(),
 							appusers.getName(),
@@ -93,7 +92,6 @@ public class UserServiceImpl implements UserService {
 					if(hasRole) {
 						try {
 							LogPoste logPoste = new LogPoste(
-									new Date(),
 									"Creation user "+users.getName(),
 									logPosteUser.getUserId().getLogin(),
 									logPosteUser.getPosteId().getName(),
@@ -131,7 +129,6 @@ public class UserServiceImpl implements UserService {
 					if(users.getIduser()==logPosteUser.getUserId().getIduser()) {
 						try {
 							LogPoste logPoste = new LogPoste(
-									new Date(),
 									"Update user "+users.getName(),
 									logPosteUser.getUserId().getLogin(),
 									logPosteUser.getPosteId().getName(),
@@ -151,7 +148,6 @@ public class UserServiceImpl implements UserService {
 						if(hasRole) {
 							try {
 								LogPoste logPoste = new LogPoste(
-										new Date(),
 										"Update user "+users.getName(),
 										logPosteUser.getUserId().getLogin(),
 										logPosteUser.getPosteId().getName(),
@@ -211,7 +207,6 @@ public class UserServiceImpl implements UserService {
 					if(hasRole) {
 						try {
 							LogPoste logPoste = new LogPoste(
-									new Date(),
 									"Delete user "+users.getName(),
 									logPosteUser.getUserId().getLogin(),
 									logPosteUser.getPosteId().getName(),

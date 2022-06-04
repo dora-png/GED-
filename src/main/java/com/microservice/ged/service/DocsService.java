@@ -1,5 +1,7 @@
 package com.microservice.ged.service;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 
 import com.microservice.ged.beans.Docs;
@@ -12,5 +14,6 @@ public interface DocsService {
 	public void update(Docs docs, String posteName) throws Exception ;
 	public void updateSetter(Docs docs, String posteName) throws Exception ;
 	public void arhive(Docs docs, String posteName) throws Exception ;
+	public List<Docs> lastDocOpenByPoste(String posteName) throws Exception ;
 
 }

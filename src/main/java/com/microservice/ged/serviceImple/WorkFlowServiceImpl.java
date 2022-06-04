@@ -1,12 +1,14 @@
 package com.microservice.ged.serviceImple;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.microservice.ged.beans.Liasses;
@@ -51,17 +53,23 @@ public class WorkFlowServiceImpl implements WorkFlowService {
 		// TODO Auto-generated method stub
 		return workFlowRepo.findAll(PageRequest.of(page, size));
 	}
+	
+	@Override
+	public Page<WorkFlow> defaultList(int page, int size) {
+		// TODO Auto-generated method stub
+		return workFlowRepo.findAll(PageRequest.of(page, size));
+	}
 
 	@Override
 	public Page<WorkFlow> searchByName(String name, int page, int size) {
 		// TODO Auto-generated method stub
-		return workFlowRepo.findByNameLike(name, PageRequest.of(page, size));
+		return workFlowRepo.findByNameContaining(name, PageRequest.of(page, size));
 	}
 
 	@Override
 	public Page<WorkFlow> searchBySigle(String name, int page, int size) {
 		// TODO Auto-generated method stub
-		return workFlowRepo.findBySigleLike(name, PageRequest.of(page, size));
+		return workFlowRepo.findBySigleContaining(name, PageRequest.of(page, size));
 	}
 
 	@Override
@@ -88,7 +96,6 @@ public class WorkFlowServiceImpl implements WorkFlowService {
 					if(hasRole) {
 						try {
 							LogPoste logPoste = new LogPoste(
-									new Date(),
 									"Creation worklow "+workFlow.getName(),
 									logPosteUser.getUserId().getLogin(),
 									logPosteUser.getPosteId().getName(),
@@ -134,7 +141,6 @@ public class WorkFlowServiceImpl implements WorkFlowService {
 					if(hasRole) {
 						try {
 							LogPoste logPoste = new LogPoste(
-								new Date(),
 								"Update worklow "+workFlow.getName(),
 								logPosteUser.getUserId().getLogin(),
 								logPosteUser.getPosteId().getName(),
@@ -184,7 +190,6 @@ public class WorkFlowServiceImpl implements WorkFlowService {
 					if(hasRole) {
 						try {
 							LogPoste logPoste = new LogPoste(
-								new Date(),
 								"Delete worklow "+workFlow.getName(),
 								logPosteUser.getUserId().getLogin(),
 								logPosteUser.getPosteId().getName(),
@@ -250,7 +255,6 @@ public class WorkFlowServiceImpl implements WorkFlowService {
 								
 								try {
 									LogPoste logPoste = new LogPoste(
-										new Date(),
 										"Update worklow "+workFlowPoste.getWorkflowId().getName(),
 										logPosteUser.getUserId().getLogin(),
 										logPosteUser.getPosteId().getName(),
@@ -300,7 +304,6 @@ public class WorkFlowServiceImpl implements WorkFlowService {
 								
 								try {
 									LogPoste logPoste = new LogPoste(
-										new Date(),
 										"Update worklow "+workFlowPoste.getWorkflowId().getName(),
 										logPosteUser.getUserId().getLogin(),
 										logPosteUser.getPosteId().getName(),
@@ -325,6 +328,8 @@ public class WorkFlowServiceImpl implements WorkFlowService {
 		
 	}
 
+	
+	
 	@Override
 	public void addLiasseToWorkFlow(WorkFlow workFlow, String posteName) throws Exception {
 		// TODO Auto-generated method stub
@@ -351,7 +356,6 @@ public class WorkFlowServiceImpl implements WorkFlowService {
 						
 						try {
 							LogPoste logPoste = new LogPoste(
-								new Date(),
 								"Update worklow "+workFlow.getName(),
 								logPosteUser.getUserId().getLogin(),
 								logPosteUser.getPosteId().getName(),
@@ -374,5 +378,69 @@ public class WorkFlowServiceImpl implements WorkFlowService {
 			}
 		}		
 	}
+
+	@Override
+	public List<WorkFlowPoste> allPosteInWorkFlow(WorkFlow workFlow, String posteName, int page, int size)  throws Exception{
+		List<WorkFlowPoste> page2 = null;
+		Postes postes =  posteRepo.findByName(posteName);
+		if(postes ==null) {
+			throw new Exception("Votre poste ne vous permet pas cette action");
+		}else {
+			LogPosteUser logPosteUser= logPosteUserRepo.findByPosteIdAndDateFinIsNull(postes);
+			if(logPosteUser!=null) {
+				if(logPosteUser.getUserId()!=null) {
+					boolean  hasRole=false;
+					for(Roles roles : postes.getRoles()) {
+						if(roles.getName()=="RWORKFLOW")
+							hasRole = roles.isRead();
+					}
+					if(hasRole) {
+						page2 =  workFlowPosteRepo.findByActiveTrueAndWorkflowId(workFlow);
+					}else {
+						throw new Exception("You dont have this right create workFlow");
+					}
+				}else {
+					throw new Exception("Cet utilisateur ne peut effectuer cette action");
+				}
+			}else {
+				throw new Exception("toto");
+			}
+			
+		}
+		return page2;
+	}
+
+	@Override
+	public List<WorkFlowPoste> allWorkFlowInPoste(Postes poste, String posteName, int page, int size) throws Exception {
+		List<WorkFlowPoste> page2 = null;
+		Postes postes =  posteRepo.findByName(posteName);
+		if(postes ==null) {
+			throw new Exception("Votre poste ne vous permet pas cette action");
+		}else {
+			LogPosteUser logPosteUser= logPosteUserRepo.findByPosteIdAndDateFinIsNull(postes);
+			if(logPosteUser!=null) {
+				if(logPosteUser.getUserId()!=null) {
+					boolean  hasRole=false;
+					for(Roles roles : postes.getRoles()) {
+						if(roles.getName()=="RWORKFLOW")
+							hasRole = roles.isRead();
+					}
+					if(hasRole) {
+						page2 =  workFlowPosteRepo.findByActiveTrueAndPosteId(poste);
+					}else {
+						throw new Exception("You dont have this right create workFlow");
+					}
+				}else {
+					throw new Exception("Cet utilisateur ne peut effectuer cette action");
+				}
+			}else {
+				throw new Exception("toto");
+			}
+			
+		}
+		return page2;
+	}
+
+
 
 }

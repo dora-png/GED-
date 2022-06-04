@@ -82,7 +82,6 @@ public class LiasseServiceImpl implements LiasseService {
 					if(hasRole) {
 						try {
 							LogPoste logPoste = new LogPoste(
-								new Date(),
 								"Create Liasse "+liasse.getSigle(),
 								logPosteUser.getUserId().getLogin(),
 								logPosteUser.getPosteId().getName(),
@@ -126,7 +125,6 @@ public class LiasseServiceImpl implements LiasseService {
 					if(hasRole) {
 						try {
 							LogPoste logPoste = new LogPoste(
-								new Date(),
 								"Update Liasse "+liasse.getSigle(),
 								logPosteUser.getUserId().getLogin(),
 								logPosteUser.getPosteId().getName(),
@@ -173,7 +171,6 @@ public class LiasseServiceImpl implements LiasseService {
 					if(hasRole) {
 						try {
 							LogPoste logPoste = new LogPoste(
-								new Date(),
 								"Update Liasse "+liasse.getSigle()+" add doc",
 								logPosteUser.getUserId().getLogin(),
 								logPosteUser.getPosteId().getName(),

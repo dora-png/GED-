@@ -19,6 +19,7 @@ import com.microservice.ged.repository.LogPosteRepo;
 import com.microservice.ged.repository.LogPosteUserRepo;
 import com.microservice.ged.repository.PosteRepo;
 import com.microservice.ged.repository.RolesRepo;
+import com.microservice.ged.repository.StructureRepo;
 import com.microservice.ged.utils.PosteRoleBean;
 import com.microservice.ged.service.PosteService;
 
@@ -30,6 +31,9 @@ public class PosteServiceImpl implements PosteService{
 	
 	@Autowired
 	private RolesRepo rolesRepo;
+
+	@Autowired
+	private StructureRepo structureRepo;
 
 	@Autowired
 	AppUserRepo appUserRepo; 
@@ -96,7 +100,6 @@ public class PosteServiceImpl implements PosteService{
 					if(hasRole) {
 						try {
 							LogPoste logPoste = new LogPoste(
-								new Date(),
 								"Update Poste "+poste.getName(),
 								logPosteUser.getUserId().getLogin(),
 								logPosteUser.getPosteId().getName(),
@@ -131,14 +134,35 @@ public class PosteServiceImpl implements PosteService{
 			if(appusers !=null) {
 				try {
 					LogPoste logPoste = new LogPoste(
-							new Date(),
 							"Creation poste "+poste.getName(),
 							appusers.getLogin(),
 							appusers.getName(),
 							poste.getName(),
 							"POSTE");
-					posteRepo.save(poste);
-					logPosteRepo.save(logPoste);
+					Roles roles = rolesRepo.findByName("CLIASSE");
+					poste.getRoles().add(roles);
+					roles = rolesRepo.findByName("RLIASSE");
+					poste.getRoles().add(roles);
+					roles = rolesRepo.findByName("ULIASSE");
+					poste.getRoles().add(roles);
+					roles = rolesRepo.findByName("DLIASSE");
+					poste.getRoles().add(roles);
+					roles = rolesRepo.findByName("CDOC");
+					poste.getRoles().add(roles);
+					roles = rolesRepo.findByName("RDOC");
+					poste.getRoles().add(roles);
+					roles = rolesRepo.findByName("UDOC");
+					poste.getRoles().add(roles);
+					roles = rolesRepo.findByName("DDOC");
+					poste.getRoles().add(roles);
+					poste.setNiveau(0);
+					if(structureRepo.findByIdstructure(poste.getStructure().getIdstructure())==null) {
+						throw new Exception("Error while create Structure");
+					}else {
+						posteRepo.save(poste);
+						logPosteRepo.save(logPoste);
+					}
+					
 				} catch (Exception e) {
 					throw new Exception("Error while create Structure");
 				}
@@ -157,12 +181,28 @@ public class PosteServiceImpl implements PosteService{
 					if(hasRole) {
 						try {
 							LogPoste logPoste = new LogPoste(
-								new Date(),
 								"Create poste "+poste.getName(),
 								logPosteUser.getUserId().getLogin(),
 								logPosteUser.getPosteId().getName(),
 								poste.getName(),
 								"POSTE");
+							Roles roles = rolesRepo.findByName("CLIASSE");
+							poste.getRoles().add(roles);
+							roles = rolesRepo.findByName("RLIASSE");
+							poste.getRoles().add(roles);
+							roles = rolesRepo.findByName("ULIASSE");
+							poste.getRoles().add(roles);
+							roles = rolesRepo.findByName("DLIASSE");
+							poste.getRoles().add(roles);
+							roles = rolesRepo.findByName("CDOC");
+							poste.getRoles().add(roles);
+							roles = rolesRepo.findByName("RDOC");
+							poste.getRoles().add(roles);
+							roles = rolesRepo.findByName("UDOC");
+							poste.getRoles().add(roles);
+							roles = rolesRepo.findByName("DDOC");
+							poste.getRoles().add(roles);
+							poste.setNiveau(0);
 							posteRepo.save(poste);
 							logPosteRepo.save(logPoste);
 						} catch (Exception e) {
@@ -202,7 +242,6 @@ public class PosteServiceImpl implements PosteService{
 					if(hasRole) {
 						try {
 							LogPoste logPoste = new LogPoste(
-								new Date(),
 								"Delete Poste "+poste.getDescription(),
 								logPosteUser.getUserId().getLogin(),
 								logPosteUser.getPosteId().getName(),
@@ -250,7 +289,6 @@ public class PosteServiceImpl implements PosteService{
 					if(hasRole) {
 						try {
 							LogPoste logPoste = new LogPoste(
-								new Date(),
 								"Update Poste "+poste.getName()+" add rule "+role.getName(),
 								logPosteUser.getUserId().getLogin(),
 								logPosteUser.getPosteId().getName(),
@@ -285,7 +323,7 @@ public class PosteServiceImpl implements PosteService{
 		if(supPostes.getIdposte()==subPostes.getIdposte()) {
 			throw new Exception("Error cant do this operation");
 		}
-		if(supPostes.getNiveau()>=subPostes.getNiveau()) {
+		if(supPostes.getNiveau()<subPostes.getNiveau()) {
 			throw new Exception("Error cant do this operation");
 		}
 		if(posteRepo.findByName(supPostes.getName())==null) {
@@ -315,19 +353,20 @@ public class PosteServiceImpl implements PosteService{
 					if(hasRole) {
 						try {
 							LogPoste logPoste = new LogPoste(
-									new Date(),
 									"Update Postes "+supPostes.getName()+" (add SubPostes) ",
 									logPosteUser.getUserId().getLogin(),
 									logPosteUser.getPosteId().getName(),
 									supPostes.getName(),
 									"POSTE");
 							LogPoste logPoste1 = new LogPoste(
-								new Date(),
 								"Update Postes "+subPostes.getName()+" (set SupPostes) ",
 								logPosteUser.getUserId().getLogin(),
 								logPosteUser.getPosteId().getName(),
 								subPostes.getName(),
 								"POSTE");
+							if(supPostes.getNiveau()==0) {
+								supPostes.setNiveau(1);
+							}
 							subPostes.setNiveau(supPostes.getNiveau()+1);
 							supPostes.getPosteSubalterne().add(subPostes);
 							subPostes.setPosteSuperieur(supPostes);
@@ -376,7 +415,6 @@ public class PosteServiceImpl implements PosteService{
 					if(hasRole) {
 						try {
 							LogPoste logPoste = new LogPoste(
-								new Date(),
 								"Update Poste "+poste.getName()+" add rule "+role.getName(),
 								logPosteUser.getUserId().getLogin(),
 								logPosteUser.getPosteId().getName(),
@@ -436,14 +474,12 @@ public class PosteServiceImpl implements PosteService{
 					if(hasRole) {
 						try {
 							LogPoste logPoste = new LogPoste(
-									new Date(),
 									"Update Postes "+supPostes.getName()+" (remove SubPostes) ",
 									logPosteUser.getUserId().getLogin(),
 									logPosteUser.getPosteId().getName(),
 									supPostes.getName(),
 									"POSTE");
 							LogPoste logPoste1 = new LogPoste(
-								new Date(),
 								"Update Postes "+subPostes.getName()+" (set SupPostes) ",
 								logPosteUser.getUserId().getLogin(),
 								logPosteUser.getPosteId().getName(),

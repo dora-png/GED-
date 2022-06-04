@@ -14,6 +14,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.CreationTimestamp;
+
 
 @Entity
 @Table(name = "logposte")
@@ -28,8 +30,9 @@ public class LogPoste implements Serializable {
     @Column(name = "idlogposte", nullable = false)
     private Long idlogposte;
     
-    @Column(name = "datecreation",columnDefinition="TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
-	@Temporal(TemporalType.DATE)
+	 @Column(name = "datecreation", nullable = false, insertable = true, updatable = false)
+	 @Temporal(TemporalType.TIMESTAMP)
+	 @CreationTimestamp
 	private Date dateCreation;
     
     @Column(name = "actiondo",nullable = false)
@@ -74,10 +77,9 @@ public class LogPoste implements Serializable {
 	 * @param objectname
 	 * @param type
 	 */
-	public LogPoste(Date dateCreation, String actiondo, String loginuser, String postename, String objectname,
+	public LogPoste(String actiondo, String loginuser, String postename, String objectname,
 			String type) {
 		super();
-		this.dateCreation = dateCreation;
 		this.actiondo = actiondo;
 		this.loginuser = loginuser;
 		this.postename = postename;

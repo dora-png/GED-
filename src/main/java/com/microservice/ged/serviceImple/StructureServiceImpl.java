@@ -61,7 +61,6 @@ public class StructureServiceImpl implements StructureService {
 			if(appusers !=null) {
 				try {
 					LogPoste logPoste = new LogPoste(
-							new Date(),
 							"Creation structure "+structure.getName(),
 							appusers.getLogin(),
 							appusers.getName(),
@@ -88,7 +87,6 @@ public class StructureServiceImpl implements StructureService {
 					if(hasRole) {
 						try {
 							LogPoste logPoste = new LogPoste(
-								new Date(),
 								"Create Structure "+structure.getSigle(),
 								logPosteUser.getUserId().getLogin(),
 								logPosteUser.getPosteId().getName(),
@@ -149,7 +147,6 @@ public class StructureServiceImpl implements StructureService {
 					if(hasRole) {
 						try {
 							LogPoste logPoste = new LogPoste(
-								new Date(),
 								"Update Structure "+structure.getSigle(),
 								logPosteUser.getUserId().getLogin(),
 								logPosteUser.getPosteId().getName(),
@@ -199,7 +196,6 @@ public class StructureServiceImpl implements StructureService {
 					if(hasRole) {
 						try {
 							LogPoste logPoste = new LogPoste(
-								new Date(),
 								"Delete Structure "+structure.getSigle(),
 								logPosteUser.getUserId().getLogin(),
 								logPosteUser.getPosteId().getName(),
@@ -262,7 +258,6 @@ public class StructureServiceImpl implements StructureService {
 					if(hasRole) {
 						try {
 							LogPoste logPoste = new LogPoste(
-								new Date(),
 								"Update Structure "+structure.getSigle()+" (add poste) "+postes.getName(),
 								logPosteUser.getUserId().getLogin(),
 								logPosteUser.getPosteId().getName(),
@@ -311,7 +306,6 @@ public class StructureServiceImpl implements StructureService {
 					if(hasRole) {
 						try {
 							LogPoste logPoste = new LogPoste(
-								new Date(),
 								"Update Structure "+structure.getSigle()+" (remove poste) "+postes.getName(),
 								logPosteUser.getUserId().getLogin(),
 								logPosteUser.getPosteId().getName(),
@@ -347,7 +341,7 @@ public class StructureServiceImpl implements StructureService {
 		if(supStructures.getIdstructure()==subStructures.getIdstructure()) {
 			throw new Exception("Error cant do this operation");
 		}
-		if(supStructures.getLevel()>=subStructures.getLevel()) {
+		if(supStructures.getLevel()<subStructures.getLevel()) {
 			throw new Exception("Error cant do this operation");
 		}
 		Postes postes = posteRepo.findByName(posteName);
@@ -365,14 +359,12 @@ public class StructureServiceImpl implements StructureService {
 					if(hasRole) {
 						try {
 							LogPoste logPoste = new LogPoste(
-									new Date(),
 									"Update Structure "+supStructures.getSigle()+" (add SubStructures) ",
 									logPosteUser.getUserId().getLogin(),
 									logPosteUser.getPosteId().getName(),
 									supStructures.getName(),
 									"STRUCTURE");
 							LogPoste logPoste1 = new LogPoste(
-								new Date(),
 								"Update Structure "+subStructures.getSigle()+" (set SupStructures) ",
 								logPosteUser.getUserId().getLogin(),
 								logPosteUser.getPosteId().getName(),
@@ -427,14 +419,12 @@ public class StructureServiceImpl implements StructureService {
 					if(hasRole) {
 						try {
 							LogPoste logPoste = new LogPoste(
-									new Date(),
 									"Update Structure "+supStructures.getSigle()+" (remove SubStructures) ",
 									logPosteUser.getUserId().getLogin(),
 									logPosteUser.getPosteId().getName(),
 									supStructures.getName(),
 									"STRUCTURE");
 							LogPoste logPoste1 = new LogPoste(
-								new Date(),
 								"Update Structure "+subStructures.getSigle()+" (set SupStructures) ",
 								logPosteUser.getUserId().getLogin(),
 								logPosteUser.getPosteId().getName(),

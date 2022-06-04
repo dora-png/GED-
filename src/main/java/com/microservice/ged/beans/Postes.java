@@ -47,17 +47,17 @@ public class Postes implements Serializable {
     @Column(name = "description", nullable = false)
     private String description;
     
-    @Column(name = "niveau", columnDefinition = "integer default 0")
-    private Integer niveau;
+    @Column(name = "niveau")
+    private int niveau;
         
     @ManyToOne
 	@JoinColumn(nullable = false)
-	@JsonIncludeProperties(value = {"name", "sigle" })
+	@JsonIncludeProperties(value = {"idstructure", "name", "sigle" })
 	private Structures structure;
 
 	@OneToMany(mappedBy = "posteSuperieur", fetch = FetchType.LAZY)
-	@JsonIncludeProperties(value = { "name" })
-	private List<Postes> posteSubalterne;
+	//@JsonIncludeProperties(value = { "name" })
+	private List<Postes> posteSubalterne = new ArrayList<>();
 
 	@ManyToOne
 	@JsonIncludeProperties(value = { "name" })
@@ -65,19 +65,20 @@ public class Postes implements Serializable {
 
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinColumn(name = "rolles")
-	private Collection<Roles> roles = new ArrayList<Roles>();
+	
+	private List<Roles> roles = new ArrayList<Roles>();
 
 	/**
 	 * @return the roles
 	 */
-	public Collection<Roles> getRoles() {
+	public List<Roles> getRoles() {
 		return roles;
 	}
 
 	/**
 	 * @param roles the roles to set
 	 */
-	public void setRoles(Collection<Roles> roles) {
+	public void setRoles(List<Roles> roles) {
 		this.roles = roles;
 	}
 
@@ -100,8 +101,8 @@ public class Postes implements Serializable {
 	 * @param posteemploye
 	 * @param roles
 	 */
-	public Postes(Long idposte, String name, String description, Integer niveau, Structures structure,
-			List<Postes> posteSubalterne, Postes posteSuperieur, Collection<Roles> roles) {
+	public Postes(Long idposte, String name, String description, int niveau, Structures structure,
+			List<Postes> posteSubalterne, Postes posteSuperieur, List<Roles> roles) {
 		super();
 		this.idposte = idposte;
 		this.name = name;
@@ -129,13 +130,11 @@ public class Postes implements Serializable {
 	 * @param structure
 	 * @param posteSuperieur
 	 */
-	public Postes(String name, String description, Integer niveau, Structures structure, Postes posteSuperieur) {
+	public Postes(String name, String description, Structures structure) {
 		super();
 		this.name = name;
 		this.description = description;
-		this.niveau = niveau;
 		this.structure = structure;
-		this.posteSuperieur = posteSuperieur;
 	}
 
 	/**

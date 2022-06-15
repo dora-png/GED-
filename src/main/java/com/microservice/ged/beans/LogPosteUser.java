@@ -45,7 +45,7 @@ public class LogPosteUser implements Serializable {
 	private String actiondo;
     
     @ManyToOne
-	@JsonIncludeProperties(value = {"idposte", "name", "description" })
+	@JsonIncludeProperties(value = {"idposte", "name", "description", "groupslistes" })
 	private Postes posteId;
     
     @ManyToOne
@@ -156,11 +156,6 @@ public class LogPosteUser implements Serializable {
 	 */
 	public void setUserId(Users userId) {
 		this.userId = userId;
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(actiondo, dateDebut, dateFin, idloguserposte, posteId, userId);
 	}
 
 	@Override

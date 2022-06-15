@@ -201,11 +201,6 @@ public class Docs implements Serializable {
 	}
 
 	@Override
-	public int hashCode() {
-		return Objects.hash(cantset, description, extension, iddoc, liasse, name, path);
-	}
-
-	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;

@@ -18,24 +18,28 @@ import org.hibernate.annotations.CreationTimestamp;
 
 @Entity
 @Table(name = "users")
-public class Users implements Serializable {
-	 private static final long serialVersionUID = 1L;
+public class Users {
+	 
 	 @Id
 	 @GeneratedValue(strategy = GenerationType.IDENTITY)
 	 @Basic(optional = false)
-	 @Column(name = "id",nullable = false)
+	 @Column(name = "id")
 	 private Long iduser;
 	 
-	 @Column(name = "name", unique = true, nullable = false)
+	 @Column(name = "name", unique = true)
 	 private String name;
 	 
-	 @Column(name = "login", unique = true, nullable = false)
-	 private String login;
+	 @Column(name = "username", unique = true, nullable = false)
+	 private String username;
 	 
 	 @Column(name = "password", nullable = false)
 	 private String password;
 	 
-	 @Column(name = "datecreation", nullable = false, insertable = true, updatable = false)
+	 
+	 @Column(name = "status")
+	 private boolean status = true;
+	 
+	 @Column(name = "datecreation", insertable = true, updatable = false)
 	 @Temporal(TemporalType.TIMESTAMP)
 	 @CreationTimestamp
 	 private Date dateCreation;
@@ -49,38 +53,15 @@ public class Users implements Serializable {
 	}
 
 	/**
-	 * @param iduser
-	 */
-	public Users(Long iduser) {
-		super();
-		this.iduser = iduser;
-	}
-
-	/**
 	 * @param name
-	 * @param surname
-	 * @param login
+	 * @param username
 	 * @param password
 	 */
-	public Users(String name, String login, String password) {
+	public Users(String name, String username, String password) {
 		super();
 		this.name = name;
-		this.login = login;
+		this.username = username;
 		this.password = password;
-	}
-
-	/**
-	 * @return the iduser
-	 */
-	public Long getIduser() {
-		return iduser;
-	}
-
-	/**
-	 * @param iduser the iduser to set
-	 */
-	public void setIduser(Long iduser) {
-		this.iduser = iduser;
 	}
 
 	/**
@@ -98,17 +79,17 @@ public class Users implements Serializable {
 	}
 
 	/**
-	 * @return the login
+	 * @return the username
 	 */
-	public String getLogin() {
-		return login;
+	public String getUsername() {
+		return username;
 	}
 
 	/**
-	 * @param login the login to set
+	 * @param username the username to set
 	 */
-	public void setLogin(String login) {
-		this.login = login;
+	public void setUsername(String username) {
+		this.username = username;
 	}
 
 	/**
@@ -126,6 +107,20 @@ public class Users implements Serializable {
 	}
 
 	/**
+	 * @return the status
+	 */
+	public boolean isStatus() {
+		return status;
+	}
+
+	/**
+	 * @param status the status to set
+	 */
+	public void setStatus(boolean status) {
+		this.status = status;
+	}
+
+	/**
 	 * @return the dateCreation
 	 */
 	public Date getDateCreation() {
@@ -139,9 +134,16 @@ public class Users implements Serializable {
 		this.dateCreation = dateCreation;
 	}
 
+	/**
+	 * @return the iduser
+	 */
+	public Long getIduser() {
+		return iduser;
+	}
+
 	@Override
 	public int hashCode() {
-		return Objects.hash(dateCreation, iduser, login, name, password);
+		return Objects.hash(dateCreation, iduser, name, password, status, username);
 	}
 
 	@Override
@@ -152,16 +154,19 @@ public class Users implements Serializable {
 			return false;
 		Users other = (Users) obj;
 		return Objects.equals(dateCreation, other.dateCreation) && Objects.equals(iduser, other.iduser)
-				&& Objects.equals(login, other.login) && Objects.equals(name, other.name)
-				&& Objects.equals(password, other.password);
+				&& Objects.equals(name, other.name) && Objects.equals(password, other.password)
+				&& status == other.status && Objects.equals(username, other.username);
 	}
 
 	@Override
 	public String toString() {
-		return "Users [iduser=" + iduser + ", name=" + name +", login=" + login
-				+ ", password=" + password + ", dateCreation=" + dateCreation + "]";
+		return "Users [iduser=" + iduser + ", name=" + name + ", username=" + username + ", password=" + password
+				+ ", status=" + status + ", dateCreation=" + dateCreation + "]";
 	}
-	 
+
+	
+
+
 	 
 	 
 }

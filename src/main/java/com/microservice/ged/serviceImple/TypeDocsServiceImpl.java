@@ -9,12 +9,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import com.microservice.ged.beans.LogPoste;
 import com.microservice.ged.beans.LogPosteUser;
 import com.microservice.ged.beans.Postes;
 import com.microservice.ged.beans.Roles;
 import com.microservice.ged.beans.TypeDocs;
-import com.microservice.ged.repository.LogPosteRepo;
 import com.microservice.ged.repository.LogPosteUserRepo;
 import com.microservice.ged.repository.PosteRepo;
 import com.microservice.ged.repository.TypeDocsRepo;
@@ -33,9 +31,6 @@ public class TypeDocsServiceImpl implements TypeDocsService {
 	@Autowired
 	LogPosteUserRepo logPosteUserRepo;
 	
-	@Autowired 
-	LogPosteRepo logPosteRepo;
-
 
 	@Override
 	public Page<TypeDocs> findAll(int page, int size) {
@@ -64,40 +59,10 @@ public class TypeDocsServiceImpl implements TypeDocsService {
 		if(typeDocsRepo.findBySigle(typeDocs.getSigle())!=null) {
 			throw new Exception("TypeDocs with sigle "+typeDocs.getSigle()+" already exist");
 		}
-		Postes postes =  posteRepo.findByName(posteName);
-		if(postes ==null) {
-			throw new Exception("Votre poste ne vous permet pas cette action");
-		}else {
-			LogPosteUser logPosteUser= logPosteUserRepo.findByPosteIdAndDateFinIsNull(postes);
-			if(logPosteUser!=null) {
-				if(logPosteUser.getUserId()!=null) {
-					boolean  hasRole=false;
-					for(Roles roles : postes.getRoles()) {
-						if(roles.getName()=="CTYPEDOC")
-							hasRole = roles.isCreate();
-					}
-					if(hasRole) {
-						try {
-							LogPoste logPoste = new LogPoste(
-								"Create TypeDoc "+typeDocs.getName(),
-								logPosteUser.getUserId().getLogin(),
-								logPosteUser.getPosteId().getName(),
-								typeDocs.getName(),
-								"TYPEDOCS");
-							typeDocsRepo.save(typeDocs);
-							logPosteRepo.save(logPoste);
-						} catch (Exception e) {
-							throw new Exception("Error while create");
-						}
-					}else {
-						throw new Exception("You dont have this right create");
-					}
-				}else {
-					throw new Exception("Cet utilisateur ne peut effectuer cette action");
-				}
-			}else {
-				throw new Exception("toto");
-			}
+		try {
+			typeDocsRepo.save(typeDocs);
+		} catch (Exception e) {
+			throw new Exception("Error while create");
 		}
 	}
 
@@ -106,40 +71,10 @@ public class TypeDocsServiceImpl implements TypeDocsService {
 		if(typeDocsRepo.findByIdtypedoc(typeDocs.getIdtypedoc())==null) {
 			throw new Exception("TypedOCs with name "+typeDocs.getName()+" not exist");
 		}
-		Postes postes =  posteRepo.findByName(posteName);
-		if(postes ==null) {
-			throw new Exception("Votre poste ne vous permet pas cette action");
-		}else {
-			LogPosteUser logPosteUser= logPosteUserRepo.findByPosteIdAndDateFinIsNull(postes);
-			if(logPosteUser!=null) {
-				if(logPosteUser.getUserId()!=null) {
-					boolean  hasRole=false;
-					for(Roles roles : postes.getRoles()) {
-						if(roles.getName()=="UTYPEDOC")
-							hasRole = roles.isUpdate();
-					}
-					if(hasRole) {
-						try {
-							LogPoste logPoste = new LogPoste(
-								"Update TypeDoc "+typeDocs.getName(),
-								logPosteUser.getUserId().getLogin(),
-								logPosteUser.getPosteId().getName(),
-								typeDocs.getName(),
-								"TYPEDOCS");
-							typeDocsRepo.delete(typeDocs);
-							logPosteRepo.save(logPoste);
-						} catch (Exception e) {
-							throw new Exception("Error while update");
-						}
-					}else {
-						throw new Exception("You dont have this right update");
-					}
-				}else {
-					throw new Exception("Cet utilisateur ne peut effectuer cette action");
-				}
-			}else {
-				throw new Exception("toto");
-			}
+		try {
+			typeDocsRepo.delete(typeDocs);
+		} catch (Exception e) {
+			throw new Exception("Error while update");
 		}
 	}
 
@@ -155,40 +90,10 @@ public class TypeDocsServiceImpl implements TypeDocsService {
 		if(typeDocsRepo.findByIdtypedoc(typeDocs.getIdtypedoc())==null) {
 			throw new Exception("TypeDocs with name "+typeDocs.getName()+" not exist");
 		}
-		Postes postes =  posteRepo.findByName(posteName);
-		if(postes ==null) {
-			throw new Exception("Votre poste ne vous permet pas cette action");
-		}else {
-			LogPosteUser logPosteUser= logPosteUserRepo.findByPosteIdAndDateFinIsNull(postes);
-			if(logPosteUser!=null) {
-				if(logPosteUser.getUserId()!=null) {
-					boolean  hasRole=false;
-					for(Roles roles : postes.getRoles()) {
-						if(roles.getName()=="DTYPEDOC")
-							hasRole = roles.isDelete();
-					}
-					if(hasRole) {
-						try {
-							LogPoste logPoste = new LogPoste(
-								"Delete TypeDocs "+typeDocs.getName(),
-								logPosteUser.getUserId().getLogin(),
-								logPosteUser.getPosteId().getName(),
-								typeDocs.getName(),
-								"TYPEDOCS");
-							typeDocsRepo.delete(typeDocs);
-							logPosteRepo.save(logPoste);
-						} catch (Exception e) {
-							throw new Exception("Error while delete");
-						}
-					}else {
-						throw new Exception("You dont have this right delete");
-					}
-				}else {
-					throw new Exception("Cet utilisateur ne peut effectuer cette action");
-				}
-			}else {
-				throw new Exception("toto");
-			}
+		try {
+			typeDocsRepo.delete(typeDocs);
+		} catch (Exception e) {
+			throw new Exception("Error while delete");
 		}
 
 	}

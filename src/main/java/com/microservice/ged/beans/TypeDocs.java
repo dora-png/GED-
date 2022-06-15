@@ -3,6 +3,7 @@ package com.microservice.ged.beans;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Objects;
+import java.util.Set;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -38,7 +39,7 @@ public class TypeDocs implements Serializable {
     
     @OneToMany(mappedBy = "typedoc", fetch = FetchType.EAGER)
 	@JsonIncludeProperties(value = { "iddoc", "name", "extension" })
-	private Collection<Docs> docs;
+	private Set<Docs> docs;
 
 	/**
 	 * 
@@ -62,7 +63,7 @@ public class TypeDocs implements Serializable {
 	 * @param description
 	 * @param docs
 	 */
-	public TypeDocs(String name, String sigle, String description, Collection<Docs> docs) {
+	public TypeDocs(String name, String sigle, String description, Set<Docs> docs) {
 		super();
 		this.name = name;
 		this.sigle = sigle;
@@ -129,20 +130,15 @@ public class TypeDocs implements Serializable {
 	/**
 	 * @return the docs
 	 */
-	public Collection<Docs> getDocs() {
+	public Set<Docs> getDocs() {
 		return docs;
 	}
 
 	/**
 	 * @param docs the docs to set
 	 */
-	public void setDocs(Collection<Docs> docs) {
+	public void setDocs(Set<Docs> docs) {
 		this.docs = docs;
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(description, docs, idtypedoc, name, sigle);
 	}
 
 	@Override

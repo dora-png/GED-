@@ -24,10 +24,29 @@ public class RolesController {
 
 	@GetMapping("/roles/all")
 	public ResponseEntity<Page<Roles>> findAll(
+			@RequestParam(name = "posteId") Long posteId, 
 			@RequestParam(name = "page", defaultValue = "0") int page,
-			@RequestParam(name = "size", defaultValue = "10") int size) {
+			@RequestParam(name = "size", defaultValue = "5") int size) {
 		try {
-			Page<Roles> roles = rolesService.findAll("", page, size);
+			Page<Roles> roles = rolesService.findAll(posteId, page, size);
+			if(roles.isEmpty()) {
+				return  ResponseEntity.noContent().build();
+			}else {
+				return  ResponseEntity.ok().body(roles);
+			}			
+		} catch (Exception e) {
+			return ResponseEntity.badRequest().build();
+		}		
+	}
+	
+	@GetMapping("/roles/cant-be-add")
+	public ResponseEntity<Page<Roles>> findRoleToAdd(
+			@RequestParam(name = "posteId") Long posteId, 
+			@RequestParam(name = "posteToAddRole") Long posteToAddRole,
+			@RequestParam(name = "page", defaultValue = "0") int page,
+			@RequestParam(name = "size", defaultValue = "5") int size) {
+		try {
+			Page<Roles> roles = rolesService.findRoleToAdd(posteId, posteToAddRole, page, size);
 			if(roles.isEmpty()) {
 				return  ResponseEntity.noContent().build();
 			}else {
@@ -40,16 +59,17 @@ public class RolesController {
 
 	@GetMapping("/roles/search-by-name")
 	public ResponseEntity<Page<Roles>> searchByName(
+			@RequestParam(name = "posteId") Long posteId, 
 			@RequestParam(name = "name", defaultValue = "") String name,
 			@RequestParam(name = "page", defaultValue = "0") int page,
-			@RequestParam(name = "size", defaultValue = "10") int size) {
+			@RequestParam(name = "size", defaultValue = "5") int size) {
 		if(name.trim().isEmpty()) {
 			return ResponseEntity.badRequest().build();
 		}else if(name.isBlank()) {
 			return ResponseEntity.badRequest().build();
 		}else {
 			try {
-				Page<Roles> roles = rolesService.searchRole("",name,page, size);
+				Page<Roles> roles = rolesService.searchRole(name,posteId,page, size);
 				if(roles.isEmpty()) {
 					return  ResponseEntity.noContent().build();
 				}else {

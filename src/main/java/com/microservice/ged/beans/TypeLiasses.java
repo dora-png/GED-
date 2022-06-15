@@ -3,6 +3,7 @@ package com.microservice.ged.beans;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Objects;
+import java.util.Set;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -38,7 +39,7 @@ public class TypeLiasses implements Serializable {
     
     @OneToMany(mappedBy = "typeliasse", fetch = FetchType.EAGER)
 	@JsonIncludeProperties(value = { "idliasse",  "name", "sigle" })
-	private Collection<Liasses> liasses;
+	private Set<Liasses> liasses;
 
 	/**
 	 * 
@@ -62,7 +63,7 @@ public class TypeLiasses implements Serializable {
 	 * @param description
 	 * @param liasses
 	 */
-	public TypeLiasses(String name, String sigle, String description, Collection<Liasses> liasses) {
+	public TypeLiasses(String name, String sigle, String description, Set<Liasses> liasses) {
 		super();
 		this.name = name;
 		this.sigle = sigle;
@@ -129,21 +130,17 @@ public class TypeLiasses implements Serializable {
 	/**
 	 * @return the liasses
 	 */
-	public Collection<Liasses> getLiasses() {
+	public Set<Liasses> getLiasses() {
 		return liasses;
 	}
 
 	/**
 	 * @param liasses the liasses to set
 	 */
-	public void setLiasses(Collection<Liasses> liasses) {
+	public void setLiasses(Set<Liasses> liasses) {
 		this.liasses = liasses;
 	}
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(description, idtypeliasse, liasses, name, sigle);
-	}
 
 	@Override
 	public boolean equals(Object obj) {

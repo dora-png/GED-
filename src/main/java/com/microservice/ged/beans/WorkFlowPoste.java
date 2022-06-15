@@ -30,14 +30,14 @@ public class WorkFlowPoste implements Serializable {
 	private Postes posteId;
     
     @ManyToOne
-	@JsonIncludeProperties(value = {"idworkflow", "name", "sigle"})
+	@JsonIncludeProperties(value = {"idworkflows", "name", "sigle"})
 	private WorkFlow workflowId;
     
     @Column(name = "level", nullable = false)
     private int level;
     
-    @Column(name = "active", columnDefinition = "boolean default true")
-    private boolean active = true;
+    @Column(name = "isactive")
+    private boolean isactive;
 
 	/**
 	 * 
@@ -83,34 +83,6 @@ public class WorkFlowPoste implements Serializable {
 	}
 
 	/**
-	 * @return the posteId
-	 */
-	public Postes getPosteId() {
-		return posteId;
-	}
-
-	/**
-	 * @param posteId the posteId to set
-	 */
-	public void setPosteId(Postes posteId) {
-		this.posteId = posteId;
-	}
-
-	/**
-	 * @return the workflowId
-	 */
-	public WorkFlow getWorkflowId() {
-		return workflowId;
-	}
-
-	/**
-	 * @param workflowId the workflowId to set
-	 */
-	public void setWorkflowId(WorkFlow workflowId) {
-		this.workflowId = workflowId;
-	}
-
-	/**
 	 * @return the level
 	 */
 	public int getLevel() {
@@ -125,41 +97,32 @@ public class WorkFlowPoste implements Serializable {
 	}
 
 	/**
-	 * @return the active
+	 * @return the isactive
 	 */
-	public boolean isActive() {
-		return active;
+	public boolean isIsactive() {
+		return isactive;
 	}
 
 	/**
-	 * @param active the active to set
+	 * @param isactive the isactive to set
 	 */
-	public void setActive(boolean active) {
-		this.active = active;
+	public void setIsactive(boolean isactive) {
+		this.isactive = isactive;
 	}
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(active, idworkflowposte, level, posteId, workflowId);
+	/**
+	 * @return the posteId
+	 */
+	public Postes getPosteId() {
+		return posteId;
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (!(obj instanceof WorkFlowPoste))
-			return false;
-		WorkFlowPoste other = (WorkFlowPoste) obj;
-		return active == other.active && Objects.equals(idworkflowposte, other.idworkflowposte) && level == other.level
-				&& Objects.equals(posteId, other.posteId) && Objects.equals(workflowId, other.workflowId);
+	/**
+	 * @return the workflowId
+	 */
+	public WorkFlow getWorkflowId() {
+		return workflowId;
 	}
 
-	@Override
-	public String toString() {
-		return "WorkFlowPoste [idworkflowposte=" + idworkflowposte + ", posteId=" + posteId + ", workflowId="
-				+ workflowId + ", level=" + level + ", active=" + active + "]";
-	}
-    
-    
-    
+	
 }

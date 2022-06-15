@@ -17,6 +17,7 @@ import com.microservice.ged.beans.Structures;
 import com.microservice.ged.beans.Users;
 import com.microservice.ged.service.LogPosteUserService;
 import com.microservice.ged.service.PosteService;
+import com.microservice.ged.service.StructureService;
 import com.microservice.ged.utils.PosteRoleBean;
 
 @RestController
@@ -26,13 +27,17 @@ public class PosteController {
 	@Autowired
 	private PosteService posteservice;
 	
+
+	@Autowired
+	private StructureService structureService;
+	
 	@Autowired
 	private LogPosteUserService logPosteUserService; 
 
 	@GetMapping("/postes/all")
 	public ResponseEntity<Page<Postes>> findAll(
 			@RequestParam(name = "page", defaultValue = "0") int page,
-			@RequestParam(name = "size", defaultValue = "10") int size) {
+			@RequestParam(name = "size", defaultValue = "5") int size) {
 		try {
 			Page<Postes> postes = posteservice.findAll(page, size);
 			if(postes.isEmpty()) {
@@ -50,7 +55,7 @@ public class PosteController {
 			@RequestBody Structures structures,
 			@RequestParam(name = "niveau") int niveau,
 			@RequestParam(name = "page", defaultValue = "0") int page,
-			@RequestParam(name = "size", defaultValue = "10") int size) {
+			@RequestParam(name = "size", defaultValue = "5") int size) {
 		try {
 			Page<Postes> postes = posteservice.searchByStructureAndNiveau(niveau, structures, page, size);
 			if(postes.isEmpty()) {
@@ -63,12 +68,41 @@ public class PosteController {
 		}	
 	}
 
+	@GetMapping("/postes/search-by-structure")
+	public ResponseEntity<Page<Postes>> findAllStructure(
+			@RequestParam(name = "structure")Long structure,
+			@RequestParam(name = "page", defaultValue = "0") int page,
+			@RequestParam(name = "size", defaultValue = "5") int size) {
+		try {
+			Structures structures = structureService.findByIdStructure(structure);
+			if(structures==null) {
+				return ResponseEntity.badRequest().build();
+			}else {
+				Page<Postes> postes = posteservice.findAllStructure(structures, page, size);
+				if(postes.isEmpty()) {
+					return  ResponseEntity.noContent().build();
+				}else {
+					return  ResponseEntity.ok().body(postes);
+				}	
+			}
+			
+					
+		} catch (Exception e) {
+			return ResponseEntity.badRequest().build();
+		}	
+	}
+	
+	@GetMapping("/postes/fing-by-id")
+	public ResponseEntity<Postes> findById(@RequestParam(name = "id") Long id) throws Exception {
+
+		return  ResponseEntity.ok().body(posteservice.findById(id));
+	}
 	
 	@GetMapping("/postes/search-by-name")
 	public ResponseEntity<Page<Postes>> searchByName(
 			@RequestParam(name = "name", defaultValue = "") String name,
 			@RequestParam(name = "page", defaultValue = "0") int page,
-			@RequestParam(name = "size", defaultValue = "10") int size) {
+			@RequestParam(name = "size", defaultValue = "5") int size) {
 		if(name.trim().isEmpty()) {
 			return ResponseEntity.badRequest().build();
 		}else if(name.isBlank()) {
@@ -92,18 +126,6 @@ public class PosteController {
 			@RequestBody Postes postes,
 			@RequestParam(name = "posteName") String posteName) throws Exception {
 		try {
-			//posteservice.add(postes, "Maire");
-			System.err.println(posteName);
-			System.err.println("getName "+postes.getName());
-			System.err.println("getIdposte "+postes.getIdposte());
-			System.err.println("getDescription "+postes.getDescription());
-			System.err.println("getNiveau "+postes.getNiveau());
-			System.err.println("getPosteSubalterne "+postes.getPosteSubalterne());
-			System.err.println("getPosteSuperieur "+postes.getPosteSuperieur());
-			System.err.println("getRoles().size() "+postes.getRoles().size());
-			System.err.println("getRoles() "+postes.getRoles());
-			System.err.println("getStructure "+postes.getStructure());
-			//postes.getStructure().setIdstructure((long) 1);
 			posteservice.add(postes, posteName);
 			return  ResponseEntity.ok().build();		
 		} catch (Exception e) {
@@ -123,31 +145,6 @@ public class PosteController {
 		}	
 	}
 
-	@PostMapping("/poste/role-to-poste-add")
-	public ResponseEntity<?> addroleposte(
-			@RequestBody PosteRoleBean posterolebean,
-			@RequestParam(name = "posteName") String posteName) throws Exception {
-		try {
-			posteservice.addRolePoste(posterolebean,posteName);
-			return  ResponseEntity.ok().build();		
-		} catch (Exception e) {
-			return ResponseEntity.badRequest().build();
-		}	
-	}
-
-	@PostMapping("/poste/role-to-poste-remove")
-	public ResponseEntity<?> removeRoleToPoste(
-			@RequestBody PosteRoleBean posterolebean,
-			@RequestParam(name = "posteName") String posteName) throws Exception {
-		try {
-			posteservice.removeRoleToPoste(posterolebean,posteName);
-			return  ResponseEntity.ok().build();		
-		} catch (Exception e) {
-			return ResponseEntity.badRequest().build();
-		}	
-	}
-
-
 	@PostMapping("/poste/add-subposte")
 	public ResponseEntity<?> addSubPoste(
 			@RequestBody Postes postes,
@@ -156,21 +153,20 @@ public class PosteController {
 			posteservice.addSubPoste(posteName, postes);
 			return  ResponseEntity.ok().build();		
 		} catch (Exception e) {
-			return ResponseEntity.badRequest().build();
+			return ResponseEntity.badRequest().body(e.getLocalizedMessage());
 		}	
 	}
 
 	
-	@DeleteMapping("/poste/delete-subposte")
+	@PutMapping("/poste/delete-subposte")
 	public ResponseEntity<?> removeSubPoste(
-			@RequestParam(name = "posteName") String posteName,
-			@RequestParam(name = "supPoste") String supPoste,
-			@RequestParam(name = "subPoste") String subPoste) throws Exception {
+			@RequestBody Postes postes,
+			@RequestParam(name = "posteName") String posteName) throws Exception {
 		try {
-			posteservice.removeSubPoste(posteName,supPoste,subPoste);
+			posteservice.removeSubPoste(posteName,postes);
 			return  ResponseEntity.ok().build();		
 		} catch (Exception e) {
-			return ResponseEntity.badRequest().build();
+			return ResponseEntity.badRequest().body(e.getLocalizedMessage());
 		}
 	}
 
@@ -182,7 +178,7 @@ public class PosteController {
 			posteservice.delete(id, posteName);
 			return  ResponseEntity.ok().build();		
 		} catch (Exception e) {
-			return ResponseEntity.badRequest().build();
+			return ResponseEntity.badRequest().body(e.getLocalizedMessage());
 		}	
 	}
 
@@ -195,7 +191,7 @@ public class PosteController {
 			logPosteUserService.add(postes, users, posteName);
 			return  ResponseEntity.ok().build();		
 		} catch (Exception e) {
-			return ResponseEntity.badRequest().build();
+			return ResponseEntity.badRequest().body(e.getLocalizedMessage());
 		}	
 	}
 

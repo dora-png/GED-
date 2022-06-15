@@ -23,7 +23,7 @@ public class UsersController {
 	@GetMapping("/users/all")
 	public ResponseEntity<Page<Users>> findAll(
 			@RequestParam(name = "page", defaultValue = "0") int page,
-			@RequestParam(name = "size", defaultValue = "10") int size) {
+			@RequestParam(name = "size", defaultValue = "5") int size) {
 		try {
 			Page<Users> users = userService.findAll(page, size);
 			if(users.isEmpty()) {
@@ -40,7 +40,7 @@ public class UsersController {
 	public ResponseEntity<Page<Users>> searchByName(
 			@RequestParam(name = "name") String name,
 			@RequestParam(name = "page", defaultValue = "0") int page,
-			@RequestParam(name = "size", defaultValue = "10") int size) {
+			@RequestParam(name = "size", defaultValue = "5") int size) {
 		if(name.trim().isEmpty()) {
 			return ResponseEntity.badRequest().build();
 		}else if(name.isBlank()) {
@@ -63,7 +63,7 @@ public class UsersController {
 	public ResponseEntity<Page<Users>> searchByLogin(
 			@RequestParam(name = "login") String login,
 			@RequestParam(name = "page", defaultValue = "0") int page,
-			@RequestParam(name = "size", defaultValue = "10") int size) {
+			@RequestParam(name = "size", defaultValue = "5") int size) {
 		if(login.trim().isEmpty()) {
 			return ResponseEntity.badRequest().build();
 		}else if(login.isBlank()) {
@@ -87,7 +87,7 @@ public class UsersController {
 			@RequestBody Users users,
 			@RequestParam(name = "posteName") String posteName) {
 		try {
-			userService.add(users, posteName);
+			userService.add(users);
 			return  ResponseEntity.ok().build();		
 		} catch (Exception e) {
 			return ResponseEntity.badRequest().build();

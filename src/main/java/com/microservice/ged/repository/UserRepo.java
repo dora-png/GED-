@@ -9,10 +9,10 @@ import com.microservice.ged.beans.Users;
 
 @Repository
 public interface UserRepo extends JpaRepository<Users, Long>{
-	Users findByLogin(String login);
+	Users findByUsername(String login);
 	Users findByName(String name);
 	Users findByIduser(Long iduser);
-	Page<Users> findByNameLike(String name, Pageable pageable);
-	Page<Users> findByLoginLike(String name, Pageable pageable);
+	Page<Users> findByNameContaining(String name, Pageable pageable);
+	Page<Users> findByUsernameContaining(String name, Pageable pageable);
 
 }

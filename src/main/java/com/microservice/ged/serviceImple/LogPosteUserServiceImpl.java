@@ -10,13 +10,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import com.microservice.ged.beans.Appusers;
-import com.microservice.ged.beans.LogPoste;
 import com.microservice.ged.beans.LogPosteUser;
 import com.microservice.ged.beans.Postes;
 import com.microservice.ged.beans.Roles;
 import com.microservice.ged.beans.Users;
 import com.microservice.ged.repository.AppUserRepo;
-import com.microservice.ged.repository.LogPosteRepo;
 import com.microservice.ged.repository.LogPosteUserRepo;
 import com.microservice.ged.repository.PosteRepo;
 import com.microservice.ged.repository.UserRepo;
@@ -38,9 +36,6 @@ public class LogPosteUserServiceImpl implements LogPosteUserService {
 	@Autowired
 	AppUserRepo appUserRepo; 
 	
-	
-	@Autowired 
-	LogPosteRepo logPosteRepo;
 
 	@Override
 	public Page<LogPosteUser> logUser(Users users, int page, int size) throws Exception {
@@ -79,8 +74,8 @@ public class LogPosteUserServiceImpl implements LogPosteUserService {
 		if(userRepo.findByName(users.getName())==null) {
 			throw new Exception("User with name "+users.getName()+" Dont exist");
 		}
-		if(userRepo.findByLogin(users.getLogin())==null) {
-			throw new Exception("User with login "+users.getLogin()+" Dont exist");
+		if(userRepo.findByUsername(users.getUsername())==null) {
+			throw new Exception("User with login "+users.getUsername()+" Dont exist");
 		}
 		Postes postes =  posteRepo.findByName(posteName);
 		if(postes ==null) {
@@ -89,148 +84,35 @@ public class LogPosteUserServiceImpl implements LogPosteUserService {
 				try {					
 					if(logPosteUserRepo.findByPosteIdAndDateFinIsNull(poste)==null) {//poste non occupe
 						if(logPosteUserRepo.findByUserIdAndDateFinIsNull(users)==null) {//user sans poste
-							LogPoste logPoste = new LogPoste(
-									"Update Poste "+poste.getName()+" change user",
-									appusers.getLogin(),
-									appusers.getName(),
-									poste.getName(),
-									"POSTE");
-							LogPoste logPoste1 = new LogPoste(
-									"Update User "+users.getLogin()+" change poste",
-									appusers.getLogin(),
-									appusers.getName(),
-									users.getName(),
-									"USER");
 							LogPosteUser logPosteUser = new LogPosteUser("AFFECTATION", poste, users);
-							logPosteUserRepo.save(logPosteUser);
-							logPosteRepo.save(logPoste);
-							logPosteRepo.save(logPoste1);							
+							logPosteUserRepo.save(logPosteUser);						
 						}else {//user avec poste
 							LogPosteUser logPosteUsers = logPosteUserRepo.findByUserIdAndDateFinIsNull(users);
-							LogPoste logPoste = new LogPoste(
-									"Update Poste "+logPosteUsers.getPosteId().getName()+" End",
-									appusers.getLogin(),
-									appusers.getName(),
-									logPosteUsers.getPosteId().getName(),
-									"POSTE");
-							LogPoste logPoste1 = new LogPoste(
-									"Update Poste "+poste.getName()+" Change user",
-									appusers.getLogin(),
-									appusers.getName(),
-									poste.getName(),
-									"POSTE");
-							LogPoste logPoste2 = new LogPoste(
-									"Update User "+users.getLogin()+" end",
-									appusers.getLogin(),
-									appusers.getName(),
-									users.getName(),
-									"USER");
-							LogPoste logPoste3 = new LogPoste(
-									"Update User "+users.getLogin()+" Change poste",
-									appusers.getLogin(),
-									appusers.getName(),
-									users.getName(),
-									"USER");
+							
 							logPosteUsers.setDateFin(new Date());
 							LogPosteUser logPosteUser = new LogPosteUser("AFFECTATION", poste, users);
 							logPosteUserRepo.save(logPosteUsers);
 							logPosteUserRepo.save(logPosteUser);
-							logPosteRepo.save(logPoste);
-							logPosteRepo.save(logPoste1);
-							logPosteRepo.save(logPoste2);
-							logPosteRepo.save(logPoste3);
 							
 						}
 					}else {//poste occupe
 						if(logPosteUserRepo.findByUserIdAndDateFinIsNull(users)==null) {//user sans poste
 							LogPosteUser logPosteUsers = logPosteUserRepo.findByPosteIdAndDateFinIsNull(poste);
-							LogPoste logPoste = new LogPoste(
-									"Update Poste "+poste.getName()+" End",
-									appusers.getLogin(),
-									appusers.getName(),
-									poste.getName(),
-									"POSTE");
-							LogPoste logPoste1 = new LogPoste(
-									"Update User "+logPosteUsers.getUserId().getLogin()+" End",
-									appusers.getLogin(),
-									appusers.getName(),
-									logPosteUsers.getUserId().getName(),
-									"USER");
-							LogPoste logPoste2 = new LogPoste(
-									"Update Poste "+poste.getName()+" Change",
-									appusers.getLogin(),
-									appusers.getName(),
-									poste.getName(),
-									"POSTE");
-							LogPoste logPoste3 = new LogPoste(
-									"Update User "+users.getLogin()+" Change poste",
-									appusers.getLogin(),
-									appusers.getName(),
-									users.getName(),
-									"USER");
+						
 							logPosteUsers.setDateFin(new Date());
 							LogPosteUser logPosteUser = new LogPosteUser("AFFECTATION", poste, users);
 							logPosteUserRepo.save(logPosteUsers);
-							logPosteUserRepo.save(logPosteUser);
-							logPosteRepo.save(logPoste);
-							logPosteRepo.save(logPoste1);
-							logPosteRepo.save(logPoste2);
-							logPosteRepo.save(logPoste3);							
+							logPosteUserRepo.save(logPosteUser);							
 						}else {//user avec poste
 							LogPosteUser logPosteUsers = logPosteUserRepo.findByUserIdAndDateFinIsNull(users);
 							LogPosteUser logPosteUser = logPosteUserRepo.findByPosteIdAndDateFinIsNull(poste);
 							///////////////////////////////////
-							LogPoste logPoste = new LogPoste(
-									"Update Poste "+logPosteUsers.getPosteId().getName()+" End",
-									appusers.getLogin(),
-									appusers.getName(),
-									logPosteUsers.getPosteId().getName(),
-									"POSTE");
-							LogPoste logPoste1 = new LogPoste(
-									"Update User "+users.getName()+" End",
-									appusers.getLogin(),
-									appusers.getName(),
-									users.getName(),
-									"USER");
-							////////////////////////////////
-							LogPoste logPoste2 = new LogPoste(
-									"Update Poste "+poste.getName()+" End",
-									appusers.getLogin(),
-									appusers.getName(),
-									poste.getName(),
-									"POSTE");
-							LogPoste logPoste3 = new LogPoste(
-									"Update User "+logPosteUser.getUserId().getName()+" End",
-									appusers.getLogin(),
-									appusers.getName(),
-									logPosteUser.getUserId().getName(),
-									"USER");
-							//////////////////////////////////////////////////////////
-							LogPoste logPoste4 = new LogPoste(
-									"Update User "+users.getName()+" Change Poste",
-									appusers.getLogin(),
-									appusers.getName(),
-									users.getName(),
-									"USER");
-							LogPoste logPoste5 = new LogPoste(
-									"Update Poste "+poste.getName()+" Change user",
-									appusers.getLogin(),
-									appusers.getName(),
-									poste.getName(),
-									"POSTE");
-							
 							logPosteUsers.setDateFin(new Date());
 							logPosteUser.setDateFin(new Date());
 							LogPosteUser newlogPosteUser = new LogPosteUser("AFFECTATION", poste, users);
 							logPosteUserRepo.save(logPosteUsers);
-							logPosteRepo.save(logPoste);
-							logPosteRepo.save(logPoste1);
 							logPosteUserRepo.save(logPosteUser);
-							logPosteRepo.save(logPoste2);
-							logPosteRepo.save(logPoste3);
 							logPosteUserRepo.save(newlogPosteUser);
-							logPosteRepo.save(logPoste4);
-							logPosteRepo.save(logPoste5);
 							
 						}
 						
@@ -247,157 +129,46 @@ public class LogPosteUserServiceImpl implements LogPosteUserService {
 			LogPosteUser logPosteUser= logPosteUserRepo.findByPosteIdAndDateFinIsNull(postes);
 			if(logPosteUser!=null) {
 				if(logPosteUser.getUserId()!=null) {
-					boolean  hasRole=false;
-					for(Roles roles : postes.getRoles()) {
-						if(roles.getName()=="UPOSTE")
-							hasRole = roles.isUpdate();
-					}
+					boolean  hasRole=true;
+					/*
+					 * for(Roles roles : postes.getRoles()) { if(roles.getName()=="UPOSTE") hasRole
+					 * = roles.isUpdate(); }
+					 */
 					if(hasRole) {
 						try {					
 							if(logPosteUserRepo.findByPosteIdAndDateFinIsNull(poste)==null) {//poste non occupe
 								if(logPosteUserRepo.findByUserIdAndDateFinIsNull(users)==null) {//user sans poste
-									LogPoste logPoste = new LogPoste(
-											"Update Poste "+poste.getName()+" change user",
-											logPosteUser.getUserId().getLogin(),
-											logPosteUser.getPosteId().getName(),
-											poste.getName(),
-											"POSTE");
-									LogPoste logPoste1 = new LogPoste(
-											"Update User "+users.getLogin()+" change poste",
-											logPosteUser.getUserId().getLogin(),
-											logPosteUser.getPosteId().getName(),
-											users.getName(),
-											"USER");
+									
 									LogPosteUser logPosteUser1 = new LogPosteUser("AFFECTATION", poste, users);
-									logPosteUserRepo.save(logPosteUser1);
-									logPosteRepo.save(logPoste);
-									logPosteRepo.save(logPoste1);							
+									logPosteUserRepo.save(logPosteUser1);							
 								}else {//user avec poste
 									LogPosteUser logPosteUsers = logPosteUserRepo.findByUserIdAndDateFinIsNull(users);
-									LogPoste logPoste = new LogPoste(
-											"Update Poste "+logPosteUsers.getPosteId().getName()+" End",
-											logPosteUser.getUserId().getLogin(),
-											logPosteUser.getPosteId().getName(),
-											logPosteUsers.getPosteId().getName(),
-											"POSTE");
-									LogPoste logPoste1 = new LogPoste(
-											"Update Poste "+poste.getName()+" Change user",
-											logPosteUser.getUserId().getLogin(),
-											logPosteUser.getPosteId().getName(),
-											poste.getName(),
-											"POSTE");
-									LogPoste logPoste2 = new LogPoste(
-											"Update User "+users.getLogin()+" end",
-											logPosteUser.getUserId().getLogin(),
-											logPosteUser.getPosteId().getName(),
-											users.getName(),
-											"USER");
-									LogPoste logPoste3 = new LogPoste(
-											"Update User "+users.getLogin()+" Change poste",
-											logPosteUser.getUserId().getLogin(),
-											logPosteUser.getPosteId().getName(),
-											users.getName(),
-											"USER");
+									
 									logPosteUsers.setDateFin(new Date());
 									LogPosteUser logPosteUser1 = new LogPosteUser("AFFECTATION", poste, users);
 									logPosteUserRepo.save(logPosteUsers);
 									logPosteUserRepo.save(logPosteUser1);
-									logPosteRepo.save(logPoste);
-									logPosteRepo.save(logPoste1);
-									logPosteRepo.save(logPoste2);
-									logPosteRepo.save(logPoste3);
 									
 								}
 							}else {//poste occupe
 								if(logPosteUserRepo.findByUserIdAndDateFinIsNull(users)==null) {//user sans poste
 									LogPosteUser logPosteUsers = logPosteUserRepo.findByPosteIdAndDateFinIsNull(poste);
-									LogPoste logPoste = new LogPoste(
-											"Update Poste "+poste.getName()+" End",
-											logPosteUser.getUserId().getLogin(),
-											logPosteUser.getPosteId().getName(),
-											poste.getName(),
-											"POSTE");
-									LogPoste logPoste1 = new LogPoste(
-											"Update User "+logPosteUsers.getUserId().getLogin()+" End",
-											logPosteUser.getUserId().getLogin(),
-											logPosteUser.getPosteId().getName(),
-											logPosteUsers.getUserId().getName(),
-											"USER");
-									LogPoste logPoste2 = new LogPoste(
-											"Update Poste "+poste.getName()+" Change",
-											logPosteUser.getUserId().getLogin(),
-											logPosteUser.getPosteId().getName(),
-											poste.getName(),
-											"POSTE");
-									LogPoste logPoste3 = new LogPoste(
-											"Update User "+users.getLogin()+" Change poste",
-											logPosteUser.getUserId().getLogin(),
-											logPosteUser.getPosteId().getName(),
-											users.getName(),
-											"USER");
+									
 									logPosteUsers.setDateFin(new Date());
 									LogPosteUser logPosteUser1 = new LogPosteUser("AFFECTATION", poste, users);
 									logPosteUserRepo.save(logPosteUsers);
-									logPosteUserRepo.save(logPosteUser1);
-									logPosteRepo.save(logPoste);
-									logPosteRepo.save(logPoste1);
-									logPosteRepo.save(logPoste2);
-									logPosteRepo.save(logPoste3);							
+									logPosteUserRepo.save(logPosteUser1);							
 								}else {//user avec poste
 									LogPosteUser logPosteUsers = logPosteUserRepo.findByUserIdAndDateFinIsNull(users);
 									LogPosteUser logPosteUser1 = logPosteUserRepo.findByPosteIdAndDateFinIsNull(poste);
 									///////////////////////////////////
-									LogPoste logPoste = new LogPoste(
-											"Update Poste "+logPosteUsers.getPosteId().getName()+" End",
-											logPosteUser.getUserId().getLogin(),
-											logPosteUser.getPosteId().getName(),
-											logPosteUsers.getPosteId().getName(),
-											"POSTE");
-									LogPoste logPoste1 = new LogPoste(
-											"Update User "+users.getName()+" End",
-											logPosteUser.getUserId().getLogin(),
-											logPosteUser.getPosteId().getName(),
-											users.getName(),
-											"USER");
-									////////////////////////////////
-									LogPoste logPoste2 = new LogPoste(
-											"Update Poste "+poste.getName()+" End",
-											logPosteUser.getUserId().getLogin(),
-											logPosteUser.getPosteId().getName(),
-											poste.getName(),
-											"POSTE");
-									LogPoste logPoste3 = new LogPoste(
-											"Update User "+logPosteUser.getUserId().getName()+" End",
-											logPosteUser.getUserId().getLogin(),
-											logPosteUser.getPosteId().getName(),
-											logPosteUser.getUserId().getName(),
-											"USER");
-									//////////////////////////////////////////////////////////
-									LogPoste logPoste4 = new LogPoste(
-											"Update User "+users.getName()+" Change Poste",
-											logPosteUser.getUserId().getLogin(),
-											logPosteUser.getPosteId().getName(),
-											users.getName(),
-											"USER");
-									LogPoste logPoste5 = new LogPoste(
-											"Update Poste "+poste.getName()+" Change user",
-											logPosteUser.getUserId().getLogin(),
-											logPosteUser.getPosteId().getName(),
-											poste.getName(),
-											"POSTE");
 									
 									logPosteUsers.setDateFin(new Date());
 									logPosteUser1.setDateFin(new Date());
 									LogPosteUser newlogPosteUser = new LogPosteUser("AFFECTATION", poste, users);
 									logPosteUserRepo.save(logPosteUsers);
-									logPosteRepo.save(logPoste);
-									logPosteRepo.save(logPoste1);
 									logPosteUserRepo.save(logPosteUser1);
-									logPosteRepo.save(logPoste2);
-									logPosteRepo.save(logPoste3);
 									logPosteUserRepo.save(newlogPosteUser);
-									logPosteRepo.save(logPoste4);
-									logPosteRepo.save(logPoste5);
 									
 								}
 								

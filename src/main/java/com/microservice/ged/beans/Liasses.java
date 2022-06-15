@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -18,6 +19,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
+import org.hibernate.annotations.CreationTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 
@@ -41,13 +44,14 @@ public class Liasses implements Serializable {
     @Column(name = "description", nullable = false)
     private String description;
     
-    @Column(name = "datecreation",columnDefinition="TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
-	@Temporal(TemporalType.DATE)
+	@Column(name = "datecreation", nullable = false, insertable = true, updatable = false)
+	@Temporal(TemporalType.TIMESTAMP)
+	@CreationTimestamp
 	private Date dateCreation;
     
     @OneToMany(mappedBy = "liasse", fetch = FetchType.EAGER)
 	@JsonIncludeProperties(value = { "iddoc", "name", "extension", "path" })
-	private List<Docs> docs;
+	private Set<Docs> docs;
     
     
     @ManyToOne
@@ -57,6 +61,11 @@ public class Liasses implements Serializable {
     
     @ManyToOne
    	@JoinColumn(nullable = false)
+   	@JsonIncludeProperties(value = {"iduser", "name", "username" })
+   	private Users userid;
+    
+    @ManyToOne
+   	@JoinColumn(nullable = true)
    	@JsonIncludeProperties(value = {"idtypeliasse", "name", "sigle" })
    	private TypeLiasses typeliasse;
 
@@ -69,24 +78,72 @@ public class Liasses implements Serializable {
 	}
 
 	/**
-	 * @param idliasse
+	 * @param name
+	 * @param sigle
+	 * @param description
+	 * @param docs
+	 * @param workflowid
+	 * @param userid
+	 * @param typeliasse
 	 */
-	public Liasses(Long idliasse) {
+	public Liasses(String name, String sigle, String description, Set<Docs> docs, WorkFlow workflowid, Users userid,
+			TypeLiasses typeliasse) {
 		super();
-		this.idliasse = idliasse;
+		this.name = name;
+		this.sigle = sigle;
+		this.description = description;
+		this.docs = docs;
+		this.workflowid = workflowid;
+		this.userid = userid;
+		this.typeliasse = typeliasse;
 	}
 
 	/**
 	 * @param name
 	 * @param sigle
 	 * @param description
-	 * @param typeliasse
+	 * @param userid
 	 */
-	public Liasses(String name, String sigle, String description, TypeLiasses typeliasse) {
+	public Liasses(String name, String sigle, String description, Users userid) {
 		super();
 		this.name = name;
 		this.sigle = sigle;
 		this.description = description;
+		this.userid = userid;
+	}
+
+	/**
+	 * @param name
+	 * @param sigle
+	 * @param description
+	 * @param docs
+	 * @param userid
+	 */
+	public Liasses(String name, String sigle, String description, Set<Docs> docs, Users userid) {
+		super();
+		this.name = name;
+		this.sigle = sigle;
+		this.description = description;
+		this.docs = docs;
+		this.userid = userid;
+	}
+
+	/**
+	 * @param name
+	 * @param sigle
+	 * @param description
+	 * @param docs
+	 * @param workflowid
+	 * @param typeliasse
+	 */
+	public Liasses(String name, String sigle, String description, Set<Docs> docs, WorkFlow workflowid,
+			TypeLiasses typeliasse) {
+		super();
+		this.name = name;
+		this.sigle = sigle;
+		this.description = description;
+		this.docs = docs;
+		this.workflowid = workflowid;
 		this.typeliasse = typeliasse;
 	}
 
@@ -163,29 +220,15 @@ public class Liasses implements Serializable {
 	/**
 	 * @return the docs
 	 */
-	public List<Docs> getDocs() {
+	public Set<Docs> getDocs() {
 		return docs;
 	}
 
 	/**
 	 * @param docs the docs to set
 	 */
-	public void setDocs(List<Docs> docs) {
+	public void setDocs(Set<Docs> docs) {
 		this.docs = docs;
-	}
-
-	/**
-	 * @return the typeliasse
-	 */
-	public TypeLiasses getTypeliasse() {
-		return typeliasse;
-	}
-
-	/**
-	 * @param typeliasse the typeliasse to set
-	 */
-	public void setTypeliasse(TypeLiasses typeliasse) {
-		this.typeliasse = typeliasse;
 	}
 
 	/**
@@ -202,33 +245,36 @@ public class Liasses implements Serializable {
 		this.workflowid = workflowid;
 	}
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(dateCreation, description, docs, idliasse, name, sigle, typeliasse, workflowid);
+	/**
+	 * @return the userid
+	 */
+	public Users getUserid() {
+		return userid;
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (!(obj instanceof Liasses))
-			return false;
-		Liasses other = (Liasses) obj;
-		return Objects.equals(dateCreation, other.dateCreation) && Objects.equals(description, other.description)
-				&& Objects.equals(docs, other.docs) && Objects.equals(idliasse, other.idliasse)
-				&& Objects.equals(name, other.name) && Objects.equals(sigle, other.sigle)
-				&& Objects.equals(typeliasse, other.typeliasse) && Objects.equals(workflowid, other.workflowid);
+	/**
+	 * @param userid the userid to set
+	 */
+	public void setUserid(Users userid) {
+		this.userid = userid;
 	}
 
-	@Override
-	public String toString() {
-		return "Liasses [idliasse=" + idliasse + ", name=" + name + ", sigle=" + sigle + ", description=" + description
-				+ ", dateCreation=" + dateCreation + "]";
+	/**
+	 * @return the typeliasse
+	 */
+	public TypeLiasses getTypeliasse() {
+		return typeliasse;
 	}
 
-
-
-
-
+	/**
+	 * @param typeliasse the typeliasse to set
+	 */
+	public void setTypeliasse(TypeLiasses typeliasse) {
+		this.typeliasse = typeliasse;
+	}
+	
+	
+    
+    
 
 }

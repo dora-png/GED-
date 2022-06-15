@@ -14,6 +14,5 @@ public interface DocsService {
 	public void update(Docs docs, String posteName) throws Exception ;
 	public void updateSetter(Docs docs, String posteName) throws Exception ;
 	public void arhive(Docs docs, String posteName) throws Exception ;
-	public List<Docs> lastDocOpenByPoste(String posteName) throws Exception ;
 
 }

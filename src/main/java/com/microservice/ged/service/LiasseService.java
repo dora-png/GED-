@@ -10,7 +10,10 @@ import com.microservice.ged.beans.TypeLiasses;
 public interface LiasseService {
 	public Page<Liasses> searchLiassesByName(String name, int page, int size) throws Exception ;
 	public Page<Liasses> searchLiassesBySigle(String sigle, int page, int size) throws Exception ;
-	public void add(Liasses liasse, String posteName) throws Exception ;
+	public Liasses addLiasseForWorkflow(Liasses liasse, String posteName) throws Exception ;
+	public Liasses addLiasseForWorkflowImportData(Liasses liasse, String posteName) throws Exception ;
+	public Liasses addLiasseForUser(Liasses liasse, String posteName) throws Exception ;
+	public Liasses addLiasseForUserImportData(Liasses liasse, String posteName) throws Exception ;
 	public void update(Liasses liasse, String posteName) throws Exception ;
 	public void addDocToLiasse(Liasses liasse, String posteName) throws Exception ;
 	public Liasses findByName(String name) throws Exception ;

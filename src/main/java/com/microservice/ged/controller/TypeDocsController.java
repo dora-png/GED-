@@ -136,9 +136,19 @@ public class TypeDocsController {
 
 	@GetMapping("/typedocs/find-by-sigle")
 	public ResponseEntity<TypeDocs> findBySigle(
-			@RequestParam(name = "sigle", defaultValue = "") String sigle) {
+			@RequestParam(name = "sigle") String sigle) {
 		try {
 			return  ResponseEntity.ok().body(typeDocsService.findBySigle(sigle));		
+		} catch (Exception e) {
+			return ResponseEntity.badRequest().build();
+		}
+	}
+	
+	@GetMapping("/typedocs/find-by-id")
+	public ResponseEntity<TypeDocs> findById(
+			@RequestParam(name = "id") Long id) {
+		try {
+			return  ResponseEntity.ok().body(typeDocsService.findById(id));		
 		} catch (Exception e) {
 			return ResponseEntity.badRequest().build();
 		}

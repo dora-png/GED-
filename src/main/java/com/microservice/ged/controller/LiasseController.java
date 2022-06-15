@@ -70,18 +70,6 @@ public class LiasseController {
 		}	
 	}
 
-	@PostMapping("/liasses/add")
-	public ResponseEntity<?> add(
-			@RequestBody Liasses liasses,
-			@RequestParam(name = "posteName") String posteName) throws Exception {
-		try {
-			liasseService.add(liasses, posteName);
-			return  ResponseEntity.ok().build();		
-		} catch (Exception e) {
-			return ResponseEntity.badRequest().build();
-		}	
-	}
-
 	@PutMapping("/liasses/update")
 	public ResponseEntity<?> update(
 			@RequestBody Liasses liasses,

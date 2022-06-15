@@ -8,8 +8,10 @@ package com.microservice.ged.beans;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -57,30 +59,15 @@ public class Postes implements Serializable {
 
 	@OneToMany(mappedBy = "posteSuperieur", fetch = FetchType.LAZY)
 	//@JsonIncludeProperties(value = { "name" })
-	private List<Postes> posteSubalterne = new ArrayList<>();
+	private Set<Postes> posteSubalterne = new HashSet();
 
 	@ManyToOne
 	@JsonIncludeProperties(value = { "name" })
 	private Postes posteSuperieur;
 
 	@ManyToMany(fetch = FetchType.EAGER)
-	@JoinColumn(name = "rolles")
-	
-	private List<Roles> roles = new ArrayList<Roles>();
-
-	/**
-	 * @return the roles
-	 */
-	public List<Roles> getRoles() {
-		return roles;
-	}
-
-	/**
-	 * @param roles the roles to set
-	 */
-	public void setRoles(List<Roles> roles) {
-		this.roles = roles;
-	}
+	@JsonIncludeProperties(value = { "idgroupes", "name", "roleslistes"})
+	private Set<GroupUser> groupslistes;
 
 	/**
 	 * 
@@ -102,7 +89,7 @@ public class Postes implements Serializable {
 	 * @param roles
 	 */
 	public Postes(Long idposte, String name, String description, int niveau, Structures structure,
-			List<Postes> posteSubalterne, Postes posteSuperieur, List<Roles> roles) {
+			Set<Postes> posteSubalterne, Postes posteSuperieur, Set<GroupUser> groupslistes) {
 		super();
 		this.idposte = idposte;
 		this.name = name;
@@ -111,7 +98,7 @@ public class Postes implements Serializable {
 		this.structure = structure;
 		this.posteSubalterne = posteSubalterne;
 		this.posteSuperieur = posteSuperieur;
-		this.roles = roles;
+		this.groupslistes = groupslistes;
 	}
 
 
@@ -210,14 +197,14 @@ public class Postes implements Serializable {
 	/**
 	 * @return the posteSubalterne
 	 */
-	public List<Postes> getPosteSubalterne() {
+	public Set<Postes> getPosteSubalterne() {
 		return posteSubalterne;
 	}
 
 	/**
 	 * @param posteSubalterne the posteSubalterne to set
 	 */
-	public void setPosteSubalterne(List<Postes> posteSubalterne) {
+	public void setPosteSubalterne(Set<Postes> posteSubalterne) {
 		this.posteSubalterne = posteSubalterne;
 	}
 
@@ -235,24 +222,28 @@ public class Postes implements Serializable {
 		this.posteSuperieur = posteSuperieur;
 	}
 
-	
-	@Override
-	public int hashCode() {
-		return Objects.hash(description, idposte, name, niveau, posteSubalterne, posteSuperieur, structure);
+	/**
+	 * @return the groupslistes
+	 */
+	public Set<GroupUser> getGroupslistes() {
+		return groupslistes;
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (!(obj instanceof Postes))
-			return false;
-		Postes other = (Postes) obj;
-		return Objects.equals(description, other.description) && Objects.equals(idposte, other.idposte)
-				&& Objects.equals(name, other.name) && Objects.equals(niveau, other.niveau)
-				&& Objects.equals(posteSubalterne, other.posteSubalterne)
-				&& Objects.equals(posteSuperieur, other.posteSuperieur);
+	/**
+	 * @param groupslistes the groupslistes to set
+	 */
+	public void setGroupslistes(Set<GroupUser> groupslistes) {
+		this.groupslistes = groupslistes;
 	}
+
+	/**
+	 * @param niveau the niveau to set
+	 */
+	public void setNiveau(int niveau) {
+		this.niveau = niveau;
+	}
+
+
 
 	
 }

@@ -110,7 +110,7 @@ public class TypeLiasseController {
 
 	@DeleteMapping("/typeliasse/delete")
 	public ResponseEntity<?> delete(
-			@RequestParam(name = "id") long id,
+			@RequestParam(name = "id") Long id,
 			@RequestParam(name = "posteName") String posteName) throws Exception {
 		try {
 			TypeLiasses typeLiasses = typeLiasseService.findById(id);
@@ -126,7 +126,7 @@ public class TypeLiasseController {
 
 	@GetMapping("/typeliasse/find-by-name")
 	public ResponseEntity<TypeLiasses> findByName(
-			@RequestParam(name = "name", defaultValue = "") String name) {
+			@RequestParam(name = "name") String name) {
 		try {
 			return  ResponseEntity.ok().body(typeLiasseService.findByName(name));		
 		} catch (Exception e) {
@@ -135,6 +135,15 @@ public class TypeLiasseController {
 	}
 
 	@GetMapping("/typeliasse/find-by-sigle")
+	public ResponseEntity<TypeLiasses> findBySigle(@RequestParam(name = "id") Long id) {
+		try {
+			return  ResponseEntity.ok().body(typeLiasseService.findById(id));		
+		} catch (Exception e) {
+			return ResponseEntity.badRequest().build();
+		}
+	}
+	
+	@GetMapping("/typeliasse/find-by-id")
 	public ResponseEntity<TypeLiasses> findBySigle(
 			@RequestParam(name = "sigle", defaultValue = "") String sigle) {
 		try {

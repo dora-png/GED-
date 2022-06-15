@@ -8,18 +8,26 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PosteRoleBean {
-	private long poste;
+	private Long poste;
 	private String role;
+	
+	/**
+	 * 
+	 */
+	public PosteRoleBean() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
 	/**
 	 * @return the poste
 	 */
-	public long getPoste() {
+	public Long getPoste() {
 		return poste;
 	}
 	/**
 	 * @param poste the poste to set
 	 */
-	public void setPoste(long poste) {
+	public void setPoste(Long poste) {
 		this.poste = poste;
 	}
 	/**

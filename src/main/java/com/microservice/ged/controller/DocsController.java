@@ -65,20 +65,6 @@ public class DocsController {
 		}	
 	}	
 
-	@GetMapping("/docs/last-action")
-	public ResponseEntity<List<Docs>> lastDocOpenByPoste(@RequestParam(name = "posteName") String posteName) {
-		try {
-			List<Docs> docs = docsService.lastDocOpenByPoste(posteName);
-			if(docs.isEmpty()) {
-				return  ResponseEntity.noContent().build();
-			}else {
-				return  ResponseEntity.ok().body(docs);
-			}			
-		} catch (Exception e) {
-			return ResponseEntity.badRequest().build();
-		}	
-	}	
-	
 	@PostMapping("/docs/add")
 	public ResponseEntity<?> add(
 			@RequestBody Docs docs,

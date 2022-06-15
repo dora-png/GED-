@@ -6,9 +6,9 @@
 package com.microservice.ged.beans;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -45,21 +45,18 @@ public class Structures implements Serializable {
     
     @Column(name = "description", nullable = false)
     private String description;
-    
-    @Column(name = "level", nullable = false, columnDefinition = "integer default 0")
-    private int level;
-    
+        
     @OneToMany(mappedBy = "structure", fetch = FetchType.LAZY)
 	@JsonIncludeProperties(value = { "idposte", "name", "niveau" })
-	private List<Postes> postes;
+	private Set<Postes> postes;
     
 	@ManyToOne
-	@JsonIncludeProperties(value = { "idstructure", "name" })
+	@JsonIncludeProperties(value = { "idstructure", "name", "sigle" })
 	private Structures structureSuperieur;
 
 	@OneToMany
 	//@JsonIncludeProperties(value = { "idstructure", "name", "sigle" })
-	private List<Structures> sousStructure = new ArrayList<>();
+	private Set<Structures> sousStructure = new HashSet();
 
 	/**
 	 * 
@@ -145,31 +142,18 @@ public class Structures implements Serializable {
 		this.description = description;
 	}
 
-	/**
-	 * @return the level
-	 */
-	public int getLevel() {
-		return level;
-	}
-
-	/**
-	 * @param level the level to set
-	 */
-	public void setLevel(int level) {
-		this.level = level;
-	}
-
+	
 	/**
 	 * @return the postes
 	 */
-	public List<Postes> getPostes() {
+	public Set<Postes> getPostes() {
 		return postes;
 	}
 
 	/**
 	 * @param postes the postes to set
 	 */
-	public void setPostes(List<Postes> postes) {
+	public void setPostes(Set<Postes> postes) {
 		this.postes = postes;
 	}
 
@@ -190,21 +174,18 @@ public class Structures implements Serializable {
 	/**
 	 * @return the sousStructure
 	 */
-	public List<Structures> getSousStructure() {
+	public Set<Structures> getSousStructure() {
 		return sousStructure;
 	}
 
 	/**
 	 * @param sousStructure the sousStructure to set
 	 */
-	public void setSousStructure(List<Structures> sousStructure) {
+	public void setSousStructure(Set<Structures> sousStructure) {
 		this.sousStructure = sousStructure;
 	}
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(description, idstructure, level, name, postes, sigle, sousStructure, structureSuperieur);
-	}
+
 
 	@Override
 	public boolean equals(Object obj) {
@@ -214,7 +195,7 @@ public class Structures implements Serializable {
 			return false;
 		Structures other = (Structures) obj;
 		return Objects.equals(description, other.description) && Objects.equals(idstructure, other.idstructure)
-				&& level == other.level && Objects.equals(name, other.name) && Objects.equals(postes, other.postes)
+				&& Objects.equals(name, other.name) && Objects.equals(postes, other.postes)
 				&& Objects.equals(sigle, other.sigle) && Objects.equals(sousStructure, other.sousStructure)
 				&& Objects.equals(structureSuperieur, other.structureSuperieur);
 	}
@@ -222,7 +203,7 @@ public class Structures implements Serializable {
 	@Override
 	public String toString() {
 		return "Structures [idstructure=" + idstructure + ", name=" + name + ", sigle=" + sigle + ", description="
-				+ description + ", level=" + level + "]";
+				+ description + "]";
 	}
 
 	

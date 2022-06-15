@@ -11,10 +11,10 @@ import com.microservice.ged.beans.WorkFlow;
 import com.microservice.ged.beans.WorkFlowPoste;
 
 public interface WorkFlowPosteRepo extends JpaRepository<WorkFlowPoste, Long> {
-	List<WorkFlowPoste> findByActiveTrueAndPosteId(Postes posteId);
-	List<WorkFlowPoste> findByActiveTrueAndWorkflowId(WorkFlow workflowId);
-	Page<WorkFlowPoste> findByActiveTrueAndPosteId(Postes posteId, Pageable pageable);
-	Page<WorkFlowPoste> findByActiveTrueAndWorkflowId(WorkFlow workflowId, Pageable pageable);
-	WorkFlowPoste findByActiveTrueAndWorkflowIdAndPosteId(WorkFlow workflowId,Postes posteId);
-	WorkFlowPoste findByActiveTrueAndWorkflowIdAndLevel(WorkFlow workflowId,int level);
+	Page<WorkFlowPoste> findByIsactiveTrueAndPosteIdOrderByLevelDesc(Postes posteId, Pageable pageable);
+	Page<WorkFlowPoste> findByIsactiveTrueAndWorkflowIdOrderByLevelDesc(WorkFlow workflowId, Pageable pageable);
+	Page<WorkFlowPoste> findByIsactiveTrueAndPosteId(Postes posteId, Pageable pageable);
+	Page<WorkFlowPoste> findByIsactiveTrueAndWorkflowId(WorkFlow workflowId, Pageable pageable);
+	WorkFlowPoste findByIsactiveTrueAndWorkflowIdAndPosteId(WorkFlow workflowId,Postes posteId);
+	WorkFlowPoste findByIsactiveTrueAndWorkflowIdAndLevel(WorkFlow workflowId,int level);
 }

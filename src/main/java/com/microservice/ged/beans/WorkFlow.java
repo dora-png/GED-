@@ -3,6 +3,7 @@ package com.microservice.ged.beans;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -42,11 +43,11 @@ public class WorkFlow implements Serializable {
     
     @OneToMany(mappedBy = "workflowid", fetch = FetchType.LAZY)
 	@JsonIncludeProperties(value = { "idliasse", "name", "description" })
-	private List<Liasses> liasses;
+	private Set<Liasses> liasses;
     
     @OneToMany(fetch = FetchType.LAZY)
 	@JsonIncludeProperties(value = { "idtypedoc", "name", "sigle" })
-	private List<TypeDocs> typeDocs;
+	private Set<TypeDocs> typeDocs;
 
 	/**
 	 * 
@@ -136,35 +137,31 @@ public class WorkFlow implements Serializable {
 	/**
 	 * @return the liasses
 	 */
-	public List<Liasses> getLiasses() {
+	public Set<Liasses> getLiasses() {
 		return liasses;
 	}
 
 	/**
 	 * @param liasses the liasses to set
 	 */
-	public void setLiasses(List<Liasses> liasses) {
+	public void setLiasses(Set<Liasses> liasses) {
 		this.liasses = liasses;
 	}
 
 	/**
 	 * @return the typeDocs
 	 */
-	public List<TypeDocs> getTypeDocs() {
+	public Set<TypeDocs> getTypeDocs() {
 		return typeDocs;
 	}
 
 	/**
 	 * @param typeDocs the typeDocs to set
 	 */
-	public void setTypeDocs(List<TypeDocs> typeDocs) {
+	public void setTypeDocs(Set<TypeDocs> typeDocs) {
 		this.typeDocs = typeDocs;
 	}
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(description, idworkflows, liasses, name, sigle, typeDocs);
-	}
 
 	@Override
 	public boolean equals(Object obj) {

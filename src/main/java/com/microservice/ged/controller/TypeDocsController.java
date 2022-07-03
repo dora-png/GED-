@@ -86,10 +86,9 @@ public class TypeDocsController {
 
 	@PutMapping("/typeDocs/update")
 	public ResponseEntity<?> update(
-			@RequestBody TypeDocs typeDocs,
-			@RequestParam(name = "posteName") String posteName) throws Exception {
+			@RequestBody TypeDocs typeDocs) throws Exception {
 		try {
-			typeDocsService.update(typeDocs, posteName);
+			typeDocsService.update(typeDocs);
 			return  ResponseEntity.ok().build();		
 		} catch (Exception e) {
 			return ResponseEntity.badRequest().build();
@@ -98,10 +97,9 @@ public class TypeDocsController {
 
 	@PostMapping("/typedocs/add")
 	public ResponseEntity<?> add(
-			@RequestBody TypeDocs typeDocs,
-			@RequestParam(name = "posteName") String posteName) throws Exception {
+			@RequestBody TypeDocs typeDocs) throws Exception {
 		try {
-			typeDocsService.add(typeDocs, posteName);
+			typeDocsService.add(typeDocs);
 			return  ResponseEntity.ok().build();		
 		} catch (Exception e) {
 			return ResponseEntity.badRequest().build();
@@ -110,14 +108,13 @@ public class TypeDocsController {
 
 	@DeleteMapping("/typedocs/delete")
 	public ResponseEntity<?> delete(
-			@RequestParam(name = "id") long id,
-			@RequestParam(name = "posteName") String posteName) throws Exception {
+			@RequestParam(name = "id") long id) throws Exception {
 		try {
 			TypeDocs typeDocs = typeDocsService.findById(id);
 			if(typeDocs==null) {
 				return ResponseEntity.badRequest().build();
 			}
-			typeDocsService.delete(typeDocs, posteName);
+			typeDocsService.delete(typeDocs);
 			return  ResponseEntity.ok().build();		
 		} catch (Exception e) {
 			return ResponseEntity.badRequest().build();

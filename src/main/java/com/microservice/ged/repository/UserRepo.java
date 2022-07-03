@@ -1,5 +1,7 @@
 package com.microservice.ged.repository;
 
+import java.util.Set;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,5 +16,6 @@ public interface UserRepo extends JpaRepository<Users, Long>{
 	Users findByIduser(Long iduser);
 	Page<Users> findByNameContaining(String name, Pageable pageable);
 	Page<Users> findByUsernameContaining(String name, Pageable pageable);
+	Page<Users> findByIduserNotIn(Set<Long> ids, Pageable pageable);
 
 }

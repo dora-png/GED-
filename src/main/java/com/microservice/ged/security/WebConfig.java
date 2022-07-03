@@ -14,12 +14,12 @@ public class WebConfig implements WebMvcConfigurer {
 
 	@Autowired
 	private HandlerInterceptor traceinterceptor;
-/*
+
 	@Override
 	public void addCorsMappings(CorsRegistry corsRegistry) {
 		corsRegistry.addMapping("/**").allowedOrigins("*").allowedMethods("*").maxAge(3600L)
-				.allowedHeaders("*").exposedHeaders("*").allowCredentials(true);
-	}*/
+				.allowedHeaders("*").exposedHeaders("*").allowCredentials(false);
+	}
 
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {

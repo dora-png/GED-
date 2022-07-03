@@ -52,7 +52,7 @@ public class WorkFlowServiceImpl implements WorkFlowService {
 
 	
 	private void userExist(Long posteId, String roles)  throws Exception   {
-		if(posteRepo.findByIdposte(posteId)==null) {
+		if(posteRepo.findByIdposteAndActiveTrue(posteId)==null) {
 			throw new Exception("Poste not exist");	
 		}
 		Roles role= rolesRepo.findByName(roles);
@@ -92,7 +92,7 @@ public class WorkFlowServiceImpl implements WorkFlowService {
 
 	@Override
 	public Page<WorkFlowPoste> allWorkFlowInPoste(Long idPostes, int page, int size) throws Exception {
-		Postes poste = posteRepo.findByIdposte(idPostes);
+		Postes poste = posteRepo.findByIdposteAndActiveTrue(idPostes);
 		if(poste==null) {
 			throw new Exception("Error");	
 		}
@@ -117,7 +117,7 @@ public class WorkFlowServiceImpl implements WorkFlowService {
 			WorkFlowPoste flowPosteSet1 = new WorkFlowPoste();
 			for(WorkFlowPosteListe workFlowPosteList : workFlowPosteListe) {
 				WorkFlow workFlow = workFlowRepo.findByIdworkflows(workFlowPosteList.getIdWorkFlow());
-				Postes poste = posteRepo.findByIdposte(workFlowPosteList.getIdPoste());
+				Postes poste = posteRepo.findByIdposteAndActiveTrue(workFlowPosteList.getIdPoste());
 				if(workFlow==null) {
 					throw new Exception("WorkFlow not exist");
 				}
@@ -149,7 +149,7 @@ public class WorkFlowServiceImpl implements WorkFlowService {
 			WorkFlowPoste flowPosteSet1 = new WorkFlowPoste();
 			for(WorkFlowPosteListe workFlowPosteList : workFlowPosteListe) {
 				WorkFlow workFlow = workFlowRepo.findByIdworkflows(workFlowPosteList.getIdWorkFlow());
-				Postes poste = posteRepo.findByIdposte(workFlowPosteList.getIdPoste());
+				Postes poste = posteRepo.findByIdposteAndActiveTrue(workFlowPosteList.getIdPoste());
 				if(workFlow==null) {
 					throw new Exception("WorkFlow not exist");
 				}

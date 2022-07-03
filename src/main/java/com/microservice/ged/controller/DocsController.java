@@ -28,7 +28,7 @@ public class DocsController {
 	public ResponseEntity<Page<Docs>> searchByName(
 			@RequestParam(name = "sigle") String name,
 			@RequestParam(name = "page", defaultValue = "0") int page,
-			@RequestParam(name = "size", defaultValue = "10") int size) {
+			@RequestParam(name = "size", defaultValue = "5") int size) {
 		if(name.trim().isEmpty()) {
 			return ResponseEntity.badRequest().build();
 		}else if(name.isBlank()) {
@@ -52,7 +52,7 @@ public class DocsController {
 	public ResponseEntity<Page<Docs>> searchByLiasse(
 			@RequestBody Liasses liasses,
 			@RequestParam(name = "page", defaultValue = "0") int page,
-			@RequestParam(name = "size", defaultValue = "10") int size) {
+			@RequestParam(name = "size", defaultValue = "5") int size) {
 		try {
 			Page<Docs> docs = docsService.searchDocsByLiasses(liasses, page, size);
 				if(docs.isEmpty()) {
@@ -67,10 +67,9 @@ public class DocsController {
 
 	@PostMapping("/docs/add")
 	public ResponseEntity<?> add(
-			@RequestBody Docs docs,
-			@RequestParam(name = "posteName") String posteName) throws Exception {
+			@RequestBody Docs docs) throws Exception {
 		try {
-			docsService.add(docs, posteName);
+			docsService.add(docs);
 			return  ResponseEntity.ok().build();		
 		} catch (Exception e) {
 			return ResponseEntity.badRequest().build();
@@ -79,10 +78,9 @@ public class DocsController {
 
 	@PutMapping("/docs/update")
 	public ResponseEntity<?> update(
-			@RequestBody Docs docs,
-			@RequestParam(name = "posteName") String posteName) throws Exception {
+			@RequestBody Docs docs) throws Exception {
 		try {
-			docsService.update(docs, posteName);
+			docsService.update(docs);
 			return  ResponseEntity.ok().build();		
 		} catch (Exception e) {
 			return ResponseEntity.badRequest().build();

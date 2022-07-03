@@ -22,6 +22,7 @@ import com.microservice.ged.repository.LogPosteUserRepo;
 import com.microservice.ged.repository.PosteRepo;
 import com.microservice.ged.repository.StructureRepo;
 import com.microservice.ged.service.StructureService;
+import com.microservice.ged.utils.OrganigramSystem;
 
 @Service
 @Transactional
@@ -46,65 +47,41 @@ public class StructureServiceImpl implements StructureService {
 	}
 
 	@Override
-	public void add(Structures structure, String posteName) throws Exception {
-		if(structureRepo.findByName(structure.getName())!=null) {
+	public void add(Structures structure) throws Exception {
+		if(structureRepo.findByNameAndActiveTrue(structure.getName())!=null) {
 			throw new Exception("Structure with name "+structure.getName()+" already exist");
 		}
-		if(structureRepo.findBySigle(structure.getSigle())!=null) {
+		if(structureRepo.findBySigleAndActiveTrue(structure.getSigle())!=null) {
 			throw new Exception("Structure with sigle "+structure.getSigle()+" already exist");
 		}
-		Postes postes =  posteRepo.findByName(posteName);
-		if(postes ==null) {
-			Appusers appusers = appUserRepo.findByLogin(posteName); 
-			if(appusers !=null) {
-				try {
-					structureRepo.save(structure);
-				} catch (Exception e) {
-					throw new Exception("Error while create Structure");
-				}
-			}else {
-				throw new Exception("Error while create Structure");
-			}
-				
-		}else {
-			LogPosteUser logPosteUser= logPosteUserRepo.findByPosteIdAndDateFinIsNull(postes);
-			if(logPosteUser!=null) {
-				if(logPosteUser.getUserId()!=null) {
-					try {
-						structureRepo.save(structure);
-					} catch (Exception e) {
-						throw new Exception("Error while create Structure");
-					}
-					}else {
-						throw new Exception("You dont have this right create");
-					}
-				}else {
-					throw new Exception("Cet utilisateur ne peut effectuer cette action");
-				}
+		try {
+			structureRepo.save(structure);
+		} catch (Exception e) {
+			throw new Exception("Error while create Structure");
 		}
 	}
 
 	@Override
 	public Page<Structures> findAll(int page, int size) throws Exception {
 		// TODO Auto-generated method stub
-		return structureRepo.findAll(PageRequest.of(page, size, Sort.by("idstructure").descending()));
+		return structureRepo.findByActiveTrue(PageRequest.of(page, size, Sort.by("idstructure").descending()));
 	}
 
 	@Override
 	public Page<Structures> searchByName(String name, int page, int size) throws Exception {
 		// TODO Auto-generated method stub
-		return structureRepo.findByNameContaining(name, PageRequest.of(page, size, Sort.by("idstructure").descending()));
+		return structureRepo.findByNameContainingAndActiveTrue(name, PageRequest.of(page, size, Sort.by("idstructure").descending()));
 	}
 
 	@Override
 	public Page<Structures> searchBySigle(String sigle, int page, int size) throws Exception {
 		// TODO Auto-generated method stub
-		return structureRepo.findBySigleContaining(sigle, PageRequest.of(page, size, Sort.by("idstructure").descending()));
+		return structureRepo.findBySigleContainingAndActiveTrue(sigle, PageRequest.of(page, size, Sort.by("idstructure").descending()));
 	}
 
 	@Override
-	public void update(Structures structure, String posteName) throws Exception {
-		if(structureRepo.findByIdstructure(structure.getIdstructure())==null) {
+	public void update(Structures structure) throws Exception {
+		if(structureRepo.findByIdstructureAndActiveTrue(structure.getIdstructure())==null) {
 			throw new Exception("Structure with name "+structure.getName()+" not exist");
 		}
 		try {
@@ -115,15 +92,15 @@ public class StructureServiceImpl implements StructureService {
 	}
 
 	@Override
-	public void delete(Structures structure, String posteName) throws Exception {
+	public void delete(Structures structure) throws Exception {
 		// TODO Auto-generated method stub
-		if(structureRepo.findByName(structure.getName())==null) {
+		if(structureRepo.findByNameAndActiveTrue(structure.getName())==null) {
 			throw new Exception("Structure with name "+structure.getName()+" not exist");
 		}
-		if(structureRepo.findBySigle(structure.getSigle())==null) {
+		if(structureRepo.findBySigleAndActiveTrue(structure.getSigle())==null) {
 			throw new Exception("Structure with sigle "+structure.getSigle()+" not exist");
 		}
-		if(structureRepo.findByIdstructure(structure.getIdstructure())==null) {
+		if(structureRepo.findByIdstructureAndActiveTrue(structure.getIdstructure())==null) {
 			throw new Exception("Structure with name "+structure.getName()+" not exist");
 		}
 		try {
@@ -137,33 +114,32 @@ public class StructureServiceImpl implements StructureService {
 	@Override
 	public Structures findByName(String name) throws Exception {
 		// TODO Auto-generated method stub
-		return structureRepo.findByName(name);
+		return structureRepo.findByNameAndActiveTrue(name);
 	}
 
 	@Override
 	public Structures findBySigle(String sigle) throws Exception {
 		// TODO Auto-generated method stub
-		return structureRepo.findBySigle(sigle);
+		return structureRepo.findBySigleAndActiveTrue(sigle);
 	}
 
 	@Override
-	public void addPosteToStructures(String posteName,  Structures structure, Postes poste) throws Exception {
+	public void addPosteToStructures(Structures structure, Postes poste) throws Exception {
 		// TODO Auto-generated method stub
-		Postes postes = posteRepo.findByName(posteName);
-		if(structureRepo.findByName(structure.getName())==null) {
+		if(structureRepo.findByNameAndActiveTrue(structure.getName())==null) {
 			throw new Exception("Unknow Structure "+structure.getName());	
 		}
-		if(structureRepo.findBySigle(structure.getSigle())==null) {
+		if(structureRepo.findBySigleAndActiveTrue(structure.getSigle())==null) {
 			throw new Exception("Unknow Structure "+structure.getName());	
 		}
-		if(posteRepo.findByName(poste.getName())==null) {
+		if(posteRepo.findByNameAndActiveTrue(poste.getName())==null) {
 			throw new Exception("Unknow Poste "+poste.getName());	
 		}
 		try {
-			postes.setStructure(structure);
-			structure.getPostes().add(postes);
+			poste.setStructure(structure);
+			structure.getPostes().add(poste);
 			structureRepo.save(structure);
-			posteRepo.save(postes);
+			posteRepo.save(poste);
 		} catch (Exception e) {
 			throw new Exception("Error while update");
 		}
@@ -173,8 +149,8 @@ public class StructureServiceImpl implements StructureService {
 	@Override
 	public void removePosteToStructures(String posteName, String structureName) throws Exception {
 		// TODO Auto-generated method stub
-		Postes postes = posteRepo.findByName(posteName);
-		Structures structure = structureRepo.findByName(structureName);
+		Postes postes = posteRepo.findByNameAndActiveTrue(posteName);
+		Structures structure = structureRepo.findByNameAndActiveTrue(structureName);
 		if(structure == null) {
 			throw new Exception("Unknow Structure "+structureName);
 		}
@@ -190,40 +166,26 @@ public class StructureServiceImpl implements StructureService {
 	}
 	
 	@Override
-	public void addSubStructures(String posteName,Structures supStructures) throws Exception {
-		if(supStructures.getSousStructure().isEmpty()) {
-			throw new Exception("toto");
-		}else if(supStructures.getSousStructure().size()==1) {
-			Iterator<Structures> upstructureIterato = supStructures.getSousStructure().iterator();
-			Structures subStructures = new Structures();
-			while(upstructureIterato.hasNext()) {
-				subStructures = upstructureIterato.next();
-			}
-			if(structureRepo.findByIdstructure(supStructures.getIdstructure())==null) {
-				throw new Exception("Not exist");				
-			}
-			if(structureRepo.findByIdstructure(subStructures.getIdstructure())==null) {
-				throw new Exception("Not exist");				
-			}
-			if(supStructures.getIdstructure()==subStructures.getIdstructure()) {
-				throw new Exception("Error cant do this operation");
-			}
-			supStructures = structureRepo.findByIdstructure(supStructures.getIdstructure());
-				try {
-					supStructures.getSousStructure().add(subStructures);
-					subStructures.setStructureSuperieur(supStructures);
-					structureRepo.save(subStructures);
-					structureRepo.save(supStructures);
-				} catch (Exception e) {
-					throw new Exception("Error while update");
-				}	
-		}else {
-			throw new Exception("toto");
-		}	
+	public void addSubStructures(Structures subStructures) throws Exception {
+		Structures supStructures = subStructures.getStructureSuperieur();
+		if(structureRepo.findByIdstructureAndActiveTrue(supStructures.getIdstructure())==null) {
+			throw new Exception("Error while create sub-structure");
+		}
+		if(structureRepo.findByNameAndActiveTrue(subStructures.getName())!=null) {
+			throw new Exception("Error: Already exist");
+		}
+		if(structureRepo.findBySigleAndActiveTrue(subStructures.getSigle())!=null) {
+			throw new Exception("Error: Already exist");
+		}
+		supStructures = structureRepo.findByIdstructureAndActiveTrue(supStructures.getIdstructure());
+		subStructures.setStructureSuperieur(supStructures);
+		subStructures = structureRepo.save(subStructures);
+		supStructures.getSousStructure().add(subStructures);
+		structureRepo.save(supStructures);
 	}
 
 	@Override
-	public void removeSubStructures(String posteName,Structures supStructures) throws Exception {
+	public void removeSubStructures(Structures supStructures) throws Exception {
 		if(supStructures.getSousStructure().isEmpty()) {
 			throw new Exception("toto");
 		}else if(supStructures.getSousStructure().size()==1) {
@@ -232,10 +194,10 @@ public class StructureServiceImpl implements StructureService {
 			while(upstructureIterato.hasNext()) {
 				subStructures = upstructureIterato.next();
 			}
-			if(structureRepo.findByIdstructure(supStructures.getIdstructure())==null) {
+			if(structureRepo.findByIdstructureAndActiveTrue(supStructures.getIdstructure())==null) {
 				throw new Exception("Not exist");				
 			}
-			if(structureRepo.findByIdstructure(subStructures.getIdstructure())==null) {
+			if(structureRepo.findByIdstructureAndActiveTrue(subStructures.getIdstructure())==null) {
 				throw new Exception("Not exist");				
 			}
 			if(supStructures.getIdstructure()==subStructures.getIdstructure()) {
@@ -259,13 +221,35 @@ public class StructureServiceImpl implements StructureService {
 	@Override
 	public Structures findByIdStructure(Long id) throws Exception {
 		// TODO Auto-generated method stub
-		return structureRepo.findById(id).orElseThrow(() -> new Exception(""));
+		return structureRepo.findByIdstructureAndActiveTrue(id);
 	}
 
 	@Override
-	public Page<Structures> structureUnUseListe(int page, int size) throws Exception {
-		// TODO Auto-generated method stub
-		return structureRepo.findByStructureSuperieurIsNullAndSousStructureIsNull(PageRequest.of(page, size, Sort.by("idstructure").descending()));
+	public OrganigramSystem ogranigramme() throws Exception {
+		Structures structures = structureRepo.findByStructureSuperieurIsNullAndActiveTrue();
+		if(structures==null) {
+			return null;
+		}else {
+			OrganigramSystem organigramSystem = toto(structures);	
+			return organigramSystem;			
+		}
+	}
+	
+	private OrganigramSystem toto(Structures structures){
+		OrganigramSystem organigramSystem = new OrganigramSystem();
+		organigramSystem.setName(structures.getSigle().toUpperCase());
+		organigramSystem.setTitle(structures.getName());
+		organigramSystem.setId(structures.getIdstructure());
+		if(structures.getSousStructure().isEmpty()) {
+			organigramSystem.setChilds(null);				
+		}else {
+			structures.getSousStructure().forEach(
+					(structure)->{						
+						organigramSystem.getChilds().add(toto(structure));						
+					}
+				);	
+		}		
+		return organigramSystem;
 	}
 
 	

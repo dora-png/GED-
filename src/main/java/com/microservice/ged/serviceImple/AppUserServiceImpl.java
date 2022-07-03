@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.microservice.ged.beans.Appusers;
@@ -21,8 +22,10 @@ public class AppUserServiceImpl implements AppUserService {
 	@Autowired
 	AppUserRepo appUserRepo;
 
+
 	@Autowired
-	PosteRepo posteRepo;
+	BCryptPasswordEncoder bCryptPasswordEncoder; 	
+	
 	
 	
 	@Override
@@ -52,6 +55,7 @@ public class AppUserServiceImpl implements AppUserService {
 	@Override
 	public Appusers addUser(Appusers user) {
 		// TODO Auto-generated method stub
+		user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()) );
 		return appUserRepo.save(user);
 	}
 

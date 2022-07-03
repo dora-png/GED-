@@ -22,6 +22,8 @@ import com.microservice.ged.repository.AppUserRepo;
 import com.microservice.ged.repository.LogPosteUserRepo;
 import com.microservice.ged.repository.RolesRepo;
 import com.microservice.ged.repository.StructureRepo;
+import com.microservice.ged.service.AppUserService;
+import com.microservice.ged.service.GroupUserService;
 import com.microservice.ged.service.LogPosteUserService;
 import com.microservice.ged.service.PosteService;
 import com.microservice.ged.service.StructureService;
@@ -43,27 +45,30 @@ public class GedApplication {
 	
 	@Bean
 	CommandLineRunner start(
-			AppUserRepo userRepo, 
+			AppUserService userRepo, 
 			RolesRepo approlerepository,
 			UserService userService,
 			StructureService structureService,
 			PosteService posteService,
 			LogPosteUserService logPosteUserService,
+			GroupUserService groupUserService,
 			WorkFlowService workFlowService
 			) {
 		return arg -> {
 			Appusers appusers = new Appusers("ROOT", "root","1234");
-			userRepo.save(appusers);
+			userRepo.addUser(appusers);
+			
+			GroupUser groupUser = new GroupUser("Group 1");
 			
 			Roles ap1 = new Roles("CWORKFLOW", true, false, false, false);
 			Roles ap2 = new Roles("RWORKFLOW", false, true, false, false);
 			Roles ap3 = new Roles("UWORKFLOW", true, true, true, false);
 			Roles ap4 = new Roles("DWORKFLOW", true, true, true, true);
-			approlerepository.save(ap1);
+			ap1 = approlerepository.save(ap1);
 			approlerepository.save(ap2);
 			approlerepository.save(ap3);
 			approlerepository.save(ap4);
-
+			groupUser.getRoleslistes().add(ap1);
 			Roles ap12 = new Roles("CUSER", true, false, false, false);
 			Roles ap22 = new Roles("RUSER", false, true, false, false);
 			Roles ap32 = new Roles("UUSER", true, true, true, false);
@@ -139,52 +144,29 @@ public class GedApplication {
 			userService.add(users);
 			//GroupUser groupUser = new GroupUser(null)
 			Structures structures = new Structures("Mairie", "MRIE", "description");
-			structureService.add(structures, appusers.getLogin());
+			structureService.add(structures);
 			Structures structure = new Structures("Cabinet", "CM", "description");
 			Postes postes = new Postes("Maire", "description", structures);
-			posteService.add(postes, appusers.getLogin());
-			logPosteUserService.add(postes, users, appusers.getLogin());
+			posteService.addPoste(postes);
+			logPosteUserService.add(postes, users);
 			
 			
 			Users uses = new Users("Administratore", "admine", "1234");
 			userService.add(uses);
 			
-			structureService.add(structure, postes.getName());			
-			Structures structureq = new Structures("Cabineqt", "CAM", "description");
-			structureService.add(structureq, postes.getName());	
-			
-			Structures structure1 = new Structures("Cabine1t", "C1M", "description");
-			structureService.add(structure1, postes.getName());	
-			
-			Structures structure2 = new Structures("Cabine2t", "C2M", "description");
-			structureService.add(structure2, postes.getName());	
-			
-			Structures structure3 = new Structures("Cabine3t", "C3M", "description");
-			structureService.add(structure3, postes.getName());	
-			
-			Structures structure4 = new Structures("Cabine4t", "C4M", "description");
-			structureService.add(structure4, postes.getName());	
-			
-			Structures structure5 = new Structures("Cabine5t", "C5M", "description");
-			structureService.add(structure5, postes.getName());	
-			
-			Structures structure6 = new Structures("Cabine6t", "C6M", "description");
-			structureService.add(structure6, postes.getName());	
-			
-			Structures structure7 = new Structures("Cabine7t", "C7M", "description");
-			structureService.add(structure7, postes.getName());	
 			Postes poste = new Postes("SGP", "description", structures);
-			Postes poste1 = new Postes("Poste1", "description", structures);
-			posteService.add(poste, postes.getName());
-			posteService.add(poste1, postes.getName());			
-			postes.getPosteSubalterne().add(poste);
-			poste.getPosteSubalterne().add(poste1);			
-			posteService.addSubPoste(postes.getName(),postes);
-			posteService.addSubPoste(postes.getName(),poste);
-			structures.getSousStructure().add(structure);
-			structureService.addSubStructures(postes.getName(), structures);
-			poste = posteService.findByName(poste.getName());
-			poste1 = posteService.findByName(poste1.getName());
+			//Postes poste1 = new Postes("Poste1", "description", structures);
+			/*posteService.addPoste(poste );
+			posteService.addPoste(poste1 );	*/		
+			//poste.getPosteSubalterne().add(poste1);			
+			//posteService.addSubPoste( postes);
+			//posteService.addSubPoste( poste);
+			groupUser.getPosteslistes().add(postes);
+			groupUserService.saveGroupUser(groupUser);
+			
+			
+			
+			poste = posteService.findPosteByName(poste.getName());
 			WorkFlow workFlow = new WorkFlow("workFlow ", "workFlow", "description");
 			workFlowService.add(workFlow);
 			workFlow = workFlowService.findByName(workFlow.getName());
@@ -214,8 +196,8 @@ public class GedApplication {
 			WorkFlow workFlow11 = new WorkFlow("workFlow 11", "wo11", "description");
 			workFlowService.add(workFlow11);
 			List<WorkFlowPosteListe> workFlowPosteListe = new ArrayList<>();
-			workFlowPosteListe.add(new WorkFlowPosteListe(0, poste.getIdposte(), workFlow.getIdworkflows(), true));
-			workFlowPosteListe.add(new WorkFlowPosteListe(1, poste1.getIdposte(), workFlow.getIdworkflows(), true));
+			//workFlowPosteListe.add(new WorkFlowPosteListe(0, poste.getIdposte(), workFlow.getIdworkflows(), true));
+			//workFlowPosteListe.add(new WorkFlowPosteListe(1, poste1.getIdposte(), workFlow.getIdworkflows(), true));
 			workFlowService.addPosteToWorkFlow(workFlowPosteListe);
 			
 		};

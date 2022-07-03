@@ -20,6 +20,10 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.ColumnDefault;
+import org.springframework.beans.factory.annotation.Value;
+
 import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 
 /**
@@ -45,6 +49,9 @@ public class Structures implements Serializable {
     
     @Column(name = "description", nullable = false)
     private String description;
+    
+    @Column(name = "active", nullable = false)
+    private boolean active = true;
         
     @OneToMany(mappedBy = "structure", fetch = FetchType.LAZY)
 	@JsonIncludeProperties(value = { "idposte", "name", "niveau" })
@@ -185,7 +192,21 @@ public class Structures implements Serializable {
 		this.sousStructure = sousStructure;
 	}
 
+	/**
+	 * @return the active
+	 */
+	public boolean isActive() {
+		return active;
+	}
 
+	/**
+	 * @param active the active to set
+	 */
+	public void setActive(boolean active) {
+		this.active = active;
+	}
+
+	
 
 	@Override
 	public boolean equals(Object obj) {
@@ -194,17 +215,16 @@ public class Structures implements Serializable {
 		if (!(obj instanceof Structures))
 			return false;
 		Structures other = (Structures) obj;
-		return Objects.equals(description, other.description) && Objects.equals(idstructure, other.idstructure)
-				&& Objects.equals(name, other.name) && Objects.equals(postes, other.postes)
-				&& Objects.equals(sigle, other.sigle) && Objects.equals(sousStructure, other.sousStructure)
+		return active == other.active && Objects.equals(description, other.description)
+				&& Objects.equals(idstructure, other.idstructure) && Objects.equals(name, other.name)
+				&& Objects.equals(postes, other.postes) && Objects.equals(sigle, other.sigle)
+				&& Objects.equals(sousStructure, other.sousStructure)
 				&& Objects.equals(structureSuperieur, other.structureSuperieur);
 	}
 
-	@Override
-	public String toString() {
-		return "Structures [idstructure=" + idstructure + ", name=" + name + ", sigle=" + sigle + ", description="
-				+ description + "]";
-	}
+
+
+	
 
 	
 }

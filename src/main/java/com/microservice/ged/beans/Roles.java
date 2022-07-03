@@ -6,15 +6,22 @@
 package com.microservice.ged.beans;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 
 /**
  *
@@ -47,6 +54,8 @@ public class Roles implements Serializable {
     @Column(name = "delete",columnDefinition = "boolean default false")
     private boolean delete;
 
+  
+    
 	/**
 	 * 
 	 */
@@ -154,6 +163,8 @@ public class Roles implements Serializable {
 	public void setDelete(boolean delete) {
 		this.delete = delete;
 	}
+
+
 
 	@Override
 	public int hashCode() {

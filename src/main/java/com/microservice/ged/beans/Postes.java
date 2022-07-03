@@ -14,6 +14,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -25,6 +26,9 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.ColumnDefault;
+
 import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 
 /**
@@ -43,18 +47,18 @@ public class Postes implements Serializable {
     @Column(name = "idposte", nullable = false)
     private Long idposte;
     
-    @Column(name = "name",unique = true, nullable = false)
+    @Column(name = "name", nullable = false)
     private String name;
     
     @Column(name = "description", nullable = false)
     private String description;
     
-    @Column(name = "niveau")
-    private int niveau;
+    @Column(name = "active", nullable = false)
+    private boolean active = true;
         
     @ManyToOne
 	@JoinColumn(nullable = false)
-	@JsonIncludeProperties(value = {"idstructure", "name", "sigle" })
+	@JsonIncludeProperties(value = {"idstructure", "name", "sigle","active" })
 	private Structures structure;
 
 	@OneToMany(mappedBy = "posteSuperieur", fetch = FetchType.LAZY)
@@ -62,12 +66,12 @@ public class Postes implements Serializable {
 	private Set<Postes> posteSubalterne = new HashSet();
 
 	@ManyToOne
-	@JsonIncludeProperties(value = { "name" })
+	@JsonIncludeProperties(value = { "idposte", "name","active" })
 	private Postes posteSuperieur;
 
-	@ManyToMany(fetch = FetchType.EAGER)
+	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
 	@JsonIncludeProperties(value = { "idgroupes", "name", "roleslistes"})
-	private Set<GroupUser> groupslistes;
+	private Set<GroupUser> groupslistes = new HashSet<>();
 
 	/**
 	 * 
@@ -88,13 +92,12 @@ public class Postes implements Serializable {
 	 * @param posteemploye
 	 * @param roles
 	 */
-	public Postes(Long idposte, String name, String description, int niveau, Structures structure,
+	public Postes(Long idposte, String name, String description, Structures structure,
 			Set<Postes> posteSubalterne, Postes posteSuperieur, Set<GroupUser> groupslistes) {
 		super();
 		this.idposte = idposte;
 		this.name = name;
 		this.description = description;
-		this.niveau = niveau;
 		this.structure = structure;
 		this.posteSubalterne = posteSubalterne;
 		this.posteSuperieur = posteSuperieur;
@@ -167,20 +170,6 @@ public class Postes implements Serializable {
 	}
 
 	/**
-	 * @return the niveau
-	 */
-	public Integer getNiveau() {
-		return niveau;
-	}
-
-	/**
-	 * @param niveau the niveau to set
-	 */
-	public void setNiveau(Integer niveau) {
-		this.niveau = niveau;
-	}
-
-	/**
 	 * @return the structure
 	 */
 	public Structures getStructure() {
@@ -237,11 +226,20 @@ public class Postes implements Serializable {
 	}
 
 	/**
-	 * @param niveau the niveau to set
+	 * @return the active
 	 */
-	public void setNiveau(int niveau) {
-		this.niveau = niveau;
+	public boolean isActive() {
+		return active;
 	}
+
+	/**
+	 * @param active the active to set
+	 */
+	public void setActive(boolean active) {
+		this.active = active;
+	}
+
+
 
 
 

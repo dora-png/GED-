@@ -52,20 +52,15 @@ public class DocsServiceImpl implements DocsService {
 	}
 
 	@Override
-	public void add(Docs docs, String posteName) throws Exception {
+	public void add(Docs docs) throws Exception {
 		if(docsRepo.findByName(docs.getName())!=null) {
 			throw new Exception("Documents with name "+docs.getName()+" already exist");
 		}
-		try {
 			docsRepo.save(docs);
-		} catch (Exception e) {
-			throw new Exception("Error while create");
-		}
-		
 	}
 
 	@Override
-	public void update(Docs docs, String posteName) throws Exception {
+	public void update(Docs docs) throws Exception {
 		if(docsRepo.findByIddoc(docs.getIddoc())==null) {
 			throw new Exception("Document with name "+docs.getName()+" not exist");
 		}
@@ -81,7 +76,7 @@ public class DocsServiceImpl implements DocsService {
 		if(docsRepo.findByIddoc(docs.getIddoc())==null) {
 			throw new Exception("Document with name "+docs.getName()+" not exist");
 		}
-		Postes postes =  posteRepo.findByName(posteName);
+		Postes postes =  posteRepo.findByNameAndActiveTrue(posteName);
 		if(postes ==null) {
 			throw new Exception("Votre poste ne vous permet pas cette action");
 		}else {
@@ -133,7 +128,7 @@ public class DocsServiceImpl implements DocsService {
 	}
 
 	@Override
-	public void arhive(Docs docs, String posteName) throws Exception {
+	public void arhive(Docs docs) throws Exception {
 		// TODO Auto-generated method stub
 		
 	}

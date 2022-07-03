@@ -45,7 +45,7 @@ public class LogPosteUser implements Serializable {
 	private String actiondo;
     
     @ManyToOne
-	@JsonIncludeProperties(value = {"idposte", "name", "description", "groupslistes" })
+	@JsonIncludeProperties(value = {"idposte", "name", "description", "groupslistes", "structure" })
 	private Postes posteId;
     
     @ManyToOne

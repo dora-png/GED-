@@ -84,8 +84,8 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 		String JwtToken = JWT.create().withSubject(springUser.getUsername())
 				.withExpiresAt(new Date(System.currentTimeMillis() + SecurityConstants.EXPIRATION_TIME))
 				.withIssuer(request.getRequestURL().toString())
-				/*.withClaim("roles",
-						springUser.getAuthorities().stream().map(ga -> ga.getAuthority()).collect(Collectors.toList()))*/
+				.withClaim("roles",
+						springUser.getAuthorities().stream().map(ga -> ga.getAuthority()).collect(Collectors.toList()))
 				.sign(Algorithm.HMAC256(SecurityConstants.SECRET));
 		response.setHeader(SecurityConstants.HEADER_STRING, SecurityConstants.TOKEN_PREFIX + JwtToken);
 
@@ -94,34 +94,24 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 		 */
 		String JwtRefreshToken = JWT.create().withSubject(springUser.getUsername())
 				.withExpiresAt(new Date(System.currentTimeMillis() + SecurityConstants.EXPIRATION_TIME_REFRESH))
-				.withClaim("roles",
-						springUser.getAuthorities().stream().map(ga -> ga.getAuthority()).collect(Collectors.toList()))
-				.sign(Algorithm.HMAC512(SecurityConstants.SECRET));
-	//	response.addHeader("Acces-Token", SecurityConstants.TOKEN_PREFIX + JwtToken);
-/*
+				.sign(Algorithm.HMAC256(SecurityConstants.SECRET));
+
 		Map<String, String> idToken = new HashMap();
-		idToken.put("Acces-Token", SecurityConstants.TOKEN_PREFIX + JwtToken);
 		idToken.put("Refresh-Token", JwtRefreshToken);
 		response.setContentType("application/json");
-		new ObjectMapper().writeValue(response.getOutputStream(), idToken);*/
+		new ObjectMapper().writeValue(response.getOutputStream(), idToken);
 	}
 	
 	@Override
 	protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
-		if(request.getHeader("X-FORWARDED-FOR").equals(null)) {
 
-		   response.setContentType("text/plain");
-		   response.setStatus(401);
-		   new ObjectMapper().writeValue(response.getOutputStream(), "Username or password is incorrect");
-
-	   }else {
-
-		   RequestLogin requestLogin = requestLoginService.getRequestLogin(request.getHeader("X-FORWARDED-FOR"), this.login);
+//request.getHeader("X-FORWARDED-FOR")
+		   RequestLogin requestLogin = requestLoginService.getRequestLogin(request.getRemoteAddr(), this.login);
 
 		   if (requestLogin == null) {
-			   requestLoginService.saveRequestLogin(new RequestLogin(request.getHeader("X-FORWARDED-FOR"), this.login, 1));
+			   requestLoginService.saveRequestLogin(new RequestLogin(request.getRemoteAddr(), this.login, 1));
 			   response.setContentType("text/plain");
-			   response.setStatus(401);
+			   response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			   new ObjectMapper().writeValue(response.getOutputStream(), "Username or password is incorrect");
 
 		   } else if (requestLogin.getCount() < 3) {
@@ -129,7 +119,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 			   requestLogin.setCount(requestLogin.getCount() + 1);
 			   requestLoginService.saveRequestLogin(requestLogin);
 			   response.setContentType("text/plain");
-			   response.setStatus(401);
+			   response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			   new ObjectMapper().writeValue(response.getOutputStream(), "Username or password is incorrect");
 
 		   } else if(requestLogin.getCount() == 3){
@@ -141,7 +131,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 			   if(u == null){
 
 				   response.setContentType("text/plain");
-				   response.setStatus(401);
+				   response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 				   new ObjectMapper().writeValue(response.getOutputStream(), "The account "+this.login+" is not exist or locked, please contact service");
 
 			   }else {
@@ -154,7 +144,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 					e.printStackTrace();
 				}
 				   response.setContentType("text/plain");
-				   response.setStatus(401);
+				   response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 				   new ObjectMapper().writeValue(response.getOutputStream(), this.login+" account has been locked ");
 			   }
 		   }else if(requestLogin.getCount() > 3){
@@ -164,6 +154,6 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 			   new ObjectMapper().writeValue(response.getOutputStream(), this.login+" account has been locked please contact service or go to password is locked ");
 		   }
 	   }
- }
+ 
 
 }

@@ -86,10 +86,9 @@ public class TypeLiasseController {
 
 	@PutMapping("/typeliasse/update")
 	public ResponseEntity<?> update(
-			@RequestBody TypeLiasses typeLiasses,
-			@RequestParam(name = "posteName") String posteName) throws Exception {
+			@RequestBody TypeLiasses typeLiasses) throws Exception {
 		try {
-			typeLiasseService.update(typeLiasses, posteName);
+			typeLiasseService.update(typeLiasses);
 			return  ResponseEntity.ok().build();		
 		} catch (Exception e) {
 			return ResponseEntity.badRequest().build();
@@ -98,10 +97,9 @@ public class TypeLiasseController {
 
 	@PostMapping("/typeliasse/add")
 	public ResponseEntity<?> add(
-			@RequestBody TypeLiasses typeLiasses,
-			@RequestParam(name = "posteName") String posteName) throws Exception {
+			@RequestBody TypeLiasses typeLiasses) throws Exception {
 		try {
-			typeLiasseService.add(typeLiasses, posteName);
+			typeLiasseService.add(typeLiasses);
 			return  ResponseEntity.ok().build();		
 		} catch (Exception e) {
 			return ResponseEntity.badRequest().build();
@@ -110,14 +108,13 @@ public class TypeLiasseController {
 
 	@DeleteMapping("/typeliasse/delete")
 	public ResponseEntity<?> delete(
-			@RequestParam(name = "id") Long id,
-			@RequestParam(name = "posteName") String posteName) throws Exception {
+			@RequestParam(name = "id") Long id) throws Exception {
 		try {
 			TypeLiasses typeLiasses = typeLiasseService.findById(id);
 			if(typeLiasses==null) {
 				return ResponseEntity.badRequest().build();
 			}
-			typeLiasseService.delete(typeLiasses, posteName);
+			typeLiasseService.delete(typeLiasses);
 			return  ResponseEntity.ok().build();		
 		} catch (Exception e) {
 			return ResponseEntity.badRequest().build();

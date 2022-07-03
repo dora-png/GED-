@@ -51,7 +51,7 @@ public class TypeLiasseServiceImpl implements TypeLiasseService {
 	}
 
 	@Override
-	public void add(TypeLiasses typeLiasses, String posteName) throws Exception {
+	public void add(TypeLiasses typeLiasses) throws Exception {
 		// TODO Auto-generated method stub
 		if(typeLiassesRepo.findByName(typeLiasses.getName())!=null) {
 			throw new Exception("TypeLiasse with name "+typeLiasses.getName()+" already exist");
@@ -67,7 +67,7 @@ public class TypeLiasseServiceImpl implements TypeLiasseService {
 	}
 
 	@Override
-	public void update(TypeLiasses typeLiasses, String posteName) throws Exception {
+	public void update(TypeLiasses typeLiasses) throws Exception {
 		if(typeLiassesRepo.findByIdtypeliasse(typeLiasses.getIdtypeliasse())==null) {
 			throw new Exception("TypeLiasses with name "+typeLiasses.getName()+" not exist");
 		}
@@ -79,7 +79,7 @@ public class TypeLiasseServiceImpl implements TypeLiasseService {
 	}
 
 	@Override
-	public void delete(TypeLiasses typeLiasses, String posteName) throws Exception {
+	public void delete(TypeLiasses typeLiasses) throws Exception {
 		// TODO Auto-generated method stub
 		if(typeLiassesRepo.findByName(typeLiasses.getName())==null) {
 			throw new Exception("TypeLiasse with name "+typeLiasses.getName()+" not exist");

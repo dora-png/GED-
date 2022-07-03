@@ -51,7 +51,7 @@ public class TypeDocsServiceImpl implements TypeDocsService {
 	}
 
 	@Override
-	public void add(TypeDocs typeDocs, String posteName) throws Exception {
+	public void add(TypeDocs typeDocs) throws Exception {
 		// TODO Auto-generated method stub
 		if(typeDocsRepo.findByName(typeDocs.getName())!=null) {
 			throw new Exception("TypeDocs with name "+typeDocs.getName()+" already exist");
@@ -67,7 +67,7 @@ public class TypeDocsServiceImpl implements TypeDocsService {
 	}
 
 	@Override
-	public void update(TypeDocs typeDocs, String posteName) throws Exception {
+	public void update(TypeDocs typeDocs) throws Exception {
 		if(typeDocsRepo.findByIdtypedoc(typeDocs.getIdtypedoc())==null) {
 			throw new Exception("TypedOCs with name "+typeDocs.getName()+" not exist");
 		}
@@ -79,7 +79,7 @@ public class TypeDocsServiceImpl implements TypeDocsService {
 	}
 
 	@Override
-	public void delete(TypeDocs typeDocs, String posteName) throws Exception {
+	public void delete(TypeDocs typeDocs) throws Exception {
 		// TODO Auto-generated method stub
 		if(typeDocsRepo.findByName(typeDocs.getName())==null) {
 			throw new Exception("TypeDoc with name "+typeDocs.getName()+" not exist");

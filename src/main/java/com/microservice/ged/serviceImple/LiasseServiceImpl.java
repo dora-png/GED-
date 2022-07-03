@@ -56,7 +56,7 @@ public class LiasseServiceImpl implements LiasseService {
 	}
 
 	@Override
-	public void update(Liasses liasse, String posteName) throws Exception {
+	public void update(Liasses liasse) throws Exception {
 		if(liassesRepo.findByIdliasse(liasse.getIdliasse())==null) {
 			throw new Exception("Liasse with name "+liasse.getName()+" not exist");
 		}
@@ -68,7 +68,7 @@ public class LiasseServiceImpl implements LiasseService {
 	}
 
 	@Override
-	public void addDocToLiasse(Liasses liasse, String posteName) throws Exception {
+	public void addDocToLiasse(Liasses liasse) throws Exception {
 		if(liasse.getDocs().isEmpty()) {
 			throw new Exception("toto");
 		}else if(liasse.getDocs().size()==1) {
@@ -128,7 +128,7 @@ public class LiasseServiceImpl implements LiasseService {
 	}
 
 	@Override
-	public Liasses addLiasseForWorkflow(Liasses liasse, String posteName) throws Exception {
+	public Liasses addLiasseForWorkflow(Liasses liasse) throws Exception {
 		if(liassesRepo.findByName(liasse.getName())!=null) {
 			throw new Exception("Liasse with name "+liasse.getName()+" already exist");
 		}
@@ -143,7 +143,7 @@ public class LiasseServiceImpl implements LiasseService {
 	}
 
 	@Override
-	public Liasses addLiasseForWorkflowImportData(Liasses liasse, String posteName) throws Exception {
+	public Liasses addLiasseForWorkflowImportData(Liasses liasse) throws Exception {
 		if(liassesRepo.findByName(liasse.getName())!=null) {
 			throw new Exception("Liasse with name "+liasse.getName()+" already exist");
 		}
@@ -158,7 +158,7 @@ public class LiasseServiceImpl implements LiasseService {
 	}
 
 	@Override
-	public Liasses addLiasseForUser(Liasses liasse, String posteName) throws Exception {
+	public Liasses addLiasseForUser(Liasses liasse) throws Exception {
 		if(liassesRepo.findByName(liasse.getName())!=null) {
 			throw new Exception("Liasse with name "+liasse.getName()+" already exist");
 		}
@@ -173,7 +173,7 @@ public class LiasseServiceImpl implements LiasseService {
 	}
 
 	@Override
-	public Liasses addLiasseForUserImportData(Liasses liasse, String posteName) throws Exception {
+	public Liasses addLiasseForUserImportData(Liasses liasse) throws Exception {
 		if(liassesRepo.findByName(liasse.getName())!=null) {
 			throw new Exception("Liasse with name "+liasse.getName()+" already exist");
 		}

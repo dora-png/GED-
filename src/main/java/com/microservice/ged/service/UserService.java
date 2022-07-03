@@ -1,5 +1,7 @@
 package com.microservice.ged.service;
 
+import java.util.Set;
+
 import org.springframework.data.domain.Page;
 
 import com.microservice.ged.beans.Users;
@@ -9,6 +11,7 @@ public interface UserService {
 	public Page<Users> findAll(int page, int size) throws Exception;
 	public Page<Users> searchByName(String name,int page, int size) throws Exception;
 	public Page<Users> searchByLogin(String login,int page, int size) throws Exception;
+	public Page<Users> listUserToAffect(Long id,int page, int size) throws Exception;
 	public void add(Users users) throws Exception;
 	public void update(Users users) throws Exception;
 	public void save(Users users) throws Exception;

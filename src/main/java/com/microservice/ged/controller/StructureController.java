@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.microservice.ged.beans.Structures;
 import com.microservice.ged.service.StructureService;
+import com.microservice.ged.utils.OrganigramSystem;
 
 @RestController
 @CrossOrigin("*")
@@ -86,10 +87,9 @@ public class StructureController {
 
 	@PutMapping("/structures/update")
 	public ResponseEntity<?> update(
-			@RequestBody Structures structures,
-			@RequestParam(name = "posteName") String posteName) throws Exception {
+			@RequestBody Structures structures) throws Exception {
 		try {
-			structureservice.update(structures, posteName);
+			structureservice.update(structures);
 			return  ResponseEntity.ok().build();		
 		} catch (Exception e) {
 			return ResponseEntity.badRequest().build();
@@ -98,10 +98,9 @@ public class StructureController {
 
 	@PostMapping("/structures/add")
 	public ResponseEntity<?> add(
-			@RequestBody Structures structures,
-			@RequestParam(name = "posteName") String posteName) throws Exception {
+			@RequestBody Structures structures) throws Exception {
 		try {
-			structureservice.add(structures, posteName);
+			structureservice.add(structures);
 			return  ResponseEntity.ok().build();		
 		} catch (Exception e) {
 			return ResponseEntity.badRequest().build();
@@ -110,14 +109,13 @@ public class StructureController {
 
 	@DeleteMapping("/structures/delete")
 	public ResponseEntity<?> delete(
-			@RequestParam(name = "id") long id,
-			@RequestParam(name = "posteName") String posteName) throws Exception {
+			@RequestParam(name = "id") long id) throws Exception {
 		try {
 			Structures structures = structureservice.findByIdStructure(id);
 			if(structures==null) {
 				return ResponseEntity.badRequest().build();
 			}
-			structureservice.delete(structures, posteName);
+			structureservice.delete(structures);
 			return  ResponseEntity.ok().build();		
 		} catch (Exception e) {
 			return ResponseEntity.badRequest().build();
@@ -133,10 +131,9 @@ public class StructureController {
 	
 	@PostMapping("/structures/add-sub-structure")
 	public ResponseEntity<?> addSubStructures(
-			@RequestBody Structures structuresSup,
-			@RequestParam(name = "posteName") String posteName) throws Exception {
+			@RequestBody Structures structuresSup) throws Exception {
 		try {
-			structureservice.addSubStructures(posteName, structuresSup);
+			structureservice.addSubStructures( structuresSup);
 			return  ResponseEntity.ok().build();		
 		} catch (Exception e) {
 			return ResponseEntity.badRequest().build();
@@ -145,10 +142,9 @@ public class StructureController {
 	
 	@PostMapping("/structures/remove-sub-structure")
 	public ResponseEntity<?> removeSubStructures(
-			@RequestBody Structures structuresSup,
-			@RequestParam(name = "posteName") String posteName) throws Exception {
+			@RequestBody Structures structuresSup) throws Exception {
 		try {
-			structureservice.removeSubStructures(posteName, structuresSup);
+			structureservice.removeSubStructures(structuresSup);
 			return  ResponseEntity.ok().build();		
 		} catch (Exception e) {
 			return ResponseEntity.badRequest().build();
@@ -156,14 +152,13 @@ public class StructureController {
 	}
 	
 	@GetMapping("/structures/list-of-unused")
-	public ResponseEntity<Page<Structures>> structureUnUseListe(
-			@RequestParam(name = "page", defaultValue = "0") int page) {
+	public ResponseEntity<OrganigramSystem> ogranigramme() {
 		try {
-			Page<Structures> structures = structureservice.structureUnUseListe(page, 5);
-			if(structures.isEmpty()) {
+			OrganigramSystem organigramSystem  = structureservice.ogranigramme();
+			if(organigramSystem==null) {
 				return  ResponseEntity.noContent().build();
 			}else {
-				return  ResponseEntity.ok().body(structures);
+				return  ResponseEntity.ok().body(organigramSystem);
 			}			
 		} catch (Exception e) {
 			return ResponseEntity.badRequest().build();

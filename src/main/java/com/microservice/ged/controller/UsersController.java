@@ -1,5 +1,7 @@
 package com.microservice.ged.controller;
 
+import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -35,33 +37,46 @@ public class UsersController {
 			return ResponseEntity.badRequest().build();
 		}		
 	}
+	
+	@GetMapping("/users/to-add")
+	public ResponseEntity<Page<Users>> listUserToAdd(
+			@RequestParam(name = "id", required = true) Long id,
+			@RequestParam(name = "page", defaultValue = "0") int page,
+			@RequestParam(name = "size", defaultValue = "5") int size) {
+		try {
+			Page<Users> users = userService.listUserToAffect(id,page, size);
+			if(users.isEmpty()) {
+				return  ResponseEntity.noContent().build();
+			}else {
+				return  ResponseEntity.ok().body(users);
+			}			
+		} catch (Exception e) {
+			return ResponseEntity.badRequest().build();
+		}		
+	}
 
 	@GetMapping("/users/search-by-name")
 	public ResponseEntity<Page<Users>> searchByName(
-			@RequestParam(name = "name") String name,
+			@RequestParam(name = "name", required = true) String name,
 			@RequestParam(name = "page", defaultValue = "0") int page,
-			@RequestParam(name = "size", defaultValue = "5") int size) {
+			@RequestParam(name = "size", defaultValue = "5") int size) throws Exception {
 		if(name.trim().isEmpty()) {
-			return ResponseEntity.badRequest().build();
-		}else if(name.isBlank()) {
-			return ResponseEntity.badRequest().build();
-		}else {
-			try {
-				Page<Users> users = userService.searchByName(name,page, size);
-				if(users.isEmpty()) {
-					return  ResponseEntity.noContent().build();
-				}else {
-					return  ResponseEntity.ok().body(users);
-				}			
-			} catch (Exception e) {
-				return ResponseEntity.badRequest().build();
-			}	
+			throw new Exception("Name to search is empty");
 		}
+		if(name.isBlank()) {
+			throw new Exception("Name to search is blank");
+		}
+		Page<Users> users = userService.searchByName(name,page, size);
+		if(users.isEmpty()) {
+			return  ResponseEntity.noContent().build();
+		}else {
+			return  ResponseEntity.ok().body(users);
+		}		
 	}
 
 	@GetMapping("/users/search-by-login")
 	public ResponseEntity<Page<Users>> searchByLogin(
-			@RequestParam(name = "login") String login,
+			@RequestParam(name = "login", required = true) String login,
 			@RequestParam(name = "page", defaultValue = "0") int page,
 			@RequestParam(name = "size", defaultValue = "5") int size) {
 		if(login.trim().isEmpty()) {
@@ -94,6 +109,9 @@ public class UsersController {
 		}
 	}
 
-
+	@GetMapping("/users/by-id")
+	public ResponseEntity<Users> findUserById(@RequestParam(name = "id", required = true) Long id) throws Exception {
+		return  ResponseEntity.ok().body(userService.findById(id));	
+	}
 
 }

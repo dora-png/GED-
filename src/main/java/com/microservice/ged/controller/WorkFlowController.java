@@ -34,7 +34,7 @@ public class WorkFlowController {
 	@GetMapping("/workflow/all")
 	public ResponseEntity<Page<WorkFlow>> findAll(
 			@RequestParam(name = "page", defaultValue = "0") int page,
-			@RequestParam(name = "size", defaultValue = "5") int size) {
+			@RequestParam(name = "size", defaultValue = "10") int size) {
 		try {
 			Page<WorkFlow> workFlow = workFlowService.findAll(page, size);
 			if(workFlow.isEmpty()) {

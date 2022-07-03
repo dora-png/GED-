@@ -72,10 +72,9 @@ public class LiasseController {
 
 	@PutMapping("/liasses/update")
 	public ResponseEntity<?> update(
-			@RequestBody Liasses liasses,
-			@RequestParam(name = "posteName") String posteName) throws Exception {
+			@RequestBody Liasses liasses) throws Exception {
 		try {
-			liasseService.update(liasses, posteName);
+			liasseService.update(liasses);
 			return  ResponseEntity.ok().build();		
 		} catch (Exception e) {
 			return ResponseEntity.badRequest().build();
@@ -84,10 +83,9 @@ public class LiasseController {
 
 	@PostMapping("/liasses/doc-to-liasses-add")
 	public ResponseEntity<?> addDocToLiasse(
-			@RequestBody Liasses liasses,
-			@RequestParam(name = "posteName") String posteName) throws Exception {
+			@RequestBody Liasses liasses) throws Exception {
 		try {
-			liasseService.addDocToLiasse(liasses, posteName);
+			liasseService.addDocToLiasse(liasses);
 			return  ResponseEntity.ok().build();		
 		} catch (Exception e) {
 			return ResponseEntity.badRequest().build();

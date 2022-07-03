@@ -3,6 +3,9 @@ package com.microservice.ged.serviceImple;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import javax.transaction.Transactional;
 
@@ -19,11 +22,13 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.microservice.ged.beans.Appusers;
+import com.microservice.ged.beans.GroupUser;
 import com.microservice.ged.beans.LogPosteUser;
 import com.microservice.ged.beans.Postes;
 import com.microservice.ged.beans.Roles;
 import com.microservice.ged.beans.Users;
 import com.microservice.ged.repository.AppUserRepo;
+import com.microservice.ged.repository.GroupUserRepo;
 import com.microservice.ged.repository.LogPosteUserRepo;
 import com.microservice.ged.repository.PosteRepo;
 import com.microservice.ged.repository.RolesRepo;
@@ -41,6 +46,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 	
 	@Autowired
 	RolesRepo rolesRepo;
+
+	@Autowired
+	GroupUserRepo groupUserRepo;
 	
 	@Autowired
 	PosteRepo posteRepo;
@@ -55,13 +63,38 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		
 		Users user = userRepo.findByUsername(username);
+		Appusers appusers = null;
+		Collection<SimpleGrantedAuthority> authorities = new HashSet<>();
 		if(user==null) {
-			throw new UsernameNotFoundException("User not found");
+			appusers = appUserRepo.findByLogin(username);
+			if(appusers==null) {
+				throw new UsernameNotFoundException("User not found");
+			}
+			List<Roles> roles =  rolesRepo.findAll();
+			roles.forEach(
+					(role)->{
+						if(!authorities.contains(role.getName())) {
+							authorities.add(new SimpleGrantedAuthority(role.getName()));
+						}
+					}
+				 );
+			return new User(appusers.getLogin(),appusers.getPassword(),authorities);
 		}else {
-			
+			LogPosteUser logPosteUser =  logPosteUserRepo.findByUserIdAndDateFinIsNull(user);
+			if(logPosteUser!=null) {
+				Set<Postes> postes = new HashSet<>();
+				postes.add(logPosteUser.getPosteId());
+				List<GroupUser> groupList = groupUserRepo.findByPosteslistesIn(postes);
+				groupList.forEach(
+					(role)->{
+						if(!authorities.contains(role.getName())) {
+							authorities.add(new SimpleGrantedAuthority(role.getName()));
+						}
+					}
+				 );
+			}
+			return new User(user.getUsername(),user.getPassword(),authorities);			
 		}
-		Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
-		return new User(user.getUsername(),user.getPassword(),authorities);
 	}
 
 
@@ -146,6 +179,15 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 	public void setStatus(Users users) {
 		// TODO Auto-generated method stub
 		
+	}
+
+
+	@Override
+	public Page<Users> listUserToAffect(Long id, int page, int size) throws Exception {
+		// TODO Auto-generated method stub
+		Set<Long> ids = new HashSet<>();
+		ids.add(id);
+		return userRepo.findByIduserNotIn(ids, PageRequest.of(page, size,Sort.by("iduser").descending()));
 	}
 
 }

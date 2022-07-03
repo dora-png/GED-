@@ -10,6 +10,7 @@ public interface LogPosteUserService {
 	public Page<LogPosteUser> logUser(Users users, int page, int size) throws Exception ;
 	public Page<LogPosteUser> logPoste(Postes postes, int page, int size) throws Exception ;
 	public Postes currentPosteOfUser(Users users) throws Exception ;
-	public void add(Postes poste, Users users, String posteName) throws Exception ;
+	public Users currentUserOfPoste(Postes postes) throws Exception ;
+	public void add(Postes poste, Users users) throws Exception ;
 
 }

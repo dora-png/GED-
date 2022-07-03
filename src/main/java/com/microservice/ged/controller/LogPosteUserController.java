@@ -13,19 +13,28 @@ import com.microservice.ged.beans.Users;
 import com.microservice.ged.beans.LogPosteUser;
 import com.microservice.ged.beans.Postes;
 import com.microservice.ged.service.LogPosteUserService;
+import com.microservice.ged.service.PosteService;
+import com.microservice.ged.service.UserService;
 
 @RestController
 @CrossOrigin("*")
 public class LogPosteUserController {
 
-
+	@Autowired
 	private LogPosteUserService logPosteUserService;
+	
+	@Autowired
+	private PosteService posteService;
+	
+
+	@Autowired
+	private UserService userService;
 
 	@GetMapping("/logposteuser/user-log")
 	public ResponseEntity<Page<LogPosteUser>> findByUser(
 			@RequestBody Users users,
 			@RequestParam(name = "page", defaultValue = "0") int page,
-			@RequestParam(name = "size", defaultValue = "10") int size) {
+			@RequestParam(name = "size", defaultValue = "5") int size) {
 		try {
 			Page<LogPosteUser> logPosteUser = logPosteUserService.logUser(users, page, size);
 			if(logPosteUser.isEmpty()) {
@@ -42,7 +51,7 @@ public class LogPosteUserController {
 	public ResponseEntity<Page<LogPosteUser>> findByPoste(
 			@RequestBody Postes postes,
 			@RequestParam(name = "page", defaultValue = "0") int page,
-			@RequestParam(name = "size", defaultValue = "10") int size) {
+			@RequestParam(name = "size", defaultValue = "5") int size) {
 		try {
 			Page<LogPosteUser> logPosteUser = logPosteUserService.logPoste(postes, page, size);
 			if(logPosteUser.isEmpty()) {
@@ -56,16 +65,26 @@ public class LogPosteUserController {
 	}
 
 	@GetMapping("/logposteuser/currentposte")
-	public ResponseEntity<Postes> currentPosteOfUser(@RequestBody Users users) {
+	public ResponseEntity<Postes> currentPosteOfUser(@RequestParam(name = "idUser" , required = true) Long idUser) throws Exception{
+		Users users = userService.findById(idUser);
+		Postes poste;
 		try {
-			Postes poste = logPosteUserService.currentPosteOfUser(users);
-			if(poste==null) {
-				return  ResponseEntity.noContent().build();
-			}else {
-				return  ResponseEntity.ok().body(poste);
-			}			
+			poste = logPosteUserService.currentPosteOfUser(users);
+			return  ResponseEntity.ok().body(poste);
 		} catch (Exception e) {
-			return ResponseEntity.badRequest().build();
+			return  ResponseEntity.noContent().build();
+		}
+		
+	}
+	
+	@GetMapping("/logposteuser/currentuser")
+	public ResponseEntity<Users> currentUserOfPoste(@RequestParam(name = "idPoste" , required = true) Long idPoste) throws Exception{
+		Postes postes = posteService.findPosteById(idPoste);
+		Users users = logPosteUserService.currentUserOfPoste(postes);
+		if(users==null) {
+			return  ResponseEntity.noContent().build();
+		}else {
+			return  ResponseEntity.ok().body(users);
 		}		
 	}
 }

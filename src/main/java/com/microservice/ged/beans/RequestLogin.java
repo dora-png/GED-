@@ -35,7 +35,15 @@ public class RequestLogin {
     @CreationTimestamp
     private Date date;
 
-    public RequestLogin(String ipAdress, String account, int count) {
+    
+    
+    public RequestLogin() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+
+	public RequestLogin(String ipAdress, String account, int count) {
         this.ipAdress = ipAdress;
         this.account = account;
         this.count = count;

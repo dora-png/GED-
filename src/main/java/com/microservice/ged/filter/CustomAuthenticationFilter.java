@@ -77,17 +77,17 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 	@Override
 	protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authorization) throws IOException, ServletException {
 		/*
-		 * Le Token de connexion
+		 * Le Token des droits
 		 */
 		User springUser = (User) authorization.getPrincipal();
 
 		String JwtToken = JWT.create().withSubject(springUser.getUsername())
 				.withExpiresAt(new Date(System.currentTimeMillis() + SecurityConstants.EXPIRATION_TIME))
 				.withIssuer(request.getRequestURL().toString())
-				.withClaim("roles",
+				.withClaim(SecurityConstants.ROLES,
 						springUser.getAuthorities().stream().map(ga -> ga.getAuthority()).collect(Collectors.toList()))
 				.sign(Algorithm.HMAC256(SecurityConstants.SECRET));
-		response.setHeader(SecurityConstants.HEADER_STRING, SecurityConstants.TOKEN_PREFIX + JwtToken);
+		response.setHeader(SecurityConstants.HEADER_STRING, SecurityConstants.TOKEN_PREFIX + JwtToken + SecurityConstants.TOKEN_SUFIX);
 
 		/*
 		 * Le Token de rafrechissement
@@ -95,7 +95,6 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 		String JwtRefreshToken = JWT.create().withSubject(springUser.getUsername())
 				.withExpiresAt(new Date(System.currentTimeMillis() + SecurityConstants.EXPIRATION_TIME_REFRESH))
 				.sign(Algorithm.HMAC256(SecurityConstants.SECRET));
-
 		Map<String, String> idToken = new HashMap();
 		idToken.put("Refresh-Token", JwtRefreshToken);
 		response.setContentType("application/json");
@@ -109,48 +108,41 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 		   RequestLogin requestLogin = requestLoginService.getRequestLogin(request.getRemoteAddr(), this.login);
 
 		   if (requestLogin == null) {
-			   requestLoginService.saveRequestLogin(new RequestLogin(request.getRemoteAddr(), this.login, 1));
+			   requestLoginService.saveRequestLogin(new RequestLogin(request.getRemoteAddr(), this.login, SecurityConstants.INCRIMENT_1));
 			   response.setContentType("text/plain");
 			   response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-			   new ObjectMapper().writeValue(response.getOutputStream(), "Username or password is incorrect");
+			   new ObjectMapper().writeValue(response.getOutputStream(), "Incorrect username and/or password, try again: "+ (SecurityConstants.ITEM_PASS_LOCK_ACCOUNT - 1));
 
-		   } else if (requestLogin.getCount() < 3) {
-
-			   requestLogin.setCount(requestLogin.getCount() + 1);
+		   } else if (requestLogin.getCount() < SecurityConstants.ITEM_PASS_LOCK_ACCOUNT) {
+			   requestLogin.setCount(requestLogin.getCount() + SecurityConstants.INCRIMENT_1);
 			   requestLoginService.saveRequestLogin(requestLogin);
 			   response.setContentType("text/plain");
 			   response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-			   new ObjectMapper().writeValue(response.getOutputStream(), "Username or password is incorrect");
+			   new ObjectMapper().writeValue(response.getOutputStream(), "Incorrect username and/or password, try again: "+ (SecurityConstants.ITEM_PASS_LOCK_ACCOUNT - 1));
 
-		   } else if(requestLogin.getCount() == 3){
-
-			   requestLogin.setCount(requestLogin.getCount() + 1);
+		   } else if(requestLogin.getCount() == SecurityConstants.ITEM_PASS_LOCK_ACCOUNT){
+			   requestLogin.setCount(requestLogin.getCount() + SecurityConstants.INCRIMENT_1);
 			   requestLoginService.saveRequestLogin(requestLogin);
-			   Users u = userService.findByUsername(this.login);
-
-			   if(u == null){
-
+			   Users user = userService.findByUsername(this.login);
+			   if(user == null){
 				   response.setContentType("text/plain");
 				   response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-				   new ObjectMapper().writeValue(response.getOutputStream(), "The account "+this.login+" is not exist or locked, please contact service");
-
+				   new ObjectMapper().writeValue(response.getOutputStream(), "Account is not exist");
 			   }else {
-
-				   u.setStatus(false);
-				   try {
-					userService.add(u);
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				   user.setStatus(false);
+					try {
+						userService.add(user);
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				   response.setContentType("text/plain");
 				   response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-				   new ObjectMapper().writeValue(response.getOutputStream(), this.login+" account has been locked ");
+				   new ObjectMapper().writeValue(response.getOutputStream(), this.login+" account has been locked, contact administrator to unlock your account");
 			   }
-		   }else if(requestLogin.getCount() > 3){
-
+		   }else if(requestLogin.getCount() > SecurityConstants.ITEM_PASS_LOCK_ACCOUNT){
 			   response.setContentType("text/plain");
-			   response.setStatus(403);
+			   response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			   new ObjectMapper().writeValue(response.getOutputStream(), this.login+" account has been locked please contact service or go to password is locked ");
 		   }
 	   }

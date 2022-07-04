@@ -78,21 +78,29 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 						}
 					}
 				 );
+			authorities.add(new SimpleGrantedAuthority("ADMIN"));
 			return new User(appusers.getLogin(),appusers.getPassword(),authorities);
 		}else {
 			LogPosteUser logPosteUser =  logPosteUserRepo.findByUserIdAndDateFinIsNull(user);
 			if(logPosteUser!=null) {
 				Set<Postes> postes = new HashSet<>();
 				postes.add(logPosteUser.getPosteId());
-				List<GroupUser> groupList = groupUserRepo.findByPosteslistesIn(postes);
-				groupList.forEach(
-					(role)->{
-						if(!authorities.contains(role.getName())) {
-							authorities.add(new SimpleGrantedAuthority(role.getName()));
+				List<GroupUser> groupUserList = groupUserRepo.findByPosteslistesIn(postes);
+				groupUserList.forEach(
+						(groupUser)->{
+							groupUser.getRoleslistes().forEach(
+									(role)->{
+										if(!authorities.contains(role.getName())) {
+											authorities.add(new SimpleGrantedAuthority(role.getName()));
+										}
+									}
+							);
 						}
-					}
-				 );
+				);
+			}else{
+				throw new UsernameNotFoundException("User "+user.getUsername() +" don't have poste contact administrator to have poste");
 			}
+			authorities.add(new SimpleGrantedAuthority("ADMIN"));
 			return new User(user.getUsername(),user.getPassword(),authorities);			
 		}
 	}

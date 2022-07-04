@@ -60,50 +60,40 @@ public class GedApplication {
 			
 			GroupUser groupUser = new GroupUser("Group 1");
 			
-			Roles ap1 = new Roles("CWORKFLOW", true, false, false, false);
+			Roles ap1 = new Roles("CUWORKFLOW", true, true, true, false);
 			Roles ap2 = new Roles("RWORKFLOW", false, true, false, false);
-			Roles ap3 = new Roles("UWORKFLOW", true, true, true, false);
 			Roles ap4 = new Roles("DWORKFLOW", true, true, true, true);
-			ap1 = approlerepository.save(ap1);
-			approlerepository.save(ap2);
-			approlerepository.save(ap3);
+			approlerepository.save(ap1);
+			ap2 = approlerepository.save(ap2);
 			approlerepository.save(ap4);
-			groupUser.getRoleslistes().add(ap1);
-			Roles ap12 = new Roles("CUSER", true, false, false, false);
+			groupUser.getRoleslistes().add(ap2);
+			Roles ap12 = new Roles("CUUSER",  true, true, true, false);
 			Roles ap22 = new Roles("RUSER", false, true, false, false);
-			Roles ap32 = new Roles("UUSER", true, true, true, false);
 			Roles ap42 = new Roles("DUSER", true, true, true, true);
 			approlerepository.save(ap12);
 			approlerepository.save(ap22);
-			approlerepository.save(ap32);
 			approlerepository.save(ap42);
 			
 			
-			Roles ap13 = new Roles("CTYPELIASSE", true, false, false, false);
+			Roles ap13 = new Roles("CUTYPELIASSE",  true, true, true, false);
 			Roles ap23 = new Roles("RTYPELIASSE", false, true, false, false);
-			Roles ap33 = new Roles("UTYPELIASSE", true, true, true, false);
 			Roles ap43 = new Roles("DTYPELIASSE", true, true, true, true);
 			approlerepository.save(ap13);
 			approlerepository.save(ap23);
-			approlerepository.save(ap33);
 			approlerepository.save(ap43);
 
-			Roles ap14 = new Roles("CTYPEDOC", true, false, false, false);
+			Roles ap14 = new Roles("CUTYPEDOC",  true, true, true, false);
 			Roles ap24 = new Roles("RTYPEDOC", false, true, false, false);
-			Roles ap34 = new Roles("UTYPEDOC", true, true, true, false);
 			Roles ap44 = new Roles("DTYPEDOC", true, true, true, true);
 			approlerepository.save(ap14);
 			approlerepository.save(ap24);
-			approlerepository.save(ap34);
 			approlerepository.save(ap44);
 
-			Roles ap15 = new Roles("CSTRUCTURE", true, false, false, false);
+			Roles ap15 = new Roles("CUSTRUCTURE",  true, true, true, false);
 			Roles ap25 = new Roles("RSTRUCTURE", false, true, false, false);
-			Roles ap35 = new Roles("USTRUCTURE", true, true, true, false);
 			Roles ap45 = new Roles("DSTRUCTURE", true, true, true, true);
 			approlerepository.save(ap15);
 			approlerepository.save(ap25);
-			approlerepository.save(ap35);
 			approlerepository.save(ap45);
 
 			Roles ap16 = new Roles("RROLE", false, true, false, false);
@@ -111,31 +101,25 @@ public class GedApplication {
 			Roles ap26 = new Roles("PRINT", true, true, true, true);
 			approlerepository.save(ap26);
 
-			Roles ap17 = new Roles("CPOSTE", true, false, false, false);
+			Roles ap17 = new Roles("CUPOSTE",  true, true, true, false);
 			Roles ap27 = new Roles("RPOSTE", false, true, false, false);
-			Roles ap37 = new Roles("UPOSTE", true, true, true, false);
 			Roles ap47 = new Roles("DPOSTE", true, true, true, true);
 			approlerepository.save(ap17);
 			approlerepository.save(ap27);
-			approlerepository.save(ap37);
 			approlerepository.save(ap47);
 
-			Roles ap18 = new Roles("CLIASSE", true, false, false, false);
+			Roles ap18 = new Roles("CULIASSE",  true, true, true, false);
 			Roles ap28 = new Roles("RLIASSE", false, true, false, false);
-			Roles ap38 = new Roles("ULIASSE", true, true, true, false);
 			Roles ap48 = new Roles("DLIASSE", true, true, true, true);
 			approlerepository.save(ap18);
 			approlerepository.save(ap28);
-			approlerepository.save(ap38);
 			approlerepository.save(ap48);
 
-			Roles ap19 = new Roles("CDOC", true, false, false, false);
+			Roles ap19 = new Roles("CUDOC",  true, true, true, false);
 			Roles ap29 = new Roles("RDOC", false, true, false, false);
-			Roles ap39 = new Roles("UDOC", true, true, true, false);
 			Roles ap49 = new Roles("DDOC", true, true, true, true);
 			approlerepository.save(ap19);
 			approlerepository.save(ap29);
-			approlerepository.save(ap39);
 			approlerepository.save(ap49);
 			
 

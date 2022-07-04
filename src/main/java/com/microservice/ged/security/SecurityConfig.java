@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.http.HttpMethod;
 
 import com.microservice.ged.filter.CustomAuthenticationFilter;
 import com.microservice.ged.filter.CustomAuthorizationFilter;
@@ -51,14 +52,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 		http.authorizeRequests().antMatchers("/h2-console/**").permitAll();
 		http.authorizeRequests().antMatchers("/login/**").permitAll();
-		/*http.authorizeRequests().antMatchers(GET, "/api/user").hasAnyAuthority("USER");
-		http.authorizeRequests().antMatchers(GET, "/api/user/**").hasAnyAuthority("USER");
-		http.authorizeRequests().antMatchers(GET, "/api/structure").hasAnyAuthority("USER","ADMIN","MANAGER");
-		http.authorizeRequests().antMatchers(POST, "/api/user/save/**").hasAnyAuthority("ADMIN");
-		http.authorizeRequests().antMatchers(GET, "/api/user/**").hasAnyAuthority("MANAGER");
-		http.authorizeRequests().antMatchers(GET, "/api/user/**").hasAnyAuthority("ROOT");
-		http.authorizeRequests().anyRequest().authenticated();*/
-		http.authorizeRequests().anyRequest().permitAll();
+		/*http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/user").hasAnyAuthority("USER");
+		http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/user/**").hasAnyAuthority("USER");
+		http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/structure").hasAnyAuthority("USER","ADMIN","MANAGER");
+		http.authorizeRequests().antMatchers(HttpMethod.POST, "/api/user/save/**").hasAnyAuthority("ADMIN");
+		http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/user/**").hasAnyAuthority("MANAGER");*/
+		http.authorizeRequests().antMatchers(HttpMethod.GET, "/workflow/all/**").hasAnyAuthority("RWORKFLOW");
+		http.authorizeRequests().antMatchers(HttpMethod.GET, "/workflow/searc**").hasAnyAuthority("RWORKFLOW");
+		http.authorizeRequests().anyRequest().authenticated();
+		//http.authorizeRequests().anyRequest().permitAll();
 		http.cors().configurationSource(request -> new CorsConfiguration().applyPermitDefaultValues());
 		http.addFilter(customAuthenticationFilter);
 		http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);

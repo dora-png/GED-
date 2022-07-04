@@ -16,7 +16,7 @@ import com.microservice.ged.beans.Users;
 import com.microservice.ged.service.UserService;
 
 @RestController
-@CrossOrigin("*")
+//@CrossOrigin("*")
 public class UsersController {
 	
 	@Autowired

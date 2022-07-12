@@ -1,6 +1,7 @@
 package com.microservice.ged.beans;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.Objects;
 
 import javax.persistence.Basic;
@@ -12,6 +13,10 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+import org.hibernate.annotations.CreationTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 
@@ -26,7 +31,7 @@ public class Docs implements Serializable {
     @Column(name = "iddoc")
     private Long iddoc;
     
-    @Column(name = "name", nullable = false, unique = true)
+    @Column(name = "name", nullable = false)
     private String name;
     
     @Column(name = "extension", nullable = false)
@@ -38,8 +43,13 @@ public class Docs implements Serializable {
     @Column(name = "path", nullable = false)
     private String path;
     
-    @Column(name = "cantset", nullable = false)
-    private String cantset;
+    @Column(name = "cantset")
+    private String cantset; 
+    
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "dateCreation", nullable = false)
+	@CreationTimestamp
+	private Date dateCreation;
 
     @ManyToOne
    	@JoinColumn(nullable = false)
@@ -198,6 +208,14 @@ public class Docs implements Serializable {
 	 */
 	public void setLiasse(Liasses liasse) {
 		this.liasse = liasse;
+	}
+
+	public Date getDateCreation() {
+		return dateCreation;
+	}
+
+	public void setDateCreation(Date dateCreation) {
+		this.dateCreation = dateCreation;
 	}
 
 	@Override

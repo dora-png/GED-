@@ -1,6 +1,7 @@
 package com.microservice.ged.beans;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.Objects;
 
 import javax.persistence.Basic;
@@ -11,6 +12,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+import org.hibernate.annotations.CreationTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 
@@ -30,7 +35,7 @@ public class WorkFlowPoste implements Serializable {
 	private Postes posteId;
     
     @ManyToOne
-	@JsonIncludeProperties(value = {"idworkflows", "name", "sigle"})
+	//@JsonIncludeProperties(value = {"idworkflows", "name", "sigle"})
 	private WorkFlow workflowId;
     
     @Column(name = "level", nullable = false)
@@ -38,6 +43,17 @@ public class WorkFlowPoste implements Serializable {
     
     @Column(name = "isactive")
     private boolean isactive;
+    
+    
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "dateCreation", nullable = false, updatable = false)
+	@CreationTimestamp
+	private Date dateCreation;
+    
+    
+	public Date getDateCreation() {
+		return dateCreation;
+	}
 
 	/**
 	 * 

@@ -2,6 +2,8 @@ package com.microservice.ged.utils;
 
 import java.util.Objects;
 
+import com.microservice.ged.beans.Postes;
+
 public class WorkFlowPosteListe {
 	private int  index;
 	private Long  idPoste;

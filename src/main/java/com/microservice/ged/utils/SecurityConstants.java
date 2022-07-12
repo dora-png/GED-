@@ -14,7 +14,8 @@ public class SecurityConstants {
 	public static final int INCRIMENT_1 = 1;
 	public static final long EXPIRATION_TIME_REFRESH = 864_000_000 * 3 * 12;
 	
-	
+
+	public static final String LOCAL_STORAGE = "Storage/files";
 	
 
 }

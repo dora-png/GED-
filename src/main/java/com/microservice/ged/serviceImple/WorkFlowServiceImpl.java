@@ -111,30 +111,8 @@ public class WorkFlowServiceImpl implements WorkFlowService {
 	}
 
 	@Override
-	public void addPosteToWorkFlow(List<WorkFlowPosteListe> workFlowPosteListe) throws Exception {
-			List<WorkFlowPoste> workFlowPoste = new ArrayList<>();
-			List<WorkFlowPoste> flowPosteSet = new ArrayList<>();
-			WorkFlowPoste flowPosteSet1 = new WorkFlowPoste();
-			for(WorkFlowPosteListe workFlowPosteList : workFlowPosteListe) {
-				WorkFlow workFlow = workFlowRepo.findByIdworkflows(workFlowPosteList.getIdWorkFlow());
-				Postes poste = posteRepo.findByIdposteAndActiveTrue(workFlowPosteList.getIdPoste());
-				if(workFlow==null) {
-					throw new Exception("WorkFlow not exist");
-				}
-				if(poste==null) {
-					throw new Exception("Poste not exist");
-				}
-				flowPosteSet1 = workFlowPosteRepo.findByIsactiveTrueAndWorkflowIdAndPosteId(workFlow, poste);
-				if(flowPosteSet1!=null) {
-					flowPosteSet1.setIsactive(false);	
-					flowPosteSet.add(flowPosteSet1);
-				}
-				WorkFlowPoste flowPoste = new WorkFlowPoste(poste,  workFlow, workFlowPosteList.getIndex());
-				flowPoste.setIsactive(true);
-				workFlowPoste.add(flowPoste);
-			}
+	public void addPosteToWorkFlow(List<WorkFlowPoste> workFlowPoste) throws Exception {
 			try {
-				workFlowPosteRepo.saveAll(flowPosteSet);
 				workFlowPosteRepo.saveAll(workFlowPoste);
 			} catch (Exception e) {
 				throw new Exception("Error while update workFlow");
@@ -142,32 +120,18 @@ public class WorkFlowServiceImpl implements WorkFlowService {
 	}
 
 	@Override
-	public void removePosteToWorkFlow(List<WorkFlowPosteListe> workFlowPosteListe) throws Exception {
-		
-			List<WorkFlowPoste> workFlowPoste = new ArrayList<>();
-			List<WorkFlowPoste> flowPosteSet = new ArrayList<>();
-			WorkFlowPoste flowPosteSet1 = new WorkFlowPoste();
-			for(WorkFlowPosteListe workFlowPosteList : workFlowPosteListe) {
-				WorkFlow workFlow = workFlowRepo.findByIdworkflows(workFlowPosteList.getIdWorkFlow());
-				Postes poste = posteRepo.findByIdposteAndActiveTrue(workFlowPosteList.getIdPoste());
-				if(workFlow==null) {
-					throw new Exception("WorkFlow not exist");
-				}
-				if(poste==null) {
-					throw new Exception("Poste not exist");
-				}
-				flowPosteSet1 = workFlowPosteRepo.findByIsactiveTrueAndWorkflowIdAndPosteId(workFlow, poste);
-				if(flowPosteSet1!=null) {
-					flowPosteSet1.setIsactive(false);	
-					flowPosteSet.add(flowPosteSet1);
-				}
-				WorkFlowPoste flowPoste = new WorkFlowPoste(poste,  workFlow, workFlowPosteList.getIndex());
-				flowPoste.setIsactive(workFlowPosteList.isExist());
-				workFlowPoste.add(flowPoste);
-			}
+	public void removePosteToWorkFlow(WorkFlowPoste workFlowPoste) throws Exception {
 			try {
-				workFlowPosteRepo.saveAll(flowPosteSet);
-				workFlowPosteRepo.saveAll(workFlowPoste);
+				int level = workFlowPoste.getLevel();
+				workFlowPoste.setIsactive(false);
+				workFlowPosteRepo.save(workFlowPoste);
+				List<WorkFlowPoste> workFlowPostesList = workFlowPosteRepo.findByIsactiveTrueAndWorkflowIdAndLevelGreaterThan(workFlowPoste.getWorkflowId(), level);
+				if(!workFlowPostesList.isEmpty()) {
+					for(WorkFlowPoste item : workFlowPostesList) {
+						item.setLevel(item.getLevel()-1);
+						workFlowPosteRepo.save(item);
+					}
+				}
 			} catch (Exception e) {
 				throw new Exception("Error while update workFlow");
 			}

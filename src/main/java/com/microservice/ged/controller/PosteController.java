@@ -186,7 +186,7 @@ public class PosteController {
 		return  ResponseEntity.ok().body(postes);	
 	}
 
-	@PutMapping("/postes/update")
+	@PostMapping("/postes/update")
 	public ResponseEntity<?> updatePoste(
 			@RequestBody Postes postes) throws Exception {
 		posteservice.updatePoste(postes);
@@ -201,7 +201,7 @@ public class PosteController {
 	}
 
 	
-	@PutMapping("/poste/delete-subposte")
+	@PostMapping("/poste/delete-subposte")
 	public ResponseEntity<?> removeSubPoste(
 			@RequestBody Postes postes) throws Exception {
 		posteservice.removeSubPoste(postes);

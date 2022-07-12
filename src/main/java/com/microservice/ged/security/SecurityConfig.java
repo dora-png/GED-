@@ -50,17 +50,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		customAuthenticationFilter.setFilterProcessesUrl("/login");
 		http.csrf().disable();
 		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-		http.authorizeRequests().antMatchers("/h2-console/**").permitAll();
+		//http.authorizeRequests().antMatchers("/h2-console/**").permitAll();
 		http.authorizeRequests().antMatchers("/login/**").permitAll();
 		/*http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/user").hasAnyAuthority("USER");
 		http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/user/**").hasAnyAuthority("USER");
 		http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/structure").hasAnyAuthority("USER","ADMIN","MANAGER");
 		http.authorizeRequests().antMatchers(HttpMethod.POST, "/api/user/save/**").hasAnyAuthority("ADMIN");
 		http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/user/**").hasAnyAuthority("MANAGER");*/
-		http.authorizeRequests().antMatchers(HttpMethod.GET, "/workflow/all/**").hasAnyAuthority("RWORKFLOW");
-		http.authorizeRequests().antMatchers(HttpMethod.GET, "/workflow/searc**").hasAnyAuthority("RWORKFLOW");
-		http.authorizeRequests().anyRequest().authenticated();
-		//http.authorizeRequests().anyRequest().permitAll();
+		//http.authorizeRequests().antMatchers(HttpMethod.GET, "/workflow/all/**").hasAnyAuthority("RWORKFLOW");
+		//http.authorizeRequests().antMatchers(HttpMethod.GET, "/workflow/searc**").hasAnyAuthority("RWORKFLOW");
+		//http.authorizeRequests().anyRequest().authenticated();
+		http.authorizeRequests().anyRequest().permitAll();
 		http.cors().configurationSource(request -> new CorsConfiguration().applyPermitDefaultValues());
 		http.addFilter(customAuthenticationFilter);
 		http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
@@ -79,7 +79,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	
 	@Override
 	public void configure(WebSecurity web) throws Exception {
-		web.ignoring().antMatchers("/users", "/refreshToken","/h2-console/**", "/resetPassword/**", "/unlock-account/**");
+		web.ignoring().antMatchers("/users", "/refreshToken","/h2-console/**", "/swagger-ui/**", "/resetPassword/**", "/unlock-account/**");
 	}
 
 	

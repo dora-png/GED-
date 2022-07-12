@@ -17,4 +17,5 @@ public interface WorkFlowPosteRepo extends JpaRepository<WorkFlowPoste, Long> {
 	Page<WorkFlowPoste> findByIsactiveTrueAndWorkflowId(WorkFlow workflowId, Pageable pageable);
 	WorkFlowPoste findByIsactiveTrueAndWorkflowIdAndPosteId(WorkFlow workflowId,Postes posteId);
 	WorkFlowPoste findByIsactiveTrueAndWorkflowIdAndLevel(WorkFlow workflowId,int level);
+	List<WorkFlowPoste> findByIsactiveTrueAndWorkflowIdAndLevelGreaterThan(WorkFlow workflowId, int level);
 }

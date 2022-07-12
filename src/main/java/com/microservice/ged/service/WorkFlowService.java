@@ -17,8 +17,8 @@ public interface WorkFlowService {
 	public Page<WorkFlowPoste> allPosteInWorkFlow(Long idWorkFlow, int page, int size) throws Exception;
 	public Page<WorkFlowPoste> allWorkFlowInPoste( Long idPostes, int page, int size) throws Exception;
 	public void add(WorkFlow workFlow) throws Exception;
-	public void addPosteToWorkFlow(List<WorkFlowPosteListe> workFlowPosteListe) throws Exception;
-	public void removePosteToWorkFlow(List<WorkFlowPosteListe> workFlowPosteListe) throws Exception;
+	public void addPosteToWorkFlow(List<WorkFlowPoste> workFlowPoste) throws Exception;
+	public void removePosteToWorkFlow(WorkFlowPoste workFlowPoste) throws Exception;
 	public void addLiasseToWorkFlow( WorkFlow workFlow) throws Exception;
 	public void update(WorkFlow workFlow) throws Exception;
 	public void delete(WorkFlow workFlow) throws Exception;

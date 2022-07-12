@@ -2,6 +2,7 @@ package com.microservice.ged.beans;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Objects;
 import java.util.Set;
 
@@ -14,6 +15,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+import org.hibernate.annotations.CreationTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 
@@ -41,6 +46,11 @@ public class TypeLiasses implements Serializable {
 	@JsonIncludeProperties(value = { "idliasse",  "name", "sigle" })
 	private Set<Liasses> liasses;
 
+    
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "dateCreation", nullable = false)
+	@CreationTimestamp
+	private Date dateCreation;
 	/**
 	 * 
 	 */
@@ -141,6 +151,14 @@ public class TypeLiasses implements Serializable {
 		this.liasses = liasses;
 	}
 
+
+	public Date getDateCreation() {
+		return dateCreation;
+	}
+
+	public void setDateCreation(Date dateCreation) {
+		this.dateCreation = dateCreation;
+	}
 
 	@Override
 	public boolean equals(Object obj) {

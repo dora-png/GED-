@@ -26,16 +26,12 @@ public class StructureController {
 	@GetMapping("/structures/all")
 	public ResponseEntity<Page<Structures>> findAll(
 			@RequestParam(name = "page", defaultValue = "0") int page,
-			@RequestParam(name = "size", defaultValue = "5") int size) {
-		try {
-			Page<Structures> structures = structureservice.findAll(page, size);
-			if(structures.isEmpty()) {
-				return  ResponseEntity.noContent().build();
-			}else {
-				return  ResponseEntity.ok().body(structures);
-			}			
-		} catch (Exception e) {
-			return ResponseEntity.badRequest().build();
+			@RequestParam(name = "size", defaultValue = "5") int size) throws Exception {
+		Page<Structures> structures = structureservice.findAll(page, size);
+		if(structures.isEmpty()) {
+			return  ResponseEntity.noContent().build();
+		}else {
+			return  ResponseEntity.ok().body(structures);
 		}		
 	}
 
@@ -43,21 +39,17 @@ public class StructureController {
 	public ResponseEntity<Page<Structures>> searchByName(
 			@RequestParam(name = "name", defaultValue = "") String name,
 			@RequestParam(name = "page", defaultValue = "0") int page,
-			@RequestParam(name = "size", defaultValue = "5") int size) {
+			@RequestParam(name = "size", defaultValue = "5") int size) throws Exception {
 		if(name.trim().isEmpty()) {
 			return ResponseEntity.badRequest().build();
 		}else if(name.isBlank()) {
 			return ResponseEntity.badRequest().build();
 		}else {
-			try {
-				Page<Structures> structures = structureservice.searchByName(name,page, size);
-				if(structures.isEmpty()) {
-					return  ResponseEntity.noContent().build();
-				}else {
-					return  ResponseEntity.ok().body(structures);
-				}			
-			} catch (Exception e) {
-				return ResponseEntity.badRequest().build();
+			Page<Structures> structures = structureservice.searchByName(name,page, size);
+			if(structures.isEmpty()) {
+				return  ResponseEntity.noContent().build();
+			}else {
+				return  ResponseEntity.ok().body(structures);
 			}	
 		}	
 	}
@@ -66,60 +58,44 @@ public class StructureController {
 	public ResponseEntity<Page<Structures>> searchBySigle(
 			@RequestParam(name = "sigle", defaultValue = "") String sigle,
 			@RequestParam(name = "page", defaultValue = "0") int page,
-			@RequestParam(name = "size", defaultValue = "5") int size) {
+			@RequestParam(name = "size", defaultValue = "5") int size) throws Exception {
 		if(sigle.trim().isEmpty()) {
 			return ResponseEntity.badRequest().build();
 		}else if(sigle.isBlank()) {
 			return ResponseEntity.badRequest().build();
 		}else {
-			try {
-				Page<Structures> structures = structureservice.searchBySigle(sigle, page, size);
-				if(structures.isEmpty()) {
-					return  ResponseEntity.noContent().build();
-				}else {
-					return  ResponseEntity.ok().body(structures);
-				}			
-			} catch (Exception e) {
-				return ResponseEntity.badRequest().build();
+			Page<Structures> structures = structureservice.searchBySigle(sigle, page, size);
+			if(structures.isEmpty()) {
+				return  ResponseEntity.noContent().build();
+			}else {
+				return  ResponseEntity.ok().body(structures);
 			}	
 		}	
 	}
 
-	@PutMapping("/structures/update")
+	@PostMapping("/structures/update")
 	public ResponseEntity<?> update(
 			@RequestBody Structures structures) throws Exception {
-		try {
-			structureservice.update(structures);
-			return  ResponseEntity.ok().build();		
-		} catch (Exception e) {
-			return ResponseEntity.badRequest().build();
-		}	
+		structureservice.update(structures);
+		return  ResponseEntity.ok().build();	
 	}
 
 	@PostMapping("/structures/add")
 	public ResponseEntity<?> add(
 			@RequestBody Structures structures) throws Exception {
-		try {
-			structureservice.add(structures);
-			return  ResponseEntity.ok().build();		
-		} catch (Exception e) {
-			return ResponseEntity.badRequest().build();
-		}	
+		structureservice.add(structures);
+		return  ResponseEntity.ok().build();	
 	}
 
 	@DeleteMapping("/structures/delete")
 	public ResponseEntity<?> delete(
 			@RequestParam(name = "id") long id) throws Exception {
-		try {
-			Structures structures = structureservice.findByIdStructure(id);
-			if(structures==null) {
-				return ResponseEntity.badRequest().build();
-			}
-			structureservice.delete(structures);
-			return  ResponseEntity.ok().build();		
-		} catch (Exception e) {
+		Structures structures = structureservice.findByIdStructure(id);
+		if(structures==null) {
 			return ResponseEntity.badRequest().build();
-		}	
+		}
+		structureservice.delete(structures);
+		return  ResponseEntity.ok().build();	
 	}
 	
 	@GetMapping("/structures/find-by-id")
@@ -132,36 +108,24 @@ public class StructureController {
 	@PostMapping("/structures/add-sub-structure")
 	public ResponseEntity<?> addSubStructures(
 			@RequestBody Structures structuresSup) throws Exception {
-		try {
-			structureservice.addSubStructures( structuresSup);
-			return  ResponseEntity.ok().build();		
-		} catch (Exception e) {
-			return ResponseEntity.badRequest().build();
-		}	
+		structureservice.addSubStructures( structuresSup);
+		return  ResponseEntity.ok().build();
 	}
 	
 	@PostMapping("/structures/remove-sub-structure")
 	public ResponseEntity<?> removeSubStructures(
 			@RequestBody Structures structuresSup) throws Exception {
-		try {
-			structureservice.removeSubStructures(structuresSup);
-			return  ResponseEntity.ok().build();		
-		} catch (Exception e) {
-			return ResponseEntity.badRequest().build();
-		}	
+		structureservice.removeSubStructures(structuresSup);
+		return  ResponseEntity.ok().build();	
 	}
 	
 	@GetMapping("/structures/list-of-unused")
-	public ResponseEntity<OrganigramSystem> ogranigramme() {
-		try {
-			OrganigramSystem organigramSystem  = structureservice.ogranigramme();
-			if(organigramSystem==null) {
-				return  ResponseEntity.noContent().build();
-			}else {
-				return  ResponseEntity.ok().body(organigramSystem);
-			}			
-		} catch (Exception e) {
-			return ResponseEntity.badRequest().build();
+	public ResponseEntity<OrganigramSystem> ogranigramme() throws Exception {
+		OrganigramSystem organigramSystem  = structureservice.ogranigramme();
+		if(organigramSystem==null) {
+			return  ResponseEntity.noContent().build();
+		}else {
+			return  ResponseEntity.ok().body(organigramSystem);
 		}		
 	}
 

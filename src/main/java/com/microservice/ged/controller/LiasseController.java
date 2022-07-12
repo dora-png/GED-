@@ -1,5 +1,7 @@
 package com.microservice.ged.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +26,7 @@ public class LiasseController {
 	LiasseService liasseService;
 
 	@GetMapping("/liasses/search-by-sigle")
-	public ResponseEntity<Page<Liasses>> searchBySigle(
+	public ResponseEntity<Page<Liasses>> searchBySigleLiasse(
 			@RequestParam(name = "sigle") String sigle,
 			@RequestParam(name = "page", defaultValue = "0") int page,
 			@RequestParam(name = "size", defaultValue = "10") int size) {
@@ -48,7 +50,7 @@ public class LiasseController {
 
 	
 	@GetMapping("/liasses/search-by-name")
-	public ResponseEntity<Page<Liasses>> searchByName(
+	public ResponseEntity<Page<Liasses>> searchByNameLiasse(
 			@RequestParam(name = "name", defaultValue = "") String name,
 			@RequestParam(name = "page", defaultValue = "0") int page,
 			@RequestParam(name = "size", defaultValue = "10") int size) {
@@ -70,8 +72,8 @@ public class LiasseController {
 		}	
 	}
 
-	@PutMapping("/liasses/update")
-	public ResponseEntity<?> update(
+	@PostMapping("/liasses/update")
+	public ResponseEntity<?> updateLiasse(
 			@RequestBody Liasses liasses) throws Exception {
 		try {
 			liasseService.update(liasses);
@@ -79,6 +81,15 @@ public class LiasseController {
 		} catch (Exception e) {
 			return ResponseEntity.badRequest().build();
 		}	
+	}
+	
+	@PostMapping("/liasses/share")
+	public ResponseEntity<?> shareLiasse(
+			@RequestParam(name = "idLiasse", required = true) Long idLiasse,
+			@RequestBody List<Long> idUsers) throws Exception {
+
+			
+			return  ResponseEntity.ok().build();	
 	}
 
 	@PostMapping("/liasses/doc-to-liasses-add")
@@ -112,7 +123,7 @@ public class LiasseController {
 
 
 	@GetMapping("/liasses/find-by-name")
-	public ResponseEntity<Liasses> findByName(
+	public ResponseEntity<Liasses> findByNameLiasse(
 			@RequestParam(name = "name") String name,
 			@RequestParam(name = "posteName") String posteName) throws Exception {
 		return  ResponseEntity.ok().body(liasseService.findByName(name));

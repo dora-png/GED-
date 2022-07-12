@@ -70,49 +70,19 @@ public class GroupUserServiceImpl implements GroupUserService {
 	@Override
 	public void addRole(GroupUser groupUser) throws Exception {
 		// TODO Auto-generated method stub
-		GroupUser groupUse = groupUserRepo.findByIdgroupes(groupUser.getIdgroupes());
-		if(groupUse==null) {
+		if(groupUserRepo.findByIdgroupes(groupUser.getIdgroupes())==null) {
 			throw new Exception("Group "+groupUser.getName()+" Don't exist");
 		}
-		boolean exist=true;
-		Roles roles=null;
-		Set<Roles> set = new HashSet<Roles>();
-	    for (Iterator<Roles> it = groupUser.getRoleslistes().iterator(); it.hasNext(); ) {
-	    	roles = it.next();
-	        if(!groupUse.getRoleslistes().contains(roles)) {
-	        	exist=false;
-			}
-	    }
-	    if(exist) {
-			throw new Exception("Group "+groupUser.getName()+" already have Role: "+roles.getName());
-		}else {
-			groupUse.getRoleslistes().add(roles);
-			//groupUserRepo.save(groupUse);
-		}
+		groupUserRepo.save(groupUser);
 	}
 
 	@Override
 	public void addPoste(GroupUser groupUser) throws Exception {
 		// TODO Auto-generated method stub
-		GroupUser groupUse = groupUserRepo.findByIdgroupes(groupUser.getIdgroupes());
-		if(groupUse==null) {
+		if(groupUserRepo.findByIdgroupes(groupUser.getIdgroupes())==null) {
 			throw new Exception("Group "+groupUser.getName()+" Don't exist");
 		}
-		boolean exist=true;
-		Postes postes=null;
-		Set<Postes> set = new HashSet<Postes>();
-	    for (Iterator<Postes> it = groupUser.getPosteslistes().iterator(); it.hasNext(); ) {
-	    	postes = it.next();
-	        if(!groupUse.getPosteslistes().contains(postes)) {
-	        	exist=false;
-			}
-	    }
-	    if(exist) {
-			throw new Exception("Group "+groupUser.getName()+" already have Poste: "+postes.getName());
-		}else {
-			postes.getGroupslistes().add(groupUse);
-			groupUse.getPosteslistes().add(postes);
-		}
+		groupUserRepo.save(groupUser);
 	}
 
 	@Override
@@ -121,6 +91,16 @@ public class GroupUserServiceImpl implements GroupUserService {
 		GroupUser groupUse = groupUserRepo.findByIdgroupes(groupUser.getIdgroupes());
 		if(groupUse==null) {
 			throw new Exception("Don't exist");
+		}
+		if(groupUser.getPosteslistes().isEmpty()) {
+			throw new Exception("Please select poste to remove");
+		}
+		Roles roles = groupUser.getRoleslistes().get(0);
+		for(Roles role : groupUse.getRoleslistes()) {
+			if(role.getIdroles() == roles.getIdroles()) {
+				groupUse.getRoleslistes().remove(role);
+				groupUserRepo.save(groupUse);
+			}			
 		}
 		groupUser.getRoleslistes().forEach(
 				(role)->{
@@ -139,14 +119,16 @@ public class GroupUserServiceImpl implements GroupUserService {
 		if(groupUse==null) {
 			throw new Exception("Don't exist");
 		}
-		groupUser.getPosteslistes().forEach(
-				(poste)->{
-					if(groupUse.getPosteslistes().contains(poste)) {
-						groupUse.getPosteslistes().remove(poste);
-					}
-				}
-		);
-		groupUserRepo.save(groupUse);
+		if(groupUser.getPosteslistes().isEmpty()) {
+			throw new Exception("Please select poste to remove");
+		}
+		Postes postes = groupUser.getPosteslistes().get(0);
+		for(Postes poste : groupUse.getPosteslistes()) {
+			if(poste.getIdposte() == postes.getIdposte()) {
+				groupUse.getPosteslistes().remove(poste);
+				groupUserRepo.save(groupUse);
+			}			
+		}		
 	}
 
 	@Override

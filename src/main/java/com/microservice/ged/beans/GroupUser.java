@@ -50,12 +50,10 @@ public class GroupUser implements Serializable {
 	private Date dateCreation;
     
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
-	@JsonIncludeProperties(value = { "idroles", "name"})
 	private List<Roles> roleslistes = new ArrayList<>();
     
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
-	@JsonIncludeProperties(value = { "idposte", "name", "description"})
 	private List<Postes> posteslistes = new ArrayList<>();
 
 	/**

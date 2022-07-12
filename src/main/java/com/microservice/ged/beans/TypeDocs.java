@@ -2,6 +2,7 @@ package com.microservice.ged.beans;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Objects;
 import java.util.Set;
 
@@ -14,6 +15,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+import org.hibernate.annotations.CreationTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 
@@ -40,6 +45,11 @@ public class TypeDocs implements Serializable {
     @OneToMany(mappedBy = "typedoc", fetch = FetchType.EAGER)
 	@JsonIncludeProperties(value = { "iddoc", "name", "extension" })
 	private Set<Docs> docs;
+    
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "dateCreation", nullable = false)
+	@CreationTimestamp
+	private Date dateCreation;
 
 	/**
 	 * 
@@ -139,6 +149,14 @@ public class TypeDocs implements Serializable {
 	 */
 	public void setDocs(Set<Docs> docs) {
 		this.docs = docs;
+	}
+
+	public Date getDateCreation() {
+		return dateCreation;
+	}
+
+	public void setDateCreation(Date dateCreation) {
+		this.dateCreation = dateCreation;
 	}
 
 	@Override

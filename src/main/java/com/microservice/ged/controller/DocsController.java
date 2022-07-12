@@ -76,7 +76,7 @@ public class DocsController {
 		}	
 	}
 
-	@PutMapping("/docs/update")
+	@PostMapping("/docs/update")
 	public ResponseEntity<?> update(
 			@RequestBody Docs docs) throws Exception {
 		try {
@@ -87,7 +87,7 @@ public class DocsController {
 		}	
 	}
 
-	@PutMapping("/docs/update-setter")
+	@PostMapping("/docs/update-setter")
 	public ResponseEntity<?> updateSetter(
 			@RequestBody Docs docs,
 			@RequestParam(name = "posteName") String posteName) throws Exception {

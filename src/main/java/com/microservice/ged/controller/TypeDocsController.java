@@ -84,7 +84,7 @@ public class TypeDocsController {
 		}	
 	}
 
-	@PutMapping("/typeDocs/update")
+	@PostMapping("/typeDocs/update")
 	public ResponseEntity<?> update(
 			@RequestBody TypeDocs typeDocs) throws Exception {
 		try {

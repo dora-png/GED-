@@ -6,6 +6,7 @@
 package com.microservice.ged.beans;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -20,8 +21,11 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.beans.factory.annotation.Value;
 
 import com.fasterxml.jackson.annotation.JsonIncludeProperties;
@@ -54,7 +58,7 @@ public class Structures implements Serializable {
     private boolean active = true;
         
     @OneToMany(mappedBy = "structure", fetch = FetchType.LAZY)
-	@JsonIncludeProperties(value = { "idposte", "name", "niveau" })
+	@JsonIncludeProperties(value = { "idposte", "name", "active", "posteSubalterne", "posteSuperieur", "groupslistes" })
 	private Set<Postes> postes;
     
 	@ManyToOne
@@ -64,6 +68,12 @@ public class Structures implements Serializable {
 	@OneToMany
 	//@JsonIncludeProperties(value = { "idstructure", "name", "sigle" })
 	private Set<Structures> sousStructure = new HashSet();
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "dateCreation", nullable = false)
+	@CreationTimestamp
+	private Date dateCreation;
+	
 
 	/**
 	 * 
@@ -207,6 +217,14 @@ public class Structures implements Serializable {
 	}
 
 	
+
+	public Date getDateCreation() {
+		return dateCreation;
+	}
+
+	public void setDateCreation(Date dateCreation) {
+		this.dateCreation = dateCreation;
+	}
 
 	@Override
 	public boolean equals(Object obj) {

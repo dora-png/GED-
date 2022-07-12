@@ -84,7 +84,7 @@ public class TypeLiasseController {
 		}	
 	}
 
-	@PutMapping("/typeliasse/update")
+	@PostMapping("/typeliasse/update")
 	public ResponseEntity<?> update(
 			@RequestBody TypeLiasses typeLiasses) throws Exception {
 		try {

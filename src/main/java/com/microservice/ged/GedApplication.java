@@ -132,7 +132,11 @@ public class GedApplication {
 			Structures structure = new Structures("Cabinet", "CM", "description");
 			Postes postes = new Postes("Maire", "description", structures);
 			posteService.addPoste(postes);
+			postes = posteService.findPosteByName(postes.getName());
 			logPosteUserService.add(postes, users);
+			Postes postee = new Postes("Poste 1", "description", structures);
+			postee.setPosteSuperieur(postes);
+			posteService.addPoste(postee);
 			
 			
 			Users uses = new Users("Administratore", "admine", "1234");
@@ -182,7 +186,7 @@ public class GedApplication {
 			List<WorkFlowPosteListe> workFlowPosteListe = new ArrayList<>();
 			//workFlowPosteListe.add(new WorkFlowPosteListe(0, poste.getIdposte(), workFlow.getIdworkflows(), true));
 			//workFlowPosteListe.add(new WorkFlowPosteListe(1, poste1.getIdposte(), workFlow.getIdworkflows(), true));
-			workFlowService.addPosteToWorkFlow(workFlowPosteListe);
+			//workFlowService.addPosteToWorkFlow(workFlowPosteListe);
 			
 		};
 	}

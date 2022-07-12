@@ -22,7 +22,7 @@ import com.microservice.ged.service.WorkFlowService;
 import com.microservice.ged.utils.WorkFlowPosteListe;
 
 @RestController
-@CrossOrigin("*")
+@CrossOrigin("http://localhost:4200")
 public class WorkFlowController {
 	
 	@Autowired
@@ -31,25 +31,15 @@ public class WorkFlowController {
 	@Autowired
 	private PosteService posteService;
 	
-	//@PostAuthorize("hasAuthority('CWORKFLOW')")
 	@GetMapping("/workflow/all")
 	public ResponseEntity<Page<WorkFlow>> findAll(
 			@RequestParam(name = "page", defaultValue = "0") int page,
-			@RequestParam(name = "size", defaultValue = "10") int size) {
-		try {
-			Page<WorkFlow> workFlow = workFlowService.findAll(page, size);
-			if(workFlow.isEmpty()) {
-				workFlow = workFlowService.defaultList(0, 5);
-				if(workFlow.isEmpty()) {
-					return  ResponseEntity.noContent().build();
-				}else {
-					return  ResponseEntity.ok().body(workFlow);
-				}
-			}else {
-				return  ResponseEntity.ok().body(workFlow);
-			}			
-		} catch (Exception e) {
-			return ResponseEntity.badRequest().build();
+			@RequestParam(name = "size", defaultValue = "5") int size) throws Exception {
+		Page<WorkFlow> workFlow = workFlowService.findAll(page, size);
+		if(workFlow.isEmpty()) {
+			return  ResponseEntity.noContent().build();
+		}else {
+			return  ResponseEntity.ok().body(workFlow);
 		}	
 	}
 		
@@ -57,162 +47,113 @@ public class WorkFlowController {
 	public ResponseEntity<Page<WorkFlow>> searchByName(
 			@RequestParam(name = "name") String name,
 			@RequestParam(name = "page", defaultValue = "0") int page,
-			@RequestParam(name = "size", defaultValue = "5") int size) {
+			@RequestParam(name = "size", defaultValue = "5") int size) throws Exception {
 		if(name.trim().isEmpty()) {
-			return ResponseEntity.badRequest().build();
-		}else if(name.isBlank()) {
-			return ResponseEntity.badRequest().build();
+			throw new Exception("Name is Empty");
+		}
+		if(name.isBlank()) {
+			throw new Exception("Name is Blank");
+		}
+		Page<WorkFlow> workFlow = workFlowService.searchByName(name,page, size);
+		if(workFlow.isEmpty()) {
+			return  ResponseEntity.noContent().build();
 		}else {
-			try {
-				Page<WorkFlow> workFlow = workFlowService.searchByName(name,page, size);
-				if(workFlow.isEmpty()) {
-					return  ResponseEntity.noContent().build();
-				}else {
-					return  ResponseEntity.ok().body(workFlow);
-				}			
-			} catch (Exception e) {
-				return ResponseEntity.badRequest().build();
-			}	
-		}	
+			return  ResponseEntity.ok().body(workFlow);
+		}		
 	}
 		
 	@GetMapping("/workflow/search-by-sigle")
 	public ResponseEntity<Page<WorkFlow>> searchBySigle(
-			@RequestParam(name = "name") String sigle,
+			@RequestParam(name = "sigle") String sigle,
 			@RequestParam(name = "page", defaultValue = "0") int page,
-			@RequestParam(name = "size", defaultValue = "5") int size) {
+			@RequestParam(name = "size", defaultValue = "5") int size) throws Exception {
 		if(sigle.trim().isEmpty()) {
-			return ResponseEntity.badRequest().build();
-		}else if(sigle.isBlank()) {
-			return ResponseEntity.badRequest().build();
+			throw new Exception("Sige is Empty");
+		}
+		if(sigle.isBlank()) {
+			throw new Exception("Sigle is Blank");
+		}
+		Page<WorkFlow> workFlow = workFlowService.searchBySigle(sigle,page, size);
+		if(workFlow.isEmpty()) {
+			return  ResponseEntity.noContent().build();
 		}else {
-			try {
-				Page<WorkFlow> workFlow = workFlowService.searchBySigle(sigle,page, size);
-				if(workFlow.isEmpty()) {
-					return  ResponseEntity.noContent().build();
-				}else {
-					return  ResponseEntity.ok().body(workFlow);
-				}			
-			} catch (Exception e) {
-				return ResponseEntity.badRequest().build();
-			}	
+			return  ResponseEntity.ok().body(workFlow);
 		}	
 	}
 
 	@PostMapping("/workflow/add")
 	public ResponseEntity<?> add(
-			@RequestBody WorkFlow workFlow,
-			@RequestParam(name = "posteName") String posteName) throws Exception {
-		try {
-			workFlowService.add(workFlow);
-			return  ResponseEntity.ok().build();		
-		} catch (Exception e) {
-			return ResponseEntity.badRequest().body(e.getLocalizedMessage());
-		}	
+			@RequestBody WorkFlow workFlow) throws Exception {
+		workFlowService.add(workFlow);
+		return  ResponseEntity.ok().build();	
 	}
 
-	@PutMapping("/workflow/update")
+	@PostMapping("/workflow/update")
 	public ResponseEntity<?> update(
-			@RequestBody WorkFlow workFlow,
-			@RequestParam(name = "posteName") String posteName) throws Exception {
-		try {
-			workFlowService.update(workFlow);
-			return  ResponseEntity.ok().build();		
-		} catch (Exception e) {
-			return ResponseEntity.badRequest().body(e.getLocalizedMessage());
-		}	
+			@RequestBody WorkFlow workFlow) throws Exception {
+		System.err.println(workFlow.getName());
+		workFlowService.update(workFlow);
+		return  ResponseEntity.ok().build();
 	}
 
 	@DeleteMapping("/workflow/delete")
 	public ResponseEntity<?> delete(@RequestParam(name = "id") Long id) throws Exception {
-		try {
-			WorkFlow workFlow = workFlowService.findById(id);
-			if(workFlow==null) {
-				return ResponseEntity.badRequest().build();
-			}
-			workFlowService.delete(workFlow);
-			return  ResponseEntity.ok().build();		
-		} catch (Exception e) {
+		WorkFlow workFlow = workFlowService.findById(id);
+		if(workFlow==null) {
 			return ResponseEntity.badRequest().build();
-		}	
+		}
+		workFlowService.delete(workFlow);
+		return  ResponseEntity.ok().build();	
 	}
 
 	@GetMapping("/workflow/find-by-id")
 	public ResponseEntity<WorkFlow> findById(@RequestParam(name = "id") Long id) throws Exception {
-		try {
-			return  ResponseEntity.ok().body(workFlowService.findById(id));		
-		} catch (Exception e) {
-			return ResponseEntity.badRequest().build();
-		}	
+		return  ResponseEntity.ok().body(workFlowService.findById(id));	
 	}
 
 
 	@GetMapping("/workflow/find-by-name")
 	public ResponseEntity<WorkFlow> findByName(@RequestParam(name = "name") String name) throws Exception {
-		try {
-			return  ResponseEntity.ok().body(workFlowService.findByName(name));		
-		} catch (Exception e) {
-			return ResponseEntity.badRequest().build();
-		}	
+		return  ResponseEntity.ok().body(workFlowService.findByName(name));		
 	}
 
 
 	@GetMapping("/workflow/find-by-sigle")
 	public ResponseEntity<WorkFlow> findBySigle(@RequestParam(name = "sigle") String sigle) throws Exception {
-		try {
-			return  ResponseEntity.ok().body(workFlowService.findBySigle(sigle));		
-		} catch (Exception e) {
-			return ResponseEntity.badRequest().build();
-		}	
+		return  ResponseEntity.ok().body(workFlowService.findBySigle(sigle));	
 	}
 	
 
 	@PostMapping("/workflow/add-poste-in-workflow")
-	public ResponseEntity<?> addPosteToWorkFlow(@RequestBody List<WorkFlowPosteListe> workFlowPosteListe) throws Exception {
-		try {
-			workFlowService.addPosteToWorkFlow( workFlowPosteListe);
-			return  ResponseEntity.ok().build();		
-		} catch (Exception e) {
-			return ResponseEntity.badRequest().build();
-		}	
+	public ResponseEntity<?> addPosteToWorkFlow(@RequestBody List<WorkFlowPoste> workFlowPoste) throws Exception {
+		workFlowService.addPosteToWorkFlow( workFlowPoste);
+		return  ResponseEntity.ok().build();		
 	}
 
 
 	@PostMapping("/workflow/remove-poste-in-workflow")
-	public ResponseEntity<?> removePosteToWorkFlow(@RequestBody List<WorkFlowPosteListe> workFlowPosteListe) throws Exception {
-		try {
-			workFlowService.removePosteToWorkFlow(workFlowPosteListe);
-			return  ResponseEntity.ok().build();		
-		} catch (Exception e) {
-			return ResponseEntity.badRequest().body(e.getLocalizedMessage());
-		}	
+	public ResponseEntity<?> removePosteToWorkFlow(@RequestBody WorkFlowPoste workFlowPoste) throws Exception {
+		workFlowService.removePosteToWorkFlow(workFlowPoste);
+		return  ResponseEntity.ok().build();	
 	}
 
 
 	@PostMapping("/workflow/add-liasse-in-workflow")
 	public ResponseEntity<?> addLiasseToWorkFlow(@RequestBody WorkFlow workFlow) throws Exception {
-		try {
-			workFlowService.addLiasseToWorkFlow(workFlow);
-			return  ResponseEntity.ok().build();		
-		} catch (Exception e) {
-			return ResponseEntity.badRequest().body(e.getLocalizedMessage());
-		}	
+		workFlowService.addLiasseToWorkFlow(workFlow);
+		return  ResponseEntity.ok().build();	
 	}
 	
 	@GetMapping("/workflow/all-by-poste")
 	public ResponseEntity<Page<WorkFlowPoste>> allWorkFlowInPoste(
 			@RequestParam(name = "idPostes") Long idPostes,
 			@RequestParam(name = "page", defaultValue = "0") int page,
-			@RequestParam(name = "size", defaultValue = "5") int size) {
-		try {
-			Page<WorkFlowPoste> workFlow = workFlowService.allWorkFlowInPoste(idPostes, page, size);
-			if(workFlow.isEmpty()) {
-				return  ResponseEntity.noContent().build();
-			}else {
-				return  ResponseEntity.ok().body(workFlow);
-			}			
-		} catch (Exception e) {
-			return ResponseEntity.badRequest().build();
+			@RequestParam(name = "size", defaultValue = "5") int size) throws Exception {
+		Page<WorkFlowPoste> workFlow = workFlowService.allWorkFlowInPoste(idPostes, page, size);
+		if(workFlow.isEmpty()) {
+			return  ResponseEntity.noContent().build();
+		}else {
+			return  ResponseEntity.ok().body(workFlow);
 		}	
 	}
 	
@@ -220,16 +161,12 @@ public class WorkFlowController {
 	public ResponseEntity<Page<WorkFlowPoste>> allPosteInWorkFlow(
 			@RequestParam(name = "idWorkFlow") Long idWorkFlow,
 			@RequestParam(name = "page", defaultValue = "0") int page,
-			@RequestParam(name = "size", defaultValue = "5") int size) {
-		try {
-			Page<WorkFlowPoste> workFlows = workFlowService.allPosteInWorkFlow(idWorkFlow, page, size);
-			if(workFlows.isEmpty()) {
-				return  ResponseEntity.noContent().build();
-			}else {
-				return  ResponseEntity.ok().body(workFlows);
-			}	
-		} catch (Exception e) {
-			return ResponseEntity.badRequest().build();
+			@RequestParam(name = "size", defaultValue = "5") int size) throws Exception {
+		Page<WorkFlowPoste> workFlowsPoste = workFlowService.allPosteInWorkFlow(idWorkFlow, page, size);
+		if(workFlowsPoste.isEmpty()) {
+			return  ResponseEntity.noContent().build();
+		}else {
+			return  ResponseEntity.ok().body(workFlowsPoste);
 		}
 	}
 

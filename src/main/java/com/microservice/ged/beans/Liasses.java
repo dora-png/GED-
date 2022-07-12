@@ -51,17 +51,17 @@ public class Liasses implements Serializable {
     
     @OneToMany(mappedBy = "liasse", fetch = FetchType.EAGER)
 	@JsonIncludeProperties(value = { "iddoc", "name", "extension", "path" })
-	private Set<Docs> docs;
+	private List<Docs> docs;
     
     
     @ManyToOne
-   	@JoinColumn(nullable = false)
-   	@JsonIncludeProperties(value = {"idworkflows", "name", "sigle" })
+   	@JoinColumn(nullable = true)
+   	//@JsonIncludeProperties(value = {"idworkflows", "name", "sigle" })
    	private WorkFlow workflowid;
     
     @ManyToOne
-   	@JoinColumn(nullable = false)
-   	@JsonIncludeProperties(value = {"iduser", "name", "username" })
+   	@JoinColumn(nullable = true)
+   	//@JsonIncludeProperties(value = {"iduser", "name", "username" })
    	private Users userid;
     
     @ManyToOne
@@ -86,7 +86,7 @@ public class Liasses implements Serializable {
 	 * @param userid
 	 * @param typeliasse
 	 */
-	public Liasses(String name, String sigle, String description, Set<Docs> docs, WorkFlow workflowid, Users userid,
+	public Liasses(String name, String sigle, String description, List<Docs> docs, WorkFlow workflowid, Users userid,
 			TypeLiasses typeliasse) {
 		super();
 		this.name = name;
@@ -119,7 +119,7 @@ public class Liasses implements Serializable {
 	 * @param docs
 	 * @param userid
 	 */
-	public Liasses(String name, String sigle, String description, Set<Docs> docs, Users userid) {
+	public Liasses(String name, String sigle, String description, List<Docs> docs, Users userid) {
 		super();
 		this.name = name;
 		this.sigle = sigle;
@@ -136,7 +136,7 @@ public class Liasses implements Serializable {
 	 * @param workflowid
 	 * @param typeliasse
 	 */
-	public Liasses(String name, String sigle, String description, Set<Docs> docs, WorkFlow workflowid,
+	public Liasses(String name, String sigle, String description, List<Docs> docs, WorkFlow workflowid,
 			TypeLiasses typeliasse) {
 		super();
 		this.name = name;
@@ -220,14 +220,14 @@ public class Liasses implements Serializable {
 	/**
 	 * @return the docs
 	 */
-	public Set<Docs> getDocs() {
+	public List<Docs> getDocs() {
 		return docs;
 	}
 
 	/**
 	 * @param docs the docs to set
 	 */
-	public void setDocs(Set<Docs> docs) {
+	public void setDocs(List<Docs> docs) {
 		this.docs = docs;
 	}
 

@@ -96,7 +96,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 				.withExpiresAt(new Date(System.currentTimeMillis() + SecurityConstants.EXPIRATION_TIME_REFRESH))
 				.sign(Algorithm.HMAC256(SecurityConstants.SECRET));
 		Map<String, String> idToken = new HashMap();
-		idToken.put("Refresh-Token", JwtRefreshToken);
+		idToken.put("RefreshToken", JwtRefreshToken);
 		response.setContentType("application/json");
 		new ObjectMapper().writeValue(response.getOutputStream(), idToken);
 	}

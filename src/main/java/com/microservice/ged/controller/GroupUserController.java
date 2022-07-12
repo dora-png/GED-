@@ -67,7 +67,7 @@ public class GroupUserController {
 		return  ResponseEntity.ok().build();		
 	}
 	
-	@PutMapping("/group/update")
+	@PostMapping("/group/update")
 	public ResponseEntity<?> updateGroupUserName(
 			@RequestBody GroupUser groupUser) throws Exception {
 		try {
@@ -92,7 +92,7 @@ public class GroupUserController {
 		return  ResponseEntity.ok().build();		
 	}
 	
-	@PutMapping("/group/delete-poste")
+	@PostMapping("/group/delete-poste")
 	public ResponseEntity<?> removePosteToGroup(
 			@RequestBody GroupUser groupUser) throws Exception {
 		try {
@@ -103,7 +103,7 @@ public class GroupUserController {
 		}
 	}
 	
-	@PutMapping("/group/delete-rome")
+	@PostMapping("/group/delete-rome")
 	public ResponseEntity<?> removeRoleToGroup(
 			@RequestBody GroupUser groupUser) throws Exception {
 		try {

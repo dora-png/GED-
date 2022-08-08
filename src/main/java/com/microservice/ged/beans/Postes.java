@@ -72,193 +72,106 @@ public class Postes implements Serializable {
 	@ManyToOne
 	@JsonIncludeProperties(value = { "idposte", "name","active" })
 	private Postes posteSuperieur;
-
-	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
-	@JsonIncludeProperties(value = { "idgroupes", "name", "roleslistes"})
-	private Set<GroupUser> groupslistes = new HashSet<>();
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "dateCreation", nullable = false)
 	@CreationTimestamp
 	private Date dateCreation;
 
-	/**
-	 * 
-	 */
+
 	public Postes() {
 		super();
-		// TODO Auto-generated constructor stub
-	}
-	
-    /**
-	 * @param idposte
-	 * @param name
-	 * @param description
-	 * @param niveau
-	 * @param structure
-	 * @param posteSubalterne
-	 * @param posteSuperieur
-	 * @param posteemploye
-	 * @param roles
-	 */
-	public Postes(Long idposte, String name, String description, Structures structure,
-			Set<Postes> posteSubalterne, Postes posteSuperieur, Set<GroupUser> groupslistes) {
-		super();
-		this.idposte = idposte;
-		this.name = name;
-		this.description = description;
-		this.structure = structure;
-		this.posteSubalterne = posteSubalterne;
-		this.posteSuperieur = posteSuperieur;
-		this.groupslistes = groupslistes;
 	}
 
 
-	/**
-	 * @param idposte
-	 */
-	public Postes(Long idposte) {
-		super();
-		this.idposte = idposte;
-	}
-
-	/**
-	 * @param name
-	 * @param description
-	 * @param niveau
-	 * @param structure
-	 * @param posteSuperieur
-	 */
-	public Postes(String name, String description, Structures structure) {
+	public Postes(String name, String description, boolean active, Structures structure) {
 		super();
 		this.name = name;
 		this.description = description;
+		this.active = active;
 		this.structure = structure;
 	}
 
-	/**
-	 * @return the idposte
-	 */
+
 	public Long getIdposte() {
 		return idposte;
 	}
 
-	/**
-	 * @param idposte the idposte to set
-	 */
+
 	public void setIdposte(Long idposte) {
 		this.idposte = idposte;
 	}
 
-	/**
-	 * @return the name
-	 */
+
 	public String getName() {
 		return name;
 	}
 
-	/**
-	 * @param name the name to set
-	 */
+
 	public void setName(String name) {
 		this.name = name;
 	}
 
-	/**
-	 * @return the description
-	 */
+
 	public String getDescription() {
 		return description;
 	}
 
-	/**
-	 * @param description the description to set
-	 */
+
 	public void setDescription(String description) {
 		this.description = description;
 	}
 
-	/**
-	 * @return the structure
-	 */
-	public Structures getStructure() {
-		return structure;
-	}
 
-	/**
-	 * @param structure the structure to set
-	 */
-	public void setStructure(Structures structure) {
-		this.structure = structure;
-	}
-
-	/**
-	 * @return the posteSubalterne
-	 */
-	public Set<Postes> getPosteSubalterne() {
-		return posteSubalterne;
-	}
-
-	/**
-	 * @param posteSubalterne the posteSubalterne to set
-	 */
-	public void setPosteSubalterne(Set<Postes> posteSubalterne) {
-		this.posteSubalterne = posteSubalterne;
-	}
-
-	/**
-	 * @return the posteSuperieur
-	 */
-	public Postes getPosteSuperieur() {
-		return posteSuperieur;
-	}
-
-	/**
-	 * @param posteSuperieur the posteSuperieur to set
-	 */
-	public void setPosteSuperieur(Postes posteSuperieur) {
-		this.posteSuperieur = posteSuperieur;
-	}
-
-	/**
-	 * @return the groupslistes
-	 */
-	public Set<GroupUser> getGroupslistes() {
-		return groupslistes;
-	}
-
-	/**
-	 * @param groupslistes the groupslistes to set
-	 */
-	public void setGroupslistes(Set<GroupUser> groupslistes) {
-		this.groupslistes = groupslistes;
-	}
-
-	/**
-	 * @return the active
-	 */
 	public boolean isActive() {
 		return active;
 	}
 
-	/**
-	 * @param active the active to set
-	 */
+
 	public void setActive(boolean active) {
 		this.active = active;
 	}
+
+
+	public Structures getStructure() {
+		return structure;
+	}
+
+
+	public void setStructure(Structures structure) {
+		this.structure = structure;
+	}
+
+
+	public Set<Postes> getPosteSubalterne() {
+		return posteSubalterne;
+	}
+
+
+	public void setPosteSubalterne(Set<Postes> posteSubalterne) {
+		this.posteSubalterne = posteSubalterne;
+	}
+
+
+	public Postes getPosteSuperieur() {
+		return posteSuperieur;
+	}
+
+
+	public void setPosteSuperieur(Postes posteSuperieur) {
+		this.posteSuperieur = posteSuperieur;
+	}
+
 
 	public Date getDateCreation() {
 		return dateCreation;
 	}
 
+
 	public void setDateCreation(Date dateCreation) {
 		this.dateCreation = dateCreation;
 	}
-
-
-
-
-
+	
+	
 	
 }

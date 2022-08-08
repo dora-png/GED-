@@ -1,6 +1,5 @@
 package com.microservice.ged.serviceImple;
 
-import java.util.Date;
 import java.util.Iterator;
 
 import javax.transaction.Transactional;
@@ -11,13 +10,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import com.microservice.ged.beans.Appusers;
-import com.microservice.ged.beans.Liasses;
-import com.microservice.ged.beans.LogPosteUser;
 import com.microservice.ged.beans.Postes;
-import com.microservice.ged.beans.Roles;
 import com.microservice.ged.beans.Structures;
-import com.microservice.ged.repository.AppUserRepo;
 import com.microservice.ged.repository.LogPosteUserRepo;
 import com.microservice.ged.repository.PosteRepo;
 import com.microservice.ged.repository.StructureRepo;
@@ -33,9 +27,6 @@ public class StructureServiceImpl implements StructureService {
 
 	@Autowired
 	private PosteRepo posteRepo;
-
-	@Autowired
-	AppUserRepo appUserRepo; 
 	
 	@Autowired
 	LogPosteUserRepo logPosteUserRepo;
@@ -125,7 +116,6 @@ public class StructureServiceImpl implements StructureService {
 
 	@Override
 	public void addPosteToStructures(Structures structure, Postes poste) throws Exception {
-		// TODO Auto-generated method stub
 		if(structureRepo.findByNameAndActiveTrue(structure.getName())==null) {
 			throw new Exception("Unknow Structure "+structure.getName());	
 		}
@@ -148,7 +138,6 @@ public class StructureServiceImpl implements StructureService {
 
 	@Override
 	public void removePosteToStructures(String posteName, String structureName) throws Exception {
-		// TODO Auto-generated method stub
 		Postes postes = posteRepo.findByNameAndActiveTrue(posteName);
 		Structures structure = structureRepo.findByNameAndActiveTrue(structureName);
 		if(structure == null) {
@@ -220,7 +209,6 @@ public class StructureServiceImpl implements StructureService {
 
 	@Override
 	public Structures findByIdStructure(Long id) throws Exception {
-		// TODO Auto-generated method stub
 		return structureRepo.findByIdstructureAndActiveTrue(id);
 	}
 

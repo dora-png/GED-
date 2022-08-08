@@ -2,8 +2,8 @@ package com.microservice.ged.filter;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.microservice.ged.beans.Users;
-import com.microservice.ged.service.UserService;
+//import com.microservice.ged.service.UserService;
+import com.microservice.ged.utils.JwtTokenUtil;
 import com.microservice.ged.utils.SecurityConstants;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,8 +19,11 @@ import java.util.stream.Collectors;
 
 @Component
 public class RequestResponseFilter implements Filter {
+   // @Autowired
+    //private UserService userService;
+    
     @Autowired
-    private UserService userService;
+    private JwtTokenUtil jwtTokenUtil;
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
@@ -31,18 +34,18 @@ public class RequestResponseFilter implements Filter {
 
         if(req.getUserPrincipal() != null) {
 
-            Users springUser = userService.findByUsername(req.getUserPrincipal().getName());
+          //  Users springUser = userService.findByUsername(req.getUserPrincipal().getName());
+//get subject in send token
 
-
-            String JwtaccessToken = JWT.create().withSubject(req.getUserPrincipal().getName())
+            /*String JwtaccessToken = JWT.create().withSubject(req.getUserPrincipal().getName())
                     .withExpiresAt(new Date(System.currentTimeMillis() + 864_000_000))
                     .withIssuer(req.getRequestURL().toString())
-                    /*.withClaim("roles",
-                            springUser.getRoles().stream().map(r -> r.getRole()).collect(Collectors.toList()))*/
                     .sign(Algorithm.HMAC512(SecurityConstants.SECRET));
 
-            res.addHeader("token", "Bearer "+JwtaccessToken);
-            chain.doFilter(request, response);
+            res.addHeader(
+            		SecurityConstants.HEADER_STRING, 
+            		SecurityConstants.TOKEN_PREFIX + jwtTokenUtil.generateAuthorizationToken(authenticationRequest.getUsername(), authorities) + SecurityConstants.TOKEN_SUFIX);
+            */chain.doFilter(request, response);
 
         }else{
                 chain.doFilter(request, response);

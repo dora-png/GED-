@@ -9,17 +9,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.microservice.ged.beans.Users;
 import com.microservice.ged.beans.LogPosteUser;
 import com.microservice.ged.beans.Postes;
 import com.microservice.ged.service.LogPosteUserService;
 import com.microservice.ged.service.PosteService;
-import com.microservice.ged.service.UserService;
+//import com.microservice.ged.service.UserService;
 
 @RestController
 @CrossOrigin("*")
 public class LogPosteUserController {
-
+/*
 	@Autowired
 	private LogPosteUserService logPosteUserService;
 	
@@ -86,5 +85,5 @@ public class LogPosteUserController {
 		}else {
 			return  ResponseEntity.ok().body(users);
 		}		
-	}
+	}*/
 }

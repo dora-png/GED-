@@ -76,12 +76,31 @@
 		<dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
-            </dependency>
+        </dependency>
+        
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
             <version>20160810</version>
         </dependency>
+        
+        <!-- https://mvnrepository.com/artifact/com.unboundid/unboundid-ldapsdk -->
+		<dependency>
+		    <groupId>com.unboundid</groupId>
+		    <artifactId>unboundid-ldapsdk</artifactId>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.springframework.ldap/spring-ldap-core -->
+		<dependency>
+		    <groupId>org.springframework.ldap</groupId>
+		    <artifactId>spring-ldap-core</artifactId>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-ldap -->
+		<dependency>
+		    <groupId>org.springframework.security</groupId>
+		    <artifactId>spring-security-ldap</artifactId>
+		</dependency>
+				
+		
 	</dependencies>
 
 	<build>

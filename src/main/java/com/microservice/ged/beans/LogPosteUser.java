@@ -41,141 +41,54 @@ public class LogPosteUser implements Serializable {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dateFin;
     
-    @Column(name = "actiondo",nullable = false)
-	private String actiondo;
-    
     @ManyToOne
-	@JsonIncludeProperties(value = {"idposte", "name", "description", "groupslistes", "structure", "groupslistes" })
+	@JsonIncludeProperties(value = {"idposte", "name", "description", "structure" })
 	private Postes posteId;
     
-    @ManyToOne
-	@JsonIncludeProperties(value = {"iduser", "name", "surname", "login" })
-	private Users userId;
+    @Column(name = "ldaplogin", nullable = false, insertable = true, updatable = false)
+	private String ldaplogin;
 
-	/**
-	 * 
-	 */
 	public LogPosteUser() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-
-
-	/**
-	 * @param actiondo
-	 * @param posteId
-	 * @param userId
-	 */
-	public LogPosteUser(String actiondo, Postes posteId, Users userId) {
+	public LogPosteUser(Postes posteId, String ldaplogin) {
 		super();
-		this.actiondo = actiondo;
 		this.posteId = posteId;
-		this.userId = userId;
+		this.ldaplogin = ldaplogin;
 	}
 
-	/**
-	 * @return the idloguserposte
-	 */
-	public Long getIdloguserposte() {
-		return idloguserposte;
-	}
-
-	/**
-	 * @param idloguserposte the idloguserposte to set
-	 */
-	public void setIdloguserposte(Long idloguserposte) {
-		this.idloguserposte = idloguserposte;
-	}
-
-	/**
-	 * @return the dateDebut
-	 */
-	public Date getDateDebut() {
-		return dateDebut;
-	}
-
-	/**
-	 * @param dateDebut the dateDebut to set
-	 */
-	public void setDateDebut(Date dateDebut) {
-		this.dateDebut = dateDebut;
-	}
-
-	/**
-	 * @return the dateFin
-	 */
 	public Date getDateFin() {
 		return dateFin;
 	}
 
-	/**
-	 * @param dateFin the dateFin to set
-	 */
 	public void setDateFin(Date dateFin) {
 		this.dateFin = dateFin;
 	}
 
-	/**
-	 * @return the actiondo
-	 */
-	public String getActiondo() {
-		return actiondo;
+	public Long getIdloguserposte() {
+		return idloguserposte;
 	}
 
-	/**
-	 * @param actiondo the actiondo to set
-	 */
-	public void setActiondo(String actiondo) {
-		this.actiondo = actiondo;
+	public Date getDateDebut() {
+		return dateDebut;
 	}
 
-	/**
-	 * @return the posteId
-	 */
 	public Postes getPosteId() {
 		return posteId;
 	}
 
-	/**
-	 * @param posteId the posteId to set
-	 */
-	public void setPosteId(Postes posteId) {
-		this.posteId = posteId;
-	}
-
-	/**
-	 * @return the userId
-	 */
-	public Users getUserId() {
-		return userId;
-	}
-
-	/**
-	 * @param userId the userId to set
-	 */
-	public void setUserId(Users userId) {
-		this.userId = userId;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (!(obj instanceof LogPosteUser))
-			return false;
-		LogPosteUser other = (LogPosteUser) obj;
-		return Objects.equals(actiondo, other.actiondo) && Objects.equals(dateDebut, other.dateDebut)
-				&& Objects.equals(dateFin, other.dateFin) && Objects.equals(idloguserposte, other.idloguserposte)
-				&& Objects.equals(posteId, other.posteId) && Objects.equals(userId, other.userId);
+	public String getLdaplogin() {
+		return ldaplogin;
 	}
 
 	@Override
 	public String toString() {
 		return "LogPosteUser [idloguserposte=" + idloguserposte + ", dateDebut=" + dateDebut + ", dateFin=" + dateFin
-				+ ", actiondo=" + actiondo + ", posteId=" + posteId + ", userId=" + userId + "]";
+				+ ", posteId=" + posteId + ", ldaplogin=" + ldaplogin + "]";
 	}
+
 	
-    
     
 }

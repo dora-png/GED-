@@ -58,7 +58,7 @@ public class Structures implements Serializable {
     private boolean active = true;
         
     @OneToMany(mappedBy = "structure", fetch = FetchType.LAZY)
-	@JsonIncludeProperties(value = { "idposte", "name", "active", "posteSubalterne", "posteSuperieur", "groupslistes" })
+	@JsonIncludeProperties(value = { "idposte", "name", "active", "posteSubalterne", "posteSuperieur"})
 	private Set<Postes> postes;
     
 	@ManyToOne

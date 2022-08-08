@@ -14,15 +14,16 @@ import org.springframework.stereotype.Service;
 
 import com.microservice.ged.beans.Liasses;
 import com.microservice.ged.beans.LogPosteUser;
-import com.microservice.ged.beans.Postes;
-import com.microservice.ged.beans.Roles;
+import com.microservice.ged.beans.Profiles;
+import com.microservice.ged.beans.Droits;
 import com.microservice.ged.beans.WorkFlow;
-import com.microservice.ged.beans.WorkFlowPoste;
+import com.microservice.ged.beans.WorkFlowProfiles;
+import com.microservice.ged.repository.DroitsRepo;
 import com.microservice.ged.repository.LiassesRepo;
 import com.microservice.ged.repository.LogPosteUserRepo;
-import com.microservice.ged.repository.PosteRepo;
-import com.microservice.ged.repository.RolesRepo;
-import com.microservice.ged.repository.WorkFlowPosteRepo;
+import com.microservice.ged.repository.ProfilesRepo;
+import com.microservice.ged.repository.DroitsRepo;
+import com.microservice.ged.repository.WorkFlowProfilesRepo;
 import com.microservice.ged.repository.WorkFlowRepo;
 import com.microservice.ged.service.WorkFlowService;
 import com.microservice.ged.utils.WorkFlowPosteListe;
@@ -32,16 +33,16 @@ import com.microservice.ged.utils.WorkFlowPosteListe;
 public class WorkFlowServiceImpl implements WorkFlowService {
 	
 	@Autowired
-	WorkFlowPosteRepo workFlowPosteRepo;
+	WorkFlowProfilesRepo workFlowProfilesRepo;
 	
 	@Autowired
 	WorkFlowRepo workFlowRepo;
 	
 	@Autowired
-	PosteRepo posteRepo;
+	ProfilesRepo profilesRepo;
 	
 	@Autowired
-	RolesRepo rolesRepo;
+	DroitsRepo droitsRepo;
 	
 	@Autowired
 	LiassesRepo liassesRepo;
@@ -51,85 +52,84 @@ public class WorkFlowServiceImpl implements WorkFlowService {
 	
 
 	
-	private void userExist(Long posteId, String roles)  throws Exception   {
+	/*private void userExist(Long posteId, String droits)  throws Exception   {
 		if(posteRepo.findByIdposteAndActiveTrue(posteId)==null) {
 			throw new Exception("Poste not exist");	
 		}
-		Roles role= rolesRepo.findByName(roles);
+		Droits role= droitsRepo.findByName(droits);
 		//if(!posteRepo.findByIdposte(posteId).getRoles().contains(role)) {
 		//	throw new Exception("Forbidden");				
 		//}
-	}
+	}*/
 
 	@Override
-	public Page<WorkFlow> defaultList(int page, int size) throws Exception {
+	public Page<WorkFlow> findAllWorkFlow(int page, int size) throws Exception {
 		return workFlowRepo.findAll(PageRequest.of(page, size,Sort.by("idworkflows").descending()));
 	}
 
 	@Override
-	public Page<WorkFlow> findAll(int page, int size) throws Exception {
-		return workFlowRepo.findAll(PageRequest.of(page, size,Sort.by("idworkflows").descending()));
-	}
-
-	@Override
-	public Page<WorkFlow> searchByName(String name, int page, int size) throws Exception {
+	public Page<WorkFlow> searchWorkFlowByName(String name, int page, int size) throws Exception {
 		return workFlowRepo.findByNameContaining(name, PageRequest.of(page, size,Sort.by("idworkflows").descending()));
 	}
 
 	@Override
-	public Page<WorkFlow> searchBySigle(String name, int page, int size) throws Exception {
+	public Page<WorkFlow> searchWorkFlowBySigle(String name, int page, int size) throws Exception {
 		return workFlowRepo.findBySigleContaining(name, PageRequest.of(page, size,Sort.by("idworkflows").descending()));
 	}
 
 	@Override
-	public Page<WorkFlowPoste> allPosteInWorkFlow(Long idWorkFlow, int page, int size) throws Exception {
+	public Page<WorkFlowProfiles> allProfilesInWorkFlow(Long idWorkFlow, int page, int size) throws Exception {
 		WorkFlow workFlow = workFlowRepo.findByIdworkflows(idWorkFlow);
 		if(workFlow==null) {
 			throw new Exception("Error");	
 		}
-		return workFlowPosteRepo.findByIsactiveTrueAndWorkflowIdOrderByLevelDesc(workFlow, PageRequest.of(page, size));
+		return workFlowProfilesRepo.findByIsactiveTrueAndWorkflowIdOrderByLevelDesc(workFlow, PageRequest.of(page, size));
 	}
 
 	@Override
-	public Page<WorkFlowPoste> allWorkFlowInPoste(Long idPostes, int page, int size) throws Exception {
-		Postes poste = posteRepo.findByIdposteAndActiveTrue(idPostes);
-		if(poste==null) {
+	public Page<WorkFlowProfiles> allWorkFlowInProfiles(Long idPostes, int page, int size) throws Exception {
+		Profiles profiles = profilesRepo.findByIdprofiles(idPostes);
+		if(profiles==null) {
 			throw new Exception("Error");	
 		}
-		return workFlowPosteRepo.findByIsactiveTrueAndPosteIdOrderByLevelDesc(poste, PageRequest.of(page, size));
+		return workFlowProfilesRepo.findByIsactiveTrueAndProfilesIdOrderByLevelDesc(profiles, PageRequest.of(page, size));
 	}
 
 	@Override
-	public void add(WorkFlow workFlow) throws Exception {
+	public void addWorkFlow(WorkFlow workFlow) throws Exception {
 		if(workFlowRepo.findByName(workFlow.getName())!=null) {
 			throw new Exception("WorkFlow with name "+workFlow.getName()+" already exist");
 		}
 		if(workFlowRepo.findBySigle(workFlow.getSigle())!=null) {
 			throw new Exception("WorkFlow with sigle "+workFlow.getSigle()+" already exist");
 		}
+		workFlow.setIdworkflows(null);
+		workFlow.setDateCreation(null);
+		workFlow.setLiasses(null);
+		workFlow.setTypeDocs(null);
 		workFlowRepo.save(workFlow);		
 	}
 
 	@Override
-	public void addPosteToWorkFlow(List<WorkFlowPoste> workFlowPoste) throws Exception {
+	public void addProfileToWorkFlow(List<WorkFlowProfiles> workFlowProfiles) throws Exception {
 			try {
-				workFlowPosteRepo.saveAll(workFlowPoste);
+				workFlowProfilesRepo.saveAll(workFlowProfiles);
 			} catch (Exception e) {
 				throw new Exception("Error while update workFlow");
 			}		
 	}
 
 	@Override
-	public void removePosteToWorkFlow(WorkFlowPoste workFlowPoste) throws Exception {
+	public void removeProfileToWorkFlow(WorkFlowProfiles workFlowProfiles) throws Exception {
 			try {
-				int level = workFlowPoste.getLevel();
-				workFlowPoste.setIsactive(false);
-				workFlowPosteRepo.save(workFlowPoste);
-				List<WorkFlowPoste> workFlowPostesList = workFlowPosteRepo.findByIsactiveTrueAndWorkflowIdAndLevelGreaterThan(workFlowPoste.getWorkflowId(), level);
-				if(!workFlowPostesList.isEmpty()) {
-					for(WorkFlowPoste item : workFlowPostesList) {
+				int level = workFlowProfiles.getLevel();
+				workFlowProfiles.setIsactive(false);
+				workFlowProfilesRepo.save(workFlowProfiles);
+				List<WorkFlowProfiles> workFlowProfilesList = workFlowProfilesRepo.findByIsactiveTrueAndWorkflowIdAndLevelGreaterThan(workFlowProfiles.getWorkflowId(), level);
+				if(!workFlowProfilesList.isEmpty()) {
+					for(WorkFlowProfiles item : workFlowProfilesList) {
 						item.setLevel(item.getLevel()-1);
-						workFlowPosteRepo.save(item);
+						workFlowProfilesRepo.save(item);
 					}
 				}
 			} catch (Exception e) {
@@ -152,7 +152,7 @@ public class WorkFlowServiceImpl implements WorkFlowService {
 			if(workFlow==null) {
 				throw new Exception("WorkFlow with name "+workFlow.getName()+" not exist");
 			}
-			liasse = liassesRepo.findByIdliasse(liasse.getIdliasse());
+			liasse = liassesRepo.findByArchiveFalseAndIdliasse(liasse.getIdliasse());
 			if(liasse==null) {
 				throw new Exception("Liasse not exist");
 			}
@@ -173,52 +173,33 @@ public class WorkFlowServiceImpl implements WorkFlowService {
 	}
 
 	@Override
-	public void update(WorkFlow workFlow) throws Exception {
-		if(workFlowRepo.findByIdworkflows(workFlow.getIdworkflows())==null) {
-			throw new Exception("WorkFlow with name "+workFlow.getName()+" not exist");
-		}
-			try {
-				workFlowRepo.save(workFlow);
-			} catch (Exception e) {
-				throw new Exception("Error while update workFlow");
-			}
-		
-	}
-
-	@Override
-	public void delete( WorkFlow workFlow) throws Exception {
-		if(workFlowRepo.findByName(workFlow.getName())==null) {
-			throw new Exception("WorkFlow with name "+workFlow.getName()+" not exist");
-		}
-		if(workFlowRepo.findBySigle(workFlow.getSigle())==null) {
-			throw new Exception("WorkFlow with sigle "+workFlow.getSigle()+" not exist");
-		}
-		if(workFlowRepo.findByIdworkflows(workFlow.getIdworkflows())==null) {
+	public void updateWorkFlowStatus(Long workFlowid) throws Exception {
+		WorkFlow workFlow = workFlowRepo.findByIdworkflows(workFlowid);
+		if(workFlow==null) {
 			throw new Exception("WorkFlow with name "+workFlow.getName()+" not exist");
 		}
 		try {
-				
-				workFlowRepo.delete(workFlow);
-			} catch (Exception e) {
-				throw new Exception("Error while delete workFlow");
-			}			
+			//workFlow.
+			workFlowRepo.save(workFlow);
+		} catch (Exception e) {
+			throw new Exception("Error while update workFlow");
+		}		
 	}
 
 	@Override
-	public WorkFlow findById(Long id) throws Exception {
+	public WorkFlow findWorkFlowById(Long id) throws Exception {
 		return workFlowRepo.findById(id).orElseThrow(() -> new Exception("Not exist"));
 	}
 
 	@Override
-	public WorkFlow findByName(String name) throws Exception {
+	public WorkFlow findWorkFlowByName(String name) throws Exception {
 		return workFlowRepo.findByName(name);
 	}
 
 	@Override
-	public WorkFlow findBySigle(String sigle) throws Exception {
+	public WorkFlow findWorkFlowBySigle(String sigle) throws Exception {
 		return workFlowRepo.findBySigle(sigle);
 	}
-
 
 
 }

@@ -6,24 +6,22 @@ import org.springframework.data.domain.Page;
 
 import com.microservice.ged.beans.Postes;
 import com.microservice.ged.beans.WorkFlow;
-import com.microservice.ged.beans.WorkFlowPoste;
+import com.microservice.ged.beans.WorkFlowProfiles;
 import com.microservice.ged.utils.WorkFlowPosteListe;
 
-public interface WorkFlowService {
-	public Page<WorkFlow> defaultList(int page, int size) throws Exception;
-	public Page<WorkFlow> findAll(int page, int size) throws Exception;
-	public Page<WorkFlow> searchByName(String name,int page, int size) throws Exception;
-	public Page<WorkFlow> searchBySigle(String name,int page, int size) throws Exception;
-	public Page<WorkFlowPoste> allPosteInWorkFlow(Long idWorkFlow, int page, int size) throws Exception;
-	public Page<WorkFlowPoste> allWorkFlowInPoste( Long idPostes, int page, int size) throws Exception;
-	public void add(WorkFlow workFlow) throws Exception;
-	public void addPosteToWorkFlow(List<WorkFlowPoste> workFlowPoste) throws Exception;
-	public void removePosteToWorkFlow(WorkFlowPoste workFlowPoste) throws Exception;
+public interface WorkFlowService {	
+	public Page<WorkFlow> findAllWorkFlow(int page, int size) throws Exception;
+	public Page<WorkFlow> searchWorkFlowByName(String name,int page, int size) throws Exception;
+	public Page<WorkFlow> searchWorkFlowBySigle(String name,int page, int size) throws Exception;
+	public Page<WorkFlowProfiles> allProfilesInWorkFlow(Long idWorkFlow, int page, int size) throws Exception;
+	public Page<WorkFlowProfiles> allWorkFlowInProfiles( Long idPostes, int page, int size) throws Exception;
+	public void addWorkFlow(WorkFlow workFlow) throws Exception;
+	public void addProfileToWorkFlow(List<WorkFlowProfiles> workFlowProfiles) throws Exception;
+	public void removeProfileToWorkFlow(WorkFlowProfiles workFlowProfiles) throws Exception;
 	public void addLiasseToWorkFlow( WorkFlow workFlow) throws Exception;
-	public void update(WorkFlow workFlow) throws Exception;
-	public void delete(WorkFlow workFlow) throws Exception;
-	public WorkFlow findById(Long id) throws Exception;
-	public WorkFlow findByName(String name) throws Exception;
-	public WorkFlow findBySigle(String sigle) throws Exception;
+	public void updateWorkFlowStatus(Long workFlowid) throws Exception;
+	public WorkFlow findWorkFlowById(Long id) throws Exception;
+	public WorkFlow findWorkFlowByName(String name) throws Exception;
+	public WorkFlow findWorkFlowBySigle(String sigle) throws Exception;
 
 }

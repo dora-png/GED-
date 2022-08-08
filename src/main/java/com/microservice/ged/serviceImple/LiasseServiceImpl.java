@@ -14,13 +14,12 @@ import com.microservice.ged.beans.Docs;
 import com.microservice.ged.beans.Liasses;
 import com.microservice.ged.beans.LogPosteUser;
 import com.microservice.ged.beans.Postes;
-import com.microservice.ged.beans.Roles;
 import com.microservice.ged.beans.TypeLiasses;
-import com.microservice.ged.repository.AppUserRepo;
 import com.microservice.ged.repository.DocsRepo;
 import com.microservice.ged.repository.LiassesRepo;
 import com.microservice.ged.repository.LogPosteUserRepo;
 import com.microservice.ged.repository.PosteRepo;
+import com.microservice.ged.service.FileRessourceService;
 import com.microservice.ged.service.LiasseService;
 
 
@@ -28,7 +27,7 @@ import com.microservice.ged.service.LiasseService;
 @Service
 public class LiasseServiceImpl implements LiasseService {
 	
-	@Autowired
+	/*@Autowired
 	private DocsRepo docsRepo;
 
 	@Autowired
@@ -43,29 +42,11 @@ public class LiasseServiceImpl implements LiasseService {
 	@Autowired
 	LogPosteUserRepo logPosteUserRepo;
 
-	@Override
-	public Page<Liasses> searchLiassesByName(String name, int page, int size) throws Exception {
-		// TODO Auto-generated method stub
-		return liassesRepo.findByNameLike(name, PageRequest.of(page, size));
-	}
 
-	@Override
-	public Page<Liasses> searchLiassesBySigle(String sigle, int page, int size) throws Exception {
-		// TODO Auto-generated method stub
-		return liassesRepo.findBySigleLike(sigle, PageRequest.of(page, size));
-	}
+	@Autowired
+	FileRessourceService fileRessourceService;
+	
 
-	@Override
-	public void update(Liasses liasse) throws Exception {
-		if(liassesRepo.findByIdliasse(liasse.getIdliasse())==null) {
-			throw new Exception("Liasse with name "+liasse.getName()+" not exist");
-		}
-		try {
-			liassesRepo.save(liasse);
-		} catch (Exception e) {
-			throw new Exception("Error while update");
-		}
-	}
 
 	@Override
 	public void addDocToLiasse(Liasses liasse) throws Exception {
@@ -76,9 +57,6 @@ public class LiasseServiceImpl implements LiasseService {
 			Docs docs = new Docs();
 			while(docsIterato.hasNext()) {
 				docs = docsIterato.next();
-			}
-			if(liassesRepo.findByIdliasse(liasse.getIdliasse())==null) {
-				throw new Exception("Liasse with name "+liasse.getName()+" not exist");
 			}
 			if(docsRepo.findByIddoc(docs.getIddoc())==null) {
 				throw new Exception("Document with name "+docs.getName()+" not exist");
@@ -98,43 +76,13 @@ public class LiasseServiceImpl implements LiasseService {
 	}
 
 	@Override
-	public Liasses findByName(String name) throws Exception {
-		// TODO Auto-generated method stub
-		return liassesRepo.findByName(name);
-	}
-
-	@Override
-	public Liasses findBySigle(String sigle) throws Exception {
-		// TODO Auto-generated method stub
-		return liassesRepo.findBySigle(sigle);
-	}
-
-	@Override
 	public Page<Liasses> findByTypeliasse(TypeLiasses typeliasse, int page, int size) throws Exception {
 		// TODO Auto-generated method stub
 		return liassesRepo.findByTypeliasse(typeliasse, PageRequest.of(page, size));
 	}
 
 	@Override
-	public Page<Liasses> findByDateCreation(Date dateCreation, int page, int size) throws Exception {
-		// TODO Auto-generated method stub
-		return liassesRepo.findByDateCreation(dateCreation, PageRequest.of(page, size));
-	}
-
-	@Override
-	public Page<Liasses> findByDateCreationBetween(Date date1, Date date2, int page, int size) throws Exception {
-		// TODO Auto-generated method stub
-		return liassesRepo.findByDateCreationBetween(date1, date2, PageRequest.of(page, size));
-	}
-
-	@Override
 	public Liasses addLiasseForWorkflow(Liasses liasse) throws Exception {
-		if(liassesRepo.findByName(liasse.getName())!=null) {
-			throw new Exception("Liasse with name "+liasse.getName()+" already exist");
-		}
-		if(liassesRepo.findBySigle(liasse.getSigle())!=null) {
-			throw new Exception("Liasses with sigle "+liasse.getSigle()+" already exist");
-		}
 		try {
 			return liassesRepo.save(liasse);
 		} catch (Exception e) {
@@ -144,25 +92,21 @@ public class LiasseServiceImpl implements LiasseService {
 
 	@Override
 	public Liasses addLiasseForWorkflowImportData(Liasses liasse) throws Exception {
-		if(liassesRepo.findByName(liasse.getName())!=null) {
-			throw new Exception("Liasse with name "+liasse.getName()+" already exist");
-		}
-		if(liassesRepo.findBySigle(liasse.getSigle())!=null) {
-			throw new Exception("Liasses with sigle "+liasse.getSigle()+" already exist");
-		}
 		try {
 			return liassesRepo.save(liasse);
 		} catch (Exception e) {
 			throw new Exception("Error while create");
-		}
+		}//hjhjgkjhjhkjghjkhjkghjkhkhj
 	}
 
 	@Override
 	public Liasses addLiasseForUser(Liasses liasse) throws Exception {
-		if(liassesRepo.findByName(liasse.getName())!=null) {
+		liasse.setName(liasse.getName().toLowerCase());
+		liasse.setSigle(liasse.getSigle().toUpperCase());
+		if(liassesRepo.findByUseridAndName(liasse.getUserid(), liasse.getName())!=null) {
 			throw new Exception("Liasse with name "+liasse.getName()+" already exist");
 		}
-		if(liassesRepo.findBySigle(liasse.getSigle())!=null) {
+		if(liassesRepo.findByUseridAndSigle(liasse.getUserid(), liasse.getSigle())!=null) {
 			throw new Exception("Liasses with sigle "+liasse.getSigle()+" already exist");
 		}
 		try {
@@ -174,17 +118,154 @@ public class LiasseServiceImpl implements LiasseService {
 
 	@Override
 	public Liasses addLiasseForUserImportData(Liasses liasse) throws Exception {
-		if(liassesRepo.findByName(liasse.getName())!=null) {
+		liasse.setName(liasse.getName().toLowerCase());
+		liasse.setSigle(liasse.getSigle().toUpperCase());
+		if(liassesRepo.findByUseridAndName(liasse.getUserid(), liasse.getName())!=null) {
 			throw new Exception("Liasse with name "+liasse.getName()+" already exist");
 		}
-		if(liassesRepo.findBySigle(liasse.getSigle())!=null) {
+		if(liassesRepo.findByUseridAndSigle(liasse.getUserid(), liasse.getSigle())!=null) {
 			throw new Exception("Liasses with sigle "+liasse.getSigle()+" already exist");
 		}
-		try {
-			return liassesRepo.save(liasse);
-		} catch (Exception e) {
-			throw new Exception("Error while create");
-		}
+		//jkhjkhkjlshfkjhsdkljfhsdjkfhksdj
+		return liassesRepo.save(liasse);
 	}
+
+	@Override
+	public Page<Liasses> findByNameLike(String name, int page, int size) throws Exception {
+		// TODO Auto-generated method stub
+		return liassesRepo.findByNameLike(name, PageRequest.of(page, size));
+	}
+
+	@Override
+	public Page<Liasses> findByNameLikeAndArchiveTrue(String name, int page, int size) throws Exception {
+		// TODO Auto-generated method stub
+		return liassesRepo.findByNameLikeAndArchiveTrue(name, PageRequest.of(page, size));
+	}
+
+	@Override
+	public Page<Liasses> findByNameLikeAndArchiveFalse(String name, int page, int size) throws Exception {
+		// TODO Auto-generated method stub
+		return liassesRepo.findByNameLikeAndArchiveFalse(name, PageRequest.of(page, size));
+	}
+
+	@Override
+	public Page<Liasses> findBySigleLike(String sigle, int page, int size) throws Exception {
+		// TODO Auto-generated method stub
+		return liassesRepo.findBySigleLike(sigle, PageRequest.of(page, size));
+	}
+
+	@Override
+	public Page<Liasses> findBySigleLikeAndArchiveTrue(String sigle, int page, int size) throws Exception {
+		// TODO Auto-generated method stub
+		return  liassesRepo.findBySigleLikeAndArchiveTrue(sigle, PageRequest.of(page, size));
+	}
+
+	@Override
+	public Page<Liasses> findBySigleLikeAndArchiveFalse(String sigle, int page, int size) throws Exception {
+		// TODO Auto-generated method stub
+		return liassesRepo.findBySigleLikeAndArchiveFalse(sigle, PageRequest.of(page, size));
+	}
+
+	@Override
+	public Page<Liasses> findByTypeliasseAndArchiveTrue(TypeLiasses typeliasse, int page, int size) throws Exception {
+		// TODO Auto-generated method stub
+		return liassesRepo.findByTypeliasseAndArchiveTrue(typeliasse, PageRequest.of(page, size));
+	}
+
+	@Override
+	public Page<Liasses> findByTypeliasseAndArchiveFalse(TypeLiasses typeliasse, int page, int size) throws Exception {
+		// TODO Auto-generated method stub
+		return liassesRepo.findByTypeliasseAndArchiveFalse(typeliasse, PageRequest.of(page, size));
+	}
+
+	@Override
+	public Page<Liasses> findByArchiveFalse(int page, int size) {
+		// TODO Auto-generated method stub
+		return liassesRepo.findByArchiveFalse(PageRequest.of(page, size));
+	}
+
+	@Override
+	public Page<Liasses> findByDateCreationAndArchiveFalse(Date dateCreation, int page, int size) throws Exception {
+		// TODO Auto-generated method stub
+		return liassesRepo.findByDateCreationAndArchiveFalse(dateCreation, PageRequest.of(page, size));
+	}
+
+	@Override
+	public Page<Liasses> findByDateCreationBetweenAndArchiveFalse(Date date1, Date date2, int page, int size) throws Exception {
+		// TODO Auto-generated method stub
+		return liassesRepo.findByDateCreationBetweenAndArchiveFalse(date1, date2, PageRequest.of(page, size));
+	}
+
+	@Override
+	public Page<Liasses> findByDateCreationAndArchiveTrue(Date dateCreation, int page, int size) throws Exception {
+		// TODO Auto-generated method stub
+		return liassesRepo.findByDateCreationAndArchiveTrue(dateCreation, PageRequest.of(page, size));
+	}
+
+	@Override
+	public Page<Liasses> findByDateCreationBetweenAndArchiveTrue(Date date1, Date date2, int page, int size) throws Exception {
+		// TODO Auto-generated method stub
+		return liassesRepo.findByDateCreationBetweenAndArchiveTrue(date1, date2, PageRequest.of(page, size));
+	}
+	
+
+	@Override
+	public void updateName(Liasses liasse) throws Exception {
+		// TODO Auto-generated method stub
+		if(liassesRepo.findByArchiveTrueAndIdliasse(liasse.getIdliasse())==null) {
+			throw new Exception("Liasse with name "+liasse.getName()+" already exist");
+		}
+		liassesRepo.save(liasse);
+	}
+	
+
+	@Override
+	public void archiveLiasse(Liasses liasse) throws Exception {
+		// TODO Auto-generated method stub
+		if(liassesRepo.findByArchiveTrueAndIdliasse(liasse.getIdliasse())==null) {
+			throw new Exception("Liasse with name "+liasse.getName()+" already exist");
+		}
+		liasse.setArchive(true);
+		liassesRepo.save(liasse);
+	}
+
+	
+	@Override
+	public Liasses findByIdliasse(Long id) throws Exception {
+		// TODO Auto-generated method stub
+		return liassesRepo.findByArchiveTrueAndIdliasse(id);
+	}
+
+	@Override
+	public Page<Liasses> findByArchiveTrue(int page, int size) {
+		// TODO Auto-generated method stub
+		return liassesRepo.findByArchiveTrue(PageRequest.of(page, size));
+	}
+
+	@Override
+	public Page<Liasses> findAllLiasses(int page, int size) {
+		// TODO Auto-generated method stub
+		return liassesRepo.findAll(PageRequest.of(page, size));
+	}
+
+	@Override
+	public void createLiasseUser(Liasses liasse) throws Exception {
+		// TODO Auto-generated method stub
+		liasse = liassesRepo.save(liasse);
+		String path = "LiasseN°"+liasse.getIdliasse();
+		fileRessourceService.createFolderUser(liasse.getUserid(),path);
+	}
+
+	@Override
+	public void createLiasseWorkFlow(Liasses liasse) throws Exception {
+		// TODO Auto-generated method stub
+		liasse = liassesRepo.save(liasse);
+		fileRessourceService.createWorkFlowDir(
+				"TypeLiasseN°"+liasse.getTypeliasse().getIdtypeliasse()+"/"+
+				"YearN°"+liasse.getDateCreation().getYear()+"/"+
+				"MonthN°"+liasse.getDateCreation().getMonth()+"/"+
+				"WorkFlowN°"+liasse.getWorkflowid().getIdworkflows()+"/"+
+				"LiasseN°"+liasse.getIdliasse());
+	}*/
 
 }

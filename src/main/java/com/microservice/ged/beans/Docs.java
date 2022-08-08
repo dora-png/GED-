@@ -43,9 +43,6 @@ public class Docs implements Serializable {
     @Column(name = "path", nullable = false)
     private String path;
     
-    @Column(name = "cantset")
-    private String cantset; 
-    
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "dateCreation", nullable = false)
 	@CreationTimestamp
@@ -58,8 +55,20 @@ public class Docs implements Serializable {
     
     @ManyToOne
    	@JoinColumn(nullable = false)
-   	@JsonIncludeProperties(value = {"idliasse", "name", "sigle" })
+   	@JsonIncludeProperties(value = {"idliasse", "name", "sigle", "typeliasse", "dateCreation" })
    	private Liasses liasse;
+
+    @Column(name = "archive", nullable = false)
+    private boolean archive = false;
+    
+    
+	public boolean isArchive() {
+		return archive;
+	}
+
+	public void setArchive(boolean archive) {
+		this.archive = archive;
+	}
 
 	/**
 	 * 
@@ -86,14 +95,13 @@ public class Docs implements Serializable {
 	 * @param typedoc
 	 * @param liasse
 	 */
-	public Docs(String name, String extension, String description, String path, String cantset, TypeDocs typedoc,
+	public Docs(String name, String extension, String description, String path, TypeDocs typedoc,
 			Liasses liasse) {
 		super();
 		this.name = name;
 		this.extension = extension;
 		this.description = description;
 		this.path = path;
-		this.cantset = cantset;
 		this.typedoc = typedoc;
 		this.liasse = liasse;
 	}
@@ -168,19 +176,7 @@ public class Docs implements Serializable {
 		this.path = path;
 	}
 
-	/**
-	 * @return the cantset
-	 */
-	public String getCantset() {
-		return cantset;
-	}
-
-	/**
-	 * @param cantset the cantset to set
-	 */
-	public void setCantset(String cantset) {
-		this.cantset = cantset;
-	}
+	
 
 	/**
 	 * @return the typedoc
@@ -225,7 +221,7 @@ public class Docs implements Serializable {
 		if (!(obj instanceof Docs))
 			return false;
 		Docs other = (Docs) obj;
-		return Objects.equals(cantset, other.cantset) && Objects.equals(description, other.description)
+		return Objects.equals(description, other.description)
 				&& Objects.equals(extension, other.extension) && Objects.equals(iddoc, other.iddoc)
 				&& Objects.equals(liasse, other.liasse) && Objects.equals(name, other.name)
 				&& Objects.equals(path, other.path);
@@ -234,7 +230,7 @@ public class Docs implements Serializable {
 	@Override
 	public String toString() {
 		return "Docs [iddoc=" + iddoc + ", name=" + name + ", extension=" + extension + ", description=" + description
-				+ ", path=" + path + ", cantset=" + cantset + "]";
+				+ ", path=" + path + "]";
 	}
     
     

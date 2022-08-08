@@ -41,113 +41,79 @@ public class GroupUser implements Serializable {
     @Column(name = "idgroupes", nullable = false)
     private Long idgroupes;
     
-    @Column(name = "name", unique = true, nullable = false, updatable = false)
+    @Column(name = "name", unique = true, nullable = false)
     private String name;
     
-    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "sigle", unique = true, nullable = false)
+    private String sigle;
+    
+    @Column(name = "couleur", nullable = false)
+    private String couleur;
+    
+    
+    @Column(name = "status")
+    private Boolean status;
+    
+	@Temporal(TemporalType.TIMESTAMP)
     @Column(name = "dateCreation", nullable = false)
 	@CreationTimestamp
 	private Date dateCreation;
-    
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
-	private List<Roles> roleslistes = new ArrayList<>();
-    
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
-	private List<Postes> posteslistes = new ArrayList<>();
-
-	/**
-	 * 
-	 */
 	public GroupUser() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
-	/**
-	 * @param idgroupes
-	 */
-	public GroupUser(Long idgroupes) {
-		super();
-		this.idgroupes = idgroupes;
-	}
-
-	/**
-	 * @param name
-	 * @param roleslistes
-	 */
-	public GroupUser(String name, List<Roles> roleslistes) {
+	public GroupUser(String name, String sigle, String couleur, Boolean status) {
 		super();
 		this.name = name;
-		this.roleslistes = roleslistes;
+		this.sigle = sigle;
+		this.couleur = couleur;
+		this.status = status;
 	}
 
-	/**
-	 * @param name
-	 */
-	public GroupUser(String name) {
-		super();
-		this.name = name;
-	}
-
-	/**
-	 * @return the idgroupes
-	 */
-	public Long getIdgroupes() {
-		return idgroupes;
-	}
-
-	/**
-	 * @param idgroupes the idgroupes to set
-	 */
-	public void setIdgroupes(Long idgroupes) {
-		this.idgroupes = idgroupes;
-	}
-
-	/**
-	 * @return the name
-	 */
 	public String getName() {
 		return name;
 	}
 
-	/**
-	 * @param name the name to set
-	 */
 	public void setName(String name) {
 		this.name = name;
 	}
 
-	/**
-	 * @return the roleslistes
-	 */
-	public List<Roles> getRoleslistes() {
-		return roleslistes;
+	public String getSigle() {
+		return sigle;
 	}
 
-	/**
-	 * @param roleslistes the roleslistes to set
-	 */
-	public void setRoleslistes(List<Roles> roleslistes) {
-		this.roleslistes = roleslistes;
+	public void setSigle(String sigle) {
+		this.sigle = sigle;
 	}
 
-	/**
-	 * @return the posteslistes
-	 */
-	public List<Postes> getPosteslistes() {
-		return posteslistes;
+	public String getCouleur() {
+		return couleur;
 	}
 
-	/**
-	 * @param posteslistes the posteslistes to set
-	 */
-	public void setPosteslistes(List<Postes> posteslistes) {
-		this.posteslistes = posteslistes;
+	public void setCouleur(String couleur) {
+		this.couleur = couleur;
+	}
+
+	public Boolean getStatus() {
+		return status;
+	}
+
+	public void setStatus(Boolean status) {
+		this.status = status;
+	}
+
+	public Long getIdgroupes() {
+		return idgroupes;
 	}
 
 	public Date getDateCreation() {
 		return dateCreation;
+	}
+	
+
+    public void setIdgroupes(Long idgroupes) {
+		this.idgroupes = idgroupes;
 	}
 
 	public void setDateCreation(Date dateCreation) {
@@ -155,9 +121,4 @@ public class GroupUser implements Serializable {
 	}
 
 
-	
-
-	
-    
-    
 }

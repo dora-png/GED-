@@ -21,62 +21,187 @@ import com.microservice.ged.service.LiasseService;
 @RestController
 @CrossOrigin("*")
 public class LiasseController {
-	
+	/*
 	@Autowired
 	LiasseService liasseService;
+	
+	@GetMapping("/liasses/all")
+	public ResponseEntity<Page<Liasses>> findAllLiasse(
+			@RequestParam(name = "page", defaultValue = "0") int page,
+			@RequestParam(name = "size", defaultValue = "5") int size)  throws Exception {
+		Page<Liasses> liasses = liasseService.findAllLiasses(page, size);
+		if(liasses.isEmpty()) {
+			return  ResponseEntity.noContent().build();
+		}else {
+			return  ResponseEntity.ok().body(liasses);
+		}
+	}
+
+	@GetMapping("/liasses/archive")
+	public ResponseEntity<Page<Liasses>> findLiasseArchived(
+			@RequestParam(name = "page", defaultValue = "0") int page,
+			@RequestParam(name = "size", defaultValue = "5") int size)  throws Exception {
+		Page<Liasses> liasses = liasseService.findByArchiveTrue(page, size);
+		if(liasses.isEmpty()) {
+			return  ResponseEntity.noContent().build();
+		}else {
+			return  ResponseEntity.ok().body(liasses);
+		}
+	}
+
+	@GetMapping("/liasses/not-archived")
+	public ResponseEntity<Page<Liasses>> findLiasseNotArchived(
+			@RequestParam(name = "page", defaultValue = "0") int page,
+			@RequestParam(name = "size", defaultValue = "5") int size)  throws Exception {
+		Page<Liasses> liasses = liasseService.findByArchiveFalse(page, size);
+		if(liasses.isEmpty()) {
+			return  ResponseEntity.noContent().build();
+		}else {
+			return  ResponseEntity.ok().body(liasses);
+		}
+	}
 
 	@GetMapping("/liasses/search-by-sigle")
-	public ResponseEntity<Page<Liasses>> searchBySigleLiasse(
-			@RequestParam(name = "sigle") String sigle,
+	public ResponseEntity<Page<Liasses>> searchLiasseBySigle(
+			@RequestParam(name = "sigle", required = true) String sigle,
 			@RequestParam(name = "page", defaultValue = "0") int page,
-			@RequestParam(name = "size", defaultValue = "10") int size) {
+			@RequestParam(name = "size", defaultValue = "5") int size)  throws Exception {
 		if(sigle.trim().isEmpty()) {
-			return ResponseEntity.badRequest().build();
-		}else if(sigle.isBlank()) {
-			return ResponseEntity.badRequest().build();
+			throw new Exception("Sigle is Empty");
+		}
+		if(sigle.isBlank()) {
+			throw new Exception("Sigle is Blank");
+		}
+		Page<Liasses> liasses = liasseService.findBySigleLike(sigle,page, size);
+		if(liasses.isEmpty()) {
+			return  ResponseEntity.noContent().build();
 		}else {
-			try {
-				Page<Liasses> liasses = liasseService.searchLiassesBySigle(sigle,page, size);
-				if(liasses.isEmpty()) {
-					return  ResponseEntity.noContent().build();
-				}else {
-					return  ResponseEntity.ok().body(liasses);
-				}			
-			} catch (Exception e) {
-				return ResponseEntity.badRequest().build();
-			}	
-		}	
+			return  ResponseEntity.ok().body(liasses);
+		}
+	}
+
+	@GetMapping("/liasses/search-archive-by-sigle")
+	public ResponseEntity<Page<Liasses>> searchBySigleLiasseArchive(
+			@RequestParam(name = "sigle", required = true) String sigle,
+			@RequestParam(name = "page", defaultValue = "0") int page,
+			@RequestParam(name = "size", defaultValue = "5") int size)  throws Exception {
+		if(sigle.trim().isEmpty()) {
+			throw new Exception("Sigle is Empty");
+		}
+		if(sigle.isBlank()) {
+			throw new Exception("Sigle is Blank");
+		}
+		Page<Liasses> liasses = liasseService.findBySigleLikeAndArchiveTrue(sigle,page, size);
+		if(liasses.isEmpty()) {
+			return  ResponseEntity.noContent().build();
+		}else {
+			return  ResponseEntity.ok().body(liasses);
+		}
+	}
+
+	@GetMapping("/liasses/search-by-sigle-user")
+	public ResponseEntity<Page<Liasses>> searchBySigleLiasse(
+			@RequestParam(name = "sigle", required = true) String sigle,
+			@RequestParam(name = "page", defaultValue = "0") int page,
+			@RequestParam(name = "size", defaultValue = "5") int size)  throws Exception {
+		if(sigle.trim().isEmpty()) {
+			throw new Exception("Sigle is Empty");
+		}
+		if(sigle.isBlank()) {
+			throw new Exception("Sigle is Blank");
+		}
+		Page<Liasses> liasses = liasseService.findBySigleLikeAndArchiveFalse(sigle,page, size);
+		if(liasses.isEmpty()) {
+			return  ResponseEntity.noContent().build();
+		}else {
+			return  ResponseEntity.ok().body(liasses);
+		}
+	}
+
+	@GetMapping("/liasses/search-by-name")
+	public ResponseEntity<Page<Liasses>> searchLiasseByName(
+			@RequestParam(name = "name", required = true) String name,
+			@RequestParam(name = "page", defaultValue = "0") int page,
+			@RequestParam(name = "size", defaultValue = "5") int size) throws Exception  {
+		if(name.trim().isEmpty()) {
+			throw new Exception("Name is Empty");
+		}if(name.isBlank()) {
+			throw new Exception("Name is Blank");
+		}
+		Page<Liasses> liasses = liasseService.findByNameLike(name,page, size);
+		if(liasses.isEmpty()) {
+			return  ResponseEntity.noContent().build();
+		}else {
+			return  ResponseEntity.ok().body(liasses);
+		}
+	}
+	
+	@GetMapping("/liasses/search-archive-by-name")
+	public ResponseEntity<Page<Liasses>> searchByNameLiasseArchive(
+			@RequestParam(name = "name", required = true) String name,
+			@RequestParam(name = "page", defaultValue = "0") int page,
+			@RequestParam(name = "size", defaultValue = "5") int size) throws Exception  {
+		if(name.trim().isEmpty()) {
+			throw new Exception("Name is Empty");
+		}if(name.isBlank()) {
+			throw new Exception("Name is Blank");
+		}
+		Page<Liasses> liasses = liasseService.findByNameLikeAndArchiveTrue(name,page, size);
+		if(liasses.isEmpty()) {
+			return  ResponseEntity.noContent().build();
+		}else {
+			return  ResponseEntity.ok().body(liasses);
+		}
+	}
+	
+	@GetMapping("/liasses/search-by-name-user")
+	public ResponseEntity<Page<Liasses>> searchByNameLiasse(
+			@RequestParam(name = "name", required = true) String name,
+			@RequestParam(name = "page", defaultValue = "0") int page,
+			@RequestParam(name = "size", defaultValue = "5") int size) throws Exception  {
+		if(name.trim().isEmpty()) {
+			throw new Exception("Name is Empty");
+		}if(name.isBlank()) {
+			throw new Exception("Name is Blank");
+		}
+		Page<Liasses> liasses = liasseService.findByNameLikeAndArchiveFalse(name,page, size);
+		if(liasses.isEmpty()) {
+			return  ResponseEntity.noContent().build();
+		}else {
+			return  ResponseEntity.ok().body(liasses);
+		}
 	}
 
 	
-	@GetMapping("/liasses/search-by-name")
-	public ResponseEntity<Page<Liasses>> searchByNameLiasse(
-			@RequestParam(name = "name", defaultValue = "") String name,
-			@RequestParam(name = "page", defaultValue = "0") int page,
-			@RequestParam(name = "size", defaultValue = "10") int size) {
-		if(name.trim().isEmpty()) {
+	@PostMapping("/liasses/create-workflow")
+	public ResponseEntity<?> createLiasseWorkFlow(
+			@RequestBody Liasses liasses) throws Exception {
+		try {
+			liasseService.updateName(liasses);
+			return  ResponseEntity.ok().build();		
+		} catch (Exception e) {
 			return ResponseEntity.badRequest().build();
-		}else if(name.isBlank()) {
-			return ResponseEntity.badRequest().build();
-		}else {
-			try {
-				Page<Liasses> liasses = liasseService.searchLiassesByName(name,page, size);
-				if(liasses.isEmpty()) {
-					return  ResponseEntity.noContent().build();
-				}else {
-					return  ResponseEntity.ok().body(liasses);
-				}			
-			} catch (Exception e) {
-				return ResponseEntity.badRequest().build();
-			}	
 		}	
 	}
-
+	
+	@PostMapping("/liasses/create-user")
+	public ResponseEntity<?> createLiasseUser(
+			@RequestBody Liasses liasses) throws Exception {
+		try {
+			liasseService.createLiasseUser(liasses);
+			return  ResponseEntity.ok().build();		
+		} catch (Exception e) {
+			return ResponseEntity.badRequest().build();
+		}	
+	}
+	
+	
+	
 	@PostMapping("/liasses/update")
 	public ResponseEntity<?> updateLiasse(
 			@RequestBody Liasses liasses) throws Exception {
 		try {
-			liasseService.update(liasses);
+			liasseService.updateName(liasses);
 			return  ResponseEntity.ok().build();		
 		} catch (Exception e) {
 			return ResponseEntity.badRequest().build();
@@ -103,31 +228,12 @@ public class LiasseController {
 		}	
 	}
 
-	@GetMapping("/liasses/find-by-typeliasse")
-	public ResponseEntity<Page<Liasses>> findByTypeliasse(
-			@RequestBody TypeLiasses typeliasse,
-			@RequestParam(name = "posteName") String posteName,
-			@RequestParam(name = "page", defaultValue = "0") int page,
-			@RequestParam(name = "size", defaultValue = "10") int size) throws Exception {
-		try {
-			Page<Liasses> liasses = liasseService.findByTypeliasse(typeliasse,page, size);
-			if(liasses.isEmpty()) {
-				return  ResponseEntity.noContent().build();
-			}else {
-				return  ResponseEntity.ok().body(liasses);
-			}			
-		} catch (Exception e) {
-			return ResponseEntity.badRequest().build();
-		}		
-	}
-
-
-	@GetMapping("/liasses/find-by-name")
+	@GetMapping("/liasses/find-by-id")
 	public ResponseEntity<Liasses> findByNameLiasse(
-			@RequestParam(name = "name") String name,
+			@RequestParam(name = "id") Long id,
 			@RequestParam(name = "posteName") String posteName) throws Exception {
-		return  ResponseEntity.ok().body(liasseService.findByName(name));
+		return  ResponseEntity.ok().body(liasseService.findByIdliasse(id));
 	}
-	
+	*/
 
 }

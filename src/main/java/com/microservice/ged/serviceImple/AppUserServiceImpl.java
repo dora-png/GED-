@@ -1,68 +1,106 @@
 package com.microservice.ged.serviceImple;
 
+import static org.springframework.ldap.query.LdapQueryBuilder.query;
+
+import java.util.List;
+
+import javax.naming.NamingException;
+import javax.naming.directory.Attributes;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.ldap.core.AttributesMapper;
+import org.springframework.ldap.core.LdapTemplate;
+import org.springframework.ldap.core.support.LdapContextSource;
+import org.springframework.ldap.query.LdapQuery;
+import org.springframework.ldap.query.SearchScope;
+import org.springframework.ldap.support.LdapUtils;
 import org.springframework.stereotype.Service;
 
-import com.microservice.ged.beans.Appusers;
-import com.microservice.ged.repository.AppUserRepo;
-import com.microservice.ged.repository.PosteRepo;
 import com.microservice.ged.service.AppUserService;
 
 @Transactional
 @Service
 public class AppUserServiceImpl implements AppUserService {
-
+	
 	@Autowired
-	AppUserRepo appUserRepo;
+    private LdapContextSource contextSource;
 
-
-	@Autowired
-	BCryptPasswordEncoder bCryptPasswordEncoder; 	
-	
-	
+    private LdapTemplate ldapTemplate;
 	
 	@Override
-	public Page<Appusers> findAll(int page, int size) {
-		Pageable pageOfData = PageRequest.of(page, size, Sort.by("iduser").ascending());
-		return appUserRepo.findAll(pageOfData);
+	public List<String> findAllUser() {
+		return this.getAllUserLDAPList("*", "*", "*");
 	}
 
 	@Override
-	public Appusers findByLogin(String login) {
-		// TODO Auto-generated method stub
-		return appUserRepo.findByLogin(login);
+	public String findUserByName(String name) {
+		return this.getAllUserLDAPList(name, "*", "*").isEmpty() ? null : this.getAllUserLDAPList(name, "*", "*").get(0) ;
 	}
 
-	@Override
-	public Appusers findByName(String name) {
-		// TODO Auto-generated method stub
-		return appUserRepo.findByName(name);
+	
+	private void initUser() {
+		contextSource.setUrl("ldap://localhost:8389");
+        contextSource.setAnonymousReadOnly(true);
+        contextSource.setUserDn("ou=people,ou=groups,");
+        contextSource.afterPropertiesSet();
+        ldapTemplate = new LdapTemplate(contextSource);
 	}
+	
+	private List<String> getAllUserLDAPList(String cn, String sn, String uid) {
+		this.initUser();
+        LdapQuery query = query()
+                .searchScope(SearchScope.SUBTREE)
+                .timeLimit(3000)
+                .attributes("cn")
+                .base(LdapUtils.emptyLdapName())
+                .where("objectclass").is("person")
+                .and("cn").like(cn)
+                .and("sn").like(sn)
+                .and("uid").like(uid);
+        return ldapTemplate.search(query, new PersonAttributesMapper());
+    }
+	
+	private List<String> getAllUserLDAPListNotLike(String cn, String sn, String uid) {
+		this.initUser();
+        LdapQuery query = query()
+                .searchScope(SearchScope.SUBTREE)
+                .timeLimit(3000)
+                .attributes("cn")
+                .base(LdapUtils.emptyLdapName())
+                .where("objectclass").is("person")
+                .and("cn").not().like(cn)
+                .and("sn").like(sn)
+                .and("uid").like(uid);
+        return ldapTemplate.search(query, new PersonAttributesMapper());
+    }
+	
+	/*private void getAllGroupLDAPList() {
+        LdapQuery query = query()
+                .searchScope(SearchScope.SUBTREE)
+                .timeLimit(3000)
+                //.countLimit(10)
+                .attributes("cn")
+                .base(LdapUtils.emptyLdapName())
+                .where("objectclass").is("groupOfUniqueNames")
+                .and("uniqueMember").like("*");
+        ldapTemplate.search(query, new PersonAttributesMapper());
+    }*/
+
+	 private class PersonAttributesMapper implements AttributesMapper<String> {
+	        public String mapFromAttributes(Attributes attrs) throws NamingException {
+	            String name = (String) attrs.get("cn").get();
+	            return name;
+	        }
+	    }
 
 	@Override
-	public Appusers findById(Long id) {
-		// TODO Auto-generated method stub
-		return appUserRepo.findByIduser(id);
-	}
-
-	@Override
-	public Appusers addUser(Appusers user) {
-		// TODO Auto-generated method stub
-		user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()) );
-		return appUserRepo.save(user);
-	}
-
-	@Override
-	public void updateUser(Appusers user) {
-		// TODO Auto-generated method stub
-		appUserRepo.save(user);
+	public List<String> findAllUserByNameNotLike(String name) {
+		name="Bob*";
+		return this.getAllUserLDAPListNotLike(name, "*", "*");
 	}
 
 }

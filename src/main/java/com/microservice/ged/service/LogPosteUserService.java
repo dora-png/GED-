@@ -4,13 +4,12 @@ import org.springframework.data.domain.Page;
 
 import com.microservice.ged.beans.LogPosteUser;
 import com.microservice.ged.beans.Postes;
-import com.microservice.ged.beans.Users;
 
 public interface LogPosteUserService {
-	public Page<LogPosteUser> logUser(Users users, int page, int size) throws Exception ;
-	public Page<LogPosteUser> logPoste(Postes postes, int page, int size) throws Exception ;
-	public Postes currentPosteOfUser(Users users) throws Exception ;
-	public Users currentUserOfPoste(Postes postes) throws Exception ;
-	public void add(Postes poste, Users users) throws Exception ;
+	public Page<LogPosteUser> logUser(String iduser, int page, int size) throws Exception ;
+	public Page<LogPosteUser> logPoste(Long postesId, int page, int size) throws Exception ;
+	public Postes currentPosteOfUser(String iduser) throws Exception ;
+	public String currentUserOfPoste(Long postesId) throws Exception ;
+	public void add(Long postesId, String iduser) throws Exception ;
 
 }

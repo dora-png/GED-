@@ -5,6 +5,7 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.microservice.ged.utils.JwtTokenUtil;
 import com.microservice.ged.utils.SecurityConstants;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -42,30 +43,26 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
 			if(request.getServletPath().equals("/login")) {
 	            filterChain.doFilter(request, response);
 	        } else {
-	            String jwt = request.getHeader(SecurityConstants.HEADER_STRING);            
-	            if(jwt == null || !jwt.startsWith(SecurityConstants.TOKEN_PREFIX) || !jwt.endsWith(SecurityConstants.TOKEN_SUFIX)) {
+	            String jwt = request.getHeader(SecurityConstants.HEADER_STRING); 
+	            JwtTokenUtil jwtTokenUtil = new JwtTokenUtil();
+	            if(!jwtTokenUtil.validateToken(jwt)) {
 	            	filterChain.doFilter(request, response);
+	            	//response.setContentType("text/plain");
+					//response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+					//new ObjectMapper().writeValue(response.getOutputStream(), "Tokken Modified, vous allez etre deconnecte dans 5 secondes");
 	            	return;
-	            }  
+	            }
+
 	            try {
-	            	String token = jwt.replace(SecurityConstants.TOKEN_PREFIX, SecurityConstants.REMOVE)
-	            					  .replace(SecurityConstants.TOKEN_SUFIX, SecurityConstants.REMOVE);
-	            	Algorithm algorithm = Algorithm.HMAC256(SecurityConstants.SECRET.getBytes());
-	                JWTVerifier verifier = JWT.require(algorithm).build();
-	                DecodedJWT decodedJWT = verifier.verify(token);
-	                String username = decodedJWT.getSubject();
-	                String[] roles = decodedJWT.getClaim(SecurityConstants.ROLES).asArray(String.class);
-	                Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
-	                stream(roles).forEach(role -> {
-	                	authorities.add(new SimpleGrantedAuthority(role));
-	                 });
+	            	Collection<SimpleGrantedAuthority> authorities = jwtTokenUtil.getAllGrantedAuthorityFromToken(jwt);
+	            	String username =  jwtTokenUtil.getSubject(jwt);
 	                 UsernamePasswordAuthenticationToken authenticationToken =  new UsernamePasswordAuthenticationToken(username, null, authorities);
 	                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 	                 filterChain.doFilter(request, response);
 	            }catch (Exception e) {
 	            	response.setContentType("text/plain");
 					response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-					new ObjectMapper().writeValue(response.getOutputStream(), "Tokken Modified, vous allez etre deconnecte dans 5 secondes");
+					new ObjectMapper().writeValue(response.getOutputStream(), e.getMessage());
 	            }	           
 	        }
 		}        

@@ -1,17 +1,11 @@
 package com.microservice.ged.serviceImple;
 
-import java.util.Date;
-
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-
-import com.microservice.ged.beans.LogPosteUser;
-import com.microservice.ged.beans.Postes;
-import com.microservice.ged.beans.Roles;
 import com.microservice.ged.beans.TypeLiasses;
 import com.microservice.ged.repository.LogPosteUserRepo;
 import com.microservice.ged.repository.PosteRepo;

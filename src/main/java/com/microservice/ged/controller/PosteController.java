@@ -17,14 +17,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.microservice.ged.beans.GroupUser;
 import com.microservice.ged.beans.Postes;
-import com.microservice.ged.beans.Roles;
 import com.microservice.ged.beans.Structures;
-import com.microservice.ged.beans.Users;
 import com.microservice.ged.service.GroupUserService;
 import com.microservice.ged.service.LogPosteUserService;
 import com.microservice.ged.service.PosteService;
 import com.microservice.ged.service.StructureService;
-import com.microservice.ged.service.UserService;
+//import com.microservice.ged.service.UserService;
 import com.microservice.ged.utils.OrganigramStructure;
 import com.microservice.ged.utils.OrganigramSystem;
 import com.microservice.ged.utils.PosteRoleBean;
@@ -32,7 +30,7 @@ import com.microservice.ged.utils.PosteRoleBean;
 @RestController
 @CrossOrigin("*")
 public class PosteController {
-	
+/*	
 	@Autowired
 	private PosteService posteservice;
 
@@ -237,6 +235,6 @@ public class PosteController {
 			return  ResponseEntity.ok().body(organigramStructure);
 		}		
 	}
-
+*/
 
 }

@@ -18,10 +18,10 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-@Configuration
-@EnableWebMvc
-public class WebConfig implements WebMvcConfigurer {
-
+//@Configuration
+//@EnableWebMvc
+public class WebConfig/* implements WebMvcConfigurer */{
+/*
 	@Autowired
 	private HandlerInterceptor traceinterceptor;
 
@@ -56,7 +56,7 @@ public class WebConfig implements WebMvcConfigurer {
 	public void addInterceptors(InterceptorRegistry registry) {
 
 		registry.addInterceptor(traceinterceptor);
-	}
+	}*/
 
 }
 

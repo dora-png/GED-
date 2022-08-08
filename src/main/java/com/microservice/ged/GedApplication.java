@@ -10,25 +10,28 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import com.microservice.ged.beans.Appusers;
 import com.microservice.ged.beans.GroupUser;
 import com.microservice.ged.beans.Postes;
-import com.microservice.ged.beans.Roles;
+import com.microservice.ged.beans.Profiles;
+import com.microservice.ged.beans.Droits;
 import com.microservice.ged.beans.Structures;
-import com.microservice.ged.beans.Users;
+import com.microservice.ged.beans.TypeUser;
 import com.microservice.ged.beans.WorkFlow;
-import com.microservice.ged.beans.WorkFlowPoste;
-import com.microservice.ged.repository.AppUserRepo;
 import com.microservice.ged.repository.LogPosteUserRepo;
-import com.microservice.ged.repository.RolesRepo;
+import com.microservice.ged.repository.DroitsRepo;
 import com.microservice.ged.repository.StructureRepo;
 import com.microservice.ged.service.AppUserService;
+import com.microservice.ged.service.DroitProfilesServices;
+import com.microservice.ged.service.GroupProfileService;
 import com.microservice.ged.service.GroupUserService;
 import com.microservice.ged.service.LogPosteUserService;
 import com.microservice.ged.service.PosteService;
+import com.microservice.ged.service.ProfilesService;
 import com.microservice.ged.service.StructureService;
-import com.microservice.ged.service.UserService;
+//import com.microservice.ged.service.UserService;
 import com.microservice.ged.service.WorkFlowService;
+import com.microservice.ged.utils.GroupProfilesBean;
+import com.microservice.ged.utils.ProfilesDroitBean;
 import com.microservice.ged.utils.WorkFlowPosteListe;
 
 @SpringBootApplication
@@ -45,22 +48,96 @@ public class GedApplication {
 	
 	@Bean
 	CommandLineRunner start(
-			AppUserService userRepo, 
-			RolesRepo approlerepository,
-			UserService userService,
+			GroupProfileService groupProfileService, 
+			DroitsRepo droitsRepo,
+			ProfilesService profilesService,
 			StructureService structureService,
 			PosteService posteService,
 			LogPosteUserService logPosteUserService,
+			DroitProfilesServices droitProfilesServices,
 			GroupUserService groupUserService,
 			WorkFlowService workFlowService
 			) {
 		return arg -> {
-			Appusers appusers = new Appusers("ROOT", "root","1234");
+			
+			Droits ap12 = new Droits("CUUSER",  "CUUSER",  true, true, true, false);
+			Droits ap22 = new Droits("RUSER", "RUSER", false, true, false, false);
+			Droits ap42 = new Droits("DUSER", "DUSER", true, true, true, true);
+			droitsRepo.save(ap12);
+			droitsRepo.save(ap22);
+			droitsRepo.save(ap42);
+			
+			
+			Droits ap13 = new Droits("CUTYPELIASSE",  "CUTYPELIASSE",  true, true, true, false);
+			Droits ap23 = new Droits("RTYPELIASSE", "RTYPELIASSE", false, true, false, false);
+			Droits ap43 = new Droits("DTYPELIASSE", "DTYPELIASSE", true, true, true, true);
+			droitsRepo.save(ap13);
+			droitsRepo.save(ap23);
+			droitsRepo.save(ap43);
+
+			Droits ap14 = new Droits("CUTYPEDOC",  "CUTYPEDOC",  true, true, true, false);
+			Droits ap24 = new Droits("RTYPEDOC", "RTYPEDOC", false, true, false, false);
+			Droits ap44 = new Droits("DTYPEDOC", "DTYPEDOC", true, true, true, true);
+			droitsRepo.save(ap14);
+			droitsRepo.save(ap24);
+			droitsRepo.save(ap44);
+
+			Droits ap15 = new Droits("CUSTRUCTURE",  "CUSTRUCTURE",  true, true, true, false);
+			Droits ap25 = new Droits("RSTRUCTURE", "RSTRUCTURE", false, true, false, false);
+			Droits ap45 = new Droits("DSTRUCTURE", "DSTRUCTURE", true, true, true, true);
+			droitsRepo.save(ap15);
+			droitsRepo.save(ap25);
+			droitsRepo.save(ap45);
+
+			Droits ap16 = new Droits("RROLE", "RROLE", false, true, false, false);
+			droitsRepo.save(ap16);
+			Droits ap26 = new Droits("PRINT", "PRINT", true, true, true, true);
+			droitsRepo.save(ap26);
+
+			Droits ap17 = new Droits("CUPOSTE",  "CUPOSTE",  true, true, true, false);
+			Droits ap27 = new Droits("RPOSTE", "RPOSTE", false, true, false, false);
+			Droits ap47 = new Droits("DPOSTE", "DPOSTE", true, true, true, true);
+			droitsRepo.save(ap17);
+			droitsRepo.save(ap27);
+			droitsRepo.save(ap47);
+
+			Droits ap18 = new Droits("CULIASSE",  "CULIASSE",  true, true, true, false);
+			Droits ap28 = new Droits("RLIASSE", "RLIASSE", false, true, false, false);
+			Droits ap48 = new Droits("DLIASSE", "DLIASSE", true, true, true, true);
+			droitsRepo.save(ap18);
+			droitsRepo.save(ap28);
+			droitsRepo.save(ap48);
+
+			Droits ap19 = new Droits("CUDOC",  "CUDOC",  true, true, true, false);
+			Droits ap29 = new Droits("RDOC", "RDOC", false, true, false, false);
+			Droits ap49 = new Droits("DDOC", "DDOC", true, true, true, true);
+			droitsRepo.save(ap19);
+			droitsRepo.save(ap29);
+			droitsRepo.save(ap49);
+			
+			Profiles profiles = new Profiles("Maire",null, TypeUser.INTERN_ACTOR, true);
+			profilesService.add(profiles);
+			Profiles profiless = new Profiles("Maires",null, TypeUser.EXTERN_ACTOR, true);
+			profilesService.add(profiless);
+			
+			GroupUser groupUser = new GroupUser("String name", "String sigle", "String couleur", true);
+			groupUserService.saveGroupUser(groupUser);
+			List<ProfilesDroitBean> profilesDroitBeanList = new ArrayList<>();
+			profilesDroitBeanList.add(new ProfilesDroitBean(new Long(1), new Long(1)));
+			profilesDroitBeanList.add(new ProfilesDroitBean(new Long(2), new Long(1)));
+			profilesDroitBeanList.add(new ProfilesDroitBean(new Long(3), new Long(1)));
+			droitProfilesServices.addDroitToProfiles(profilesDroitBeanList);
+			List<GroupProfilesBean> groupProfilesBeanList = new ArrayList<>();
+			groupProfilesBeanList.add(new GroupProfilesBean(new Long(1), new Long(1)));	
+			groupProfilesBeanList.add(new GroupProfilesBean(new Long(2), new Long(1)));			
+			groupProfileService.addGroupToProfiles(groupProfilesBeanList);
+			
+			/*Appusers appusers = new Appusers("ROOT", "root","1234");
 			userRepo.addUser(appusers);
 			
 			GroupUser groupUser = new GroupUser("Group 1");
 			
-			Roles ap1 = new Roles("CUWORKFLOW", true, true, true, false);
+			droitsRepo ap1 = new Roles("CUWORKFLOW", true, true, true, false);
 			Roles ap2 = new Roles("RWORKFLOW", false, true, false, false);
 			Roles ap4 = new Roles("DWORKFLOW", true, true, true, true);
 			approlerepository.save(ap1);
@@ -144,8 +221,8 @@ public class GedApplication {
 			
 			Postes poste = new Postes("SGP", "description", structures);
 			//Postes poste1 = new Postes("Poste1", "description", structures);
-			/*posteService.addPoste(poste );
-			posteService.addPoste(poste1 );	*/		
+			//posteService.addPoste(poste );
+			///posteService.addPoste(poste1 );			
 			//poste.getPosteSubalterne().add(poste1);			
 			//posteService.addSubPoste( postes);
 			//posteService.addSubPoste( poste);
@@ -187,7 +264,7 @@ public class GedApplication {
 			//workFlowPosteListe.add(new WorkFlowPosteListe(0, poste.getIdposte(), workFlow.getIdworkflows(), true));
 			//workFlowPosteListe.add(new WorkFlowPosteListe(1, poste1.getIdposte(), workFlow.getIdworkflows(), true));
 			//workFlowService.addPosteToWorkFlow(workFlowPosteListe);
-			
+			*/
 		};
 	}
 

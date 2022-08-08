@@ -8,18 +8,33 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import com.microservice.ged.beans.Liasses;
+import com.microservice.ged.beans.Profiles;
 import com.microservice.ged.beans.TypeLiasses;
 
 @Repository
 public interface LiassesRepo extends JpaRepository<Liasses, Long>{
-	Liasses findByIdliasse(Long idliasse);
-	Liasses findByName(String name);
-	Liasses findBySigle(String sigle);
+	Liasses findByArchiveTrueAndIdliasse(Long idliasse);
+	Liasses findByArchiveFalseAndIdliasse(Long idliasse);
+	Liasses findByProfileidAndName(Profiles profileid, String name);
+	Liasses findByProfileidAndSigle(Profiles profileid, String sigle);
+	Page<Liasses> findByArchiveTrue(Pageable pageable);
+	Page<Liasses> findByArchiveFalse(Pageable pageable);
 	Page<Liasses> findByNameLike(String name, Pageable pageable);
+	Page<Liasses> findByNameLikeAndArchiveTrue(String name, Pageable pageable);
+	Page<Liasses> findByNameLikeAndArchiveFalse(String name, Pageable pageable);
 	Page<Liasses> findBySigleLike(String sigle, Pageable pageable);
+	Page<Liasses> findBySigleLikeAndArchiveTrue(String sigle, Pageable pageable);
+	Page<Liasses> findBySigleLikeAndArchiveFalse(String sigle, Pageable pageable);
 	Page<Liasses> findByTypeliasse(TypeLiasses typeliasse, Pageable pageable);
-	Page<Liasses> findByDateCreation(Date dateCreation, Pageable pageable);
-	Page<Liasses> findByDateCreationBetween(Date date1, Date date2, Pageable pageable);
+	Page<Liasses> findByTypeliasseAndArchiveTrue(TypeLiasses typeliasse, Pageable pageable);
+	Page<Liasses> findByTypeliasseAndArchiveFalse(TypeLiasses typeliasse, Pageable pageable);
+	Page<Liasses> findByProfileid(Profiles profileid, Pageable pageable);
+	Page<Liasses> findByProfileidAndArchiveTrue(Profiles profileid, Pageable pageable);
+	Page<Liasses> findByProfileidAndArchiveFalse(Profiles profileid, Pageable pageable);
+	Page<Liasses> findByDateCreationAndArchiveFalse(Date dateCreation, Pageable pageable);
+	Page<Liasses> findByDateCreationBetweenAndArchiveFalse(Date date1, Date date2, Pageable pageable);
+	Page<Liasses> findByDateCreationAndArchiveTrue(Date dateCreation, Pageable pageable);
+	Page<Liasses> findByDateCreationBetweenAndArchiveTrue(Date date1, Date date2, Pageable pageable);
 	
 	//List<Date> listeYear()
 	

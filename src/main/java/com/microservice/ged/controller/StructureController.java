@@ -19,7 +19,7 @@ import com.microservice.ged.utils.OrganigramSystem;
 @RestController
 @CrossOrigin("*")
 public class StructureController {
-	
+	/*
 	@Autowired
 	private StructureService structureservice;
 
@@ -127,6 +127,6 @@ public class StructureController {
 		}else {
 			return  ResponseEntity.ok().body(organigramSystem);
 		}		
-	}
+	}*/
 
 }

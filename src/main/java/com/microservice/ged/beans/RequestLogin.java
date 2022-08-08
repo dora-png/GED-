@@ -24,11 +24,11 @@ public class RequestLogin {
     @Column(name = "ipAdress", nullable = false)
     private String ipAdress;
 
+    @Column(name = "active")
+    private Boolean active = true;
+
     @Column(name = "account", nullable = false)
     private String account;
-
-    @Column(name = "count", nullable = false)
-    private int count;
 
     @Column(name = "date", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
@@ -43,86 +43,65 @@ public class RequestLogin {
 	}
 
 
-	public RequestLogin(String ipAdress, String account, int count) {
+	public RequestLogin(String ipAdress, String account) {
         this.ipAdress = ipAdress;
         this.account = account;
-        this.count = count;
     }
 
 
-	/**
-	 * @return the id
-	 */
+
 	public Long getId() {
 		return id;
 	}
 
-	/**
-	 * @param id the id to set
-	 */
+
 	public void setId(Long id) {
 		this.id = id;
 	}
 
-	/**
-	 * @return the ipAdress
-	 */
+
 	public String getIpAdress() {
 		return ipAdress;
 	}
 
-	/**
-	 * @param ipAdress the ipAdress to set
-	 */
+
 	public void setIpAdress(String ipAdress) {
 		this.ipAdress = ipAdress;
 	}
 
-	/**
-	 * @return the account
-	 */
+
+	public Boolean getActive() {
+		return this.active;
+	}
+
+
+	public void setActive(Boolean active) {
+		this.active = active;
+	}
+
+
 	public String getAccount() {
 		return account;
 	}
 
-	/**
-	 * @param account the account to set
-	 */
+
 	public void setAccount(String account) {
 		this.account = account;
 	}
 
-	/**
-	 * @return the count
-	 */
-	public int getCount() {
-		return count;
-	}
 
-	/**
-	 * @param count the count to set
-	 */
-	public void setCount(int count) {
-		this.count = count;
-	}
-
-	/**
-	 * @return the date
-	 */
 	public Date getDate() {
 		return date;
 	}
 
-	/**
-	 * @param date the date to set
-	 */
+
 	public void setDate(Date date) {
 		this.date = date;
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(account, count, date, id, ipAdress);
+		return Objects.hash(active, account, date, id, ipAdress);
 	}
 
 	@Override
@@ -132,13 +111,13 @@ public class RequestLogin {
 		if (!(obj instanceof RequestLogin))
 			return false;
 		RequestLogin other = (RequestLogin) obj;
-		return Objects.equals(account, other.account) && count == other.count && Objects.equals(date, other.date)
+		return Objects.equals(active, other.active) && account == other.account && Objects.equals(date, other.date)
 				&& Objects.equals(id, other.id) && Objects.equals(ipAdress, other.ipAdress);
 	}
 
 	@Override
 	public String toString() {
-		return "RequestLogin [id=" + id + ", ipAdress=" + ipAdress + ", account=" + account + ", count=" + count
+		return "RequestLogin [id=" + id + ", ipAdress=" + ipAdress + ", active=" + active + ", account=" + account
 				+ ", date=" + date + "]";
 	}
     

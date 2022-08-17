@@ -45,15 +45,15 @@ public class LogPosteUser implements Serializable {
 	@JsonIncludeProperties(value = {"idposte", "name", "description", "structure" })
 	private Postes posteId;
     
-    @Column(name = "ldaplogin", nullable = false, insertable = true, updatable = false)
-	private String ldaplogin;
+    @ManyToOne
+	private Profiles ldaplogin;
 
 	public LogPosteUser() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public LogPosteUser(Postes posteId, String ldaplogin) {
+	public LogPosteUser(Postes posteId, Profiles ldaplogin) {
 		super();
 		this.posteId = posteId;
 		this.ldaplogin = ldaplogin;
@@ -79,7 +79,7 @@ public class LogPosteUser implements Serializable {
 		return posteId;
 	}
 
-	public String getLdaplogin() {
+	public Profiles getLdaplogin() {
 		return ldaplogin;
 	}
 

@@ -20,10 +20,8 @@ import com.microservice.ged.beans.Droits;
 import com.microservice.ged.beans.Profiles;
 import com.microservice.ged.beans.TypeUser;
 import com.microservice.ged.service.AppUserService;
-import com.microservice.ged.service.DroitProfilesServices;
 import com.microservice.ged.service.ProfilesService;
 import com.microservice.ged.utils.ProfileStructureBean;
-import com.microservice.ged.utils.ProfilesDroitBean;
 
 @RestController
 @CrossOrigin("*")
@@ -34,9 +32,6 @@ public class UsersController {
 	
 	@Autowired
 	private ProfilesService profilesService;
-	
-	@Autowired
-	DroitProfilesServices droitProfilesServices;
 
 	@GetMapping("/profile/all")
 	public ResponseEntity<Page<Profiles>> findAllProfiles(
@@ -119,26 +114,12 @@ public class UsersController {
 		return  ResponseEntity.ok().body(pageLdapUser);	
 	}
 	
-	@PostMapping("/profile/add_droit")
-	public ResponseEntity<?> addDroitsToUsers(
-			@RequestBody List<ProfilesDroitBean> profilesDroitBeanList) throws Exception {
-		droitProfilesServices.addDroitToProfiles(profilesDroitBeanList);
-		return  ResponseEntity.ok().build();
-	}
-	
 	@PostMapping("/profile/user")
 	public ResponseEntity<?> addUserInProfiles(
 			@RequestParam(name = "id", required = true) Long idProfile,
 			@RequestParam(name = "userName", required = true) String userName
 			) throws Exception {
 		profilesService.addUserInProfiles(idProfile, userName);
-		return  ResponseEntity.ok().build();
-	}
-	
-	@PostMapping("/profile/remove_droit")
-	public ResponseEntity<?> removeDroitsToUsers(
-			@RequestBody ProfilesDroitBean profilesDroitBean) throws Exception {
-		droitProfilesServices.removeDroitToProfiles(profilesDroitBean);
 		return  ResponseEntity.ok().build();
 	}
 	
@@ -153,6 +134,22 @@ public class UsersController {
 	public ResponseEntity<?> setProfileStatus(
 			@RequestParam(name = "id", required = true) Long idProfile) throws Exception {
 		profilesService.setStatus(idProfile);
+		return  ResponseEntity.ok().build();
+	}
+	
+	@PostMapping("/profile/set_namekjk2132123")
+	public ResponseEntity<?> setProfileName(
+			@RequestParam(name = "id", required = true) Long idProfile,
+			@RequestParam(name = "name", required = true) String name) throws Exception {
+		profilesService.updateName(idProfile, name);
+		return  ResponseEntity.ok().build();
+	}
+	
+	@PostMapping("/profile/set_userkjk2132123")
+	public ResponseEntity<?> setProfileUser(
+			@RequestParam(name = "id", required = true) Long idProfile,
+			@RequestParam(name = "username", required = true) String username) throws Exception {
+		profilesService.updateUser(idProfile, username);
 		return  ResponseEntity.ok().build();
 	}
 	

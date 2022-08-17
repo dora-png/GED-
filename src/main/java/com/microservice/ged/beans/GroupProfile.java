@@ -42,6 +42,10 @@ public class GroupProfile implements Serializable {
     @Column(name = "dateCreation", nullable = false, updatable = false)
 	@CreationTimestamp
 	private Date dateCreation;
+    
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "dateEnd")
+	private Date dateEnd;
 
 
 	public GroupProfile() {
@@ -57,6 +61,36 @@ public class GroupProfile implements Serializable {
 	}
 
 
+	public Long getIdgroupprofile() {
+		return idgroupprofile;
+	}
+
+
+	public void setIdgroupprofile(Long idgroupprofile) {
+		this.idgroupprofile = idgroupprofile;
+	}
+
+
+	public Profiles getProfileId() {
+		return profileId;
+	}
+
+
+	public void setProfileId(Profiles profileId) {
+		this.profileId = profileId;
+	}
+
+
+	public GroupUser getGroupuserId() {
+		return groupuserId;
+	}
+
+
+	public void setGroupuserId(GroupUser groupuserId) {
+		this.groupuserId = groupuserId;
+	}
+
+
 	public boolean isIsactive() {
 		return isactive;
 	}
@@ -67,25 +101,24 @@ public class GroupProfile implements Serializable {
 	}
 
 
-	public Long getIdgroupprofile() {
-		return idgroupprofile;
-	}
-
-
-	public Profiles getProfileId() {
-		return profileId;
-	}
-
-
-	public GroupUser getGroupuserId() {
-		return groupuserId;
-	}
-
-
 	public Date getDateCreation() {
 		return dateCreation;
 	}
 
-    
+
+	public void setDateCreation(Date dateCreation) {
+		this.dateCreation = dateCreation;
+	}
+
+
+	public Date getDateEnd() {
+		return dateEnd;
+	}
+
+
+	public void setDateEnd(Date dateEnd) {
+		this.dateEnd = dateEnd;
+	}
+
 	
 }

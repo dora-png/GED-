@@ -11,11 +11,13 @@ import org.springframework.stereotype.Service;
 
 import com.microservice.ged.beans.LogPosteUser;
 import com.microservice.ged.beans.Postes;
+import com.microservice.ged.beans.Profiles;
 import com.microservice.ged.repository.LogPosteUserRepo;
 import com.microservice.ged.repository.PosteRepo;
 import com.microservice.ged.service.AppUserService;
 import com.microservice.ged.service.LogPosteUserService;
 import com.microservice.ged.service.PosteServiceBasic;
+import com.microservice.ged.service.ProfilesService;
 
 @Service
 @Transactional
@@ -25,28 +27,37 @@ public class LogPosteUserServiceImpl implements LogPosteUserService {
 	LogPosteUserRepo logPosteUserRepo;
 	
 	@Autowired
-	AppUserService appUserService;
+	ProfilesService profilesService;
 	
 	@Autowired
 	PosteServiceBasic posteServiceBasic;
 	
 
 	@Override
-	public Page<LogPosteUser> logUser(String iduser, int page, int size) throws Exception {
-		String appUsers =  appUserService.findUserByName(iduser);
-		return logPosteUserRepo.findByLdaplogin(appUsers, PageRequest.of(page, size));
+	public Page<LogPosteUser> logUser(Long iduser, int page, int size) throws Exception {
+		Profiles profiles =  profilesService.findProfileById(iduser);
+		if(profiles==null) {
+			throw new Exception("profiles id error");
+		}
+		return logPosteUserRepo.findByLdaplogin(profiles, PageRequest.of(page, size));
 	}
 
 	@Override
 	public Page<LogPosteUser> logPoste(Long postesId, int page, int size) throws Exception {
 		Postes postes = posteServiceBasic.findPosteById(postesId);
+		if(postes==null) {
+			throw new Exception("postes id error");
+		}
 		return  logPosteUserRepo.findByPosteId(postes, PageRequest.of(page, size));
 	}
 
 	@Override
-	public Postes currentPosteOfUser(String iduser) throws Exception {
-		String appUsers = appUserService.findUserByName(iduser);
-		LogPosteUser logPosteUser = logPosteUserRepo.findByLdaploginAndDateFinIsNull(appUsers);
+	public Postes currentPosteOfUser(Long iduser) throws Exception {
+		Profiles profiles =  profilesService.findProfileById(iduser);
+		if(profiles==null) {
+			throw new Exception("profiles id error");
+		}
+		LogPosteUser logPosteUser = logPosteUserRepo.findByLdaploginAndDateFinIsNull(profiles);
 		if(logPosteUser==null){
 			return null ;	
 		}
@@ -54,38 +65,44 @@ public class LogPosteUserServiceImpl implements LogPosteUserService {
 	}
 	
 	@Override
-	public void add(Long postesId, String iduser) throws Exception {
+	public void add(Long postesId, Long iduser) throws Exception {
 		Postes poste = posteServiceBasic.findPosteById(postesId);
-		String users = appUserService.findUserByName(iduser);
+		if(poste==null) {
+			throw new Exception("postes id error");
+		}
+		Profiles profiles =  profilesService.findProfileById(iduser);
+		if(profiles==null) {
+			throw new Exception("profiles id error");
+		}
 		if(logPosteUserRepo.findByPosteIdAndDateFinIsNull(poste)==null) {//poste non occupe
-			if(logPosteUserRepo.findByLdaploginAndDateFinIsNull(users)==null) {//user sans poste
-				LogPosteUser logPosteUser = new LogPosteUser(poste, users);
+			if(logPosteUserRepo.findByLdaploginAndDateFinIsNull(profiles)==null) {//user sans poste
+				LogPosteUser logPosteUser = new LogPosteUser(poste, profiles);
 				logPosteUserRepo.save(logPosteUser);						
 			}else {//user avec poste
-				LogPosteUser logPosteUsers = logPosteUserRepo.findByLdaploginAndDateFinIsNull(users);				
+				LogPosteUser logPosteUsers = logPosteUserRepo.findByLdaploginAndDateFinIsNull(profiles);				
 				logPosteUsers.setDateFin(new Date());
-				LogPosteUser logPosteUser = new LogPosteUser(poste, users);
+				LogPosteUser logPosteUser = new LogPosteUser(poste, profiles);
 				logPosteUserRepo.save(logPosteUsers);
 				logPosteUserRepo.save(logPosteUser);
 				
 			}
 		}else {//poste occupe
-			if(logPosteUserRepo.findByLdaploginAndDateFinIsNull(users)==null) {//user sans poste
+			if(logPosteUserRepo.findByLdaploginAndDateFinIsNull(profiles)==null) {//user sans poste
 				LogPosteUser logPosteUsers = logPosteUserRepo.findByPosteIdAndDateFinIsNull(poste);
 			
 				logPosteUsers.setDateFin(new Date());
 				logPosteUserRepo.save(logPosteUsers);
-				LogPosteUser logPosteUser = new LogPosteUser(poste, users);
+				LogPosteUser logPosteUser = new LogPosteUser(poste, profiles);
 				logPosteUserRepo.save(logPosteUser);							
 			}else {//user avec poste
-				LogPosteUser logPosteUsers = logPosteUserRepo.findByLdaploginAndDateFinIsNull(users);
+				LogPosteUser logPosteUsers = logPosteUserRepo.findByLdaploginAndDateFinIsNull(profiles);
 				LogPosteUser logPosteUser = logPosteUserRepo.findByPosteIdAndDateFinIsNull(poste);
 				///////////////////////////////////
 				logPosteUsers.setDateFin(new Date());
 				logPosteUserRepo.save(logPosteUsers);
 				logPosteUser.setDateFin(new Date());
 				logPosteUserRepo.save(logPosteUser);
-				LogPosteUser newlogPosteUser = new LogPosteUser(poste, users);
+				LogPosteUser newlogPosteUser = new LogPosteUser(poste, profiles);
 				logPosteUserRepo.save(newlogPosteUser);				
 			}
 			
@@ -93,8 +110,11 @@ public class LogPosteUserServiceImpl implements LogPosteUserService {
 	}
 
 	@Override
-	public String currentUserOfPoste(Long postesId) throws Exception {
+	public Profiles currentUserOfPoste(Long postesId) throws Exception {
 		Postes postes = posteServiceBasic.findPosteById(postesId);
+		if(postes==null) {
+			throw new Exception("postes id error");
+		}
 		LogPosteUser logPosteUser = logPosteUserRepo.findByPosteIdAndDateFinIsNull(postes);
 		if(logPosteUser==null){
 			return null ;	

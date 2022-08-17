@@ -23,10 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.microservice.ged.beans.GroupUser;
 import com.microservice.ged.beans.Droits;
 import com.microservice.ged.service.GroupUserService;
-import com.microservice.ged.utils.DroitsBean;
-import com.microservice.ged.utils.ProfilesDroitBean;
 import com.microservice.ged.service.DroitGroupsService;
-import com.microservice.ged.service.DroitProfilesServices;
 import com.microservice.ged.service.DroitService;
 import com.microservice.ged.service.GroupProfileService;
 
@@ -35,15 +32,14 @@ import com.microservice.ged.service.GroupProfileService;
 public class DroitsController {
 	
 	@Autowired
-	private DroitProfilesServices droitProfilesServices ;
-	
-
-	@Autowired
 	private DroitService droitService ;
 	
 
 	@Autowired
 	private GroupProfileService groupProfileService;
+
+	@Autowired
+	private DroitGroupsService droitGroupsService;
 
 	
 
@@ -54,59 +50,39 @@ public class DroitsController {
 	 * removeDroitToProfiles(ProfilesDroitBean profilesDroitBean) throws Exception;
 	 * Page<Droits> findListDroitToAdd(Long idGroupusers, int page, int size)
 	 */
+	@GetMapping("/droit/allDroid62542")
+	public ResponseEntity<Page<Droits>> findAllDroit(
+			@RequestParam(name = "page", defaultValue = "0") int page,
+			@RequestParam(name = "size", defaultValue = "5") int size) throws Exception {		
+		return  ResponseEntity.ok().body(droitService.findAllDroits(page, size));		
+	}
 	@PostMapping("/droit/profile/list4212165droittoad54564d")
-	public ResponseEntity<Page<Droits>> findListDroitToAdd( 
+	public ResponseEntity<Page<Droits>> findListDroitToAddInGroup( 
 			@RequestBody List<Long> idDroits,
 			@RequestParam(name = "page", defaultValue = "0") int page,
 			@RequestParam(name = "size", defaultValue = "5") int size) throws Exception {
-		System.err.println(idDroits);
 		return  ResponseEntity.ok().body(droitService.findDroitsToAdd(idDroits, page, size));	
 	}
 	
 	
 	@GetMapping("/droit/profile")
-	public ResponseEntity<List<DroitsBean>> findAllDroitUser( 
-			@RequestParam(name = "id", required = true) Long idProfile,
+	public ResponseEntity<List<Droits>> findAllDroitUser( 
+			@RequestParam(name = "id", required = true) Long idGroupe,
 			@RequestParam(name = "page", defaultValue = "0") int page,
 			@RequestParam(name = "size", defaultValue = "5") int size) {
 		try {
-			List<Droits> roles = droitProfilesServices.findListDroit(idProfile);
-			List<DroitsBean> droitsBeansList = new ArrayList<>();
-			if(!roles.isEmpty()) {
-				roles.forEach(
-						(role)->{
-							droitsBeansList.add(new DroitsBean(
-									role.getIddroit(), 
-									role.getName(), 
-									role.getAbbr(), 
-									role.isCreate(), 
-									role.isRead(), 
-									role.isUpdate(),
-									role.isDelete(), 
-									role.getDateCreation(), 
-									true));
-						}
-				);
-				
-			}
-			groupProfileService.findListDroit(idProfile).forEach(
+			List<Droits> droitsList = new ArrayList<>();
+			droitGroupsService.findListDroit(idGroupe).forEach(
 					(droits)->{
-						if(!roles.contains(droits)) {
-							droitsBeansList.add(new DroitsBean(
-									droits.getIddroit(), 
-									droits.getName(), 
-									droits.getAbbr(), 
-									droits.isCreate(), 
-									droits.isRead(), 
-									droits.isUpdate(),
-									droits.isDelete(), 
-									droits.getDateCreation(), 
-									false));
-						}
+						droitsList.add(droits);
 					}
 			);
-			//Page<Droits> pageDroits =  new PageImpl<>(roles, PageRequest.of(page, size, Sort.by("idDroit").descending()), roles.size());
-			return  ResponseEntity.ok().body(droitsBeansList);		
+			if(droitsList.isEmpty()) {
+				return  ResponseEntity.noContent().build();	
+			}else {
+				return  ResponseEntity.ok().body(droitsList);	
+			}
+				
 		} catch (Exception e) {
 			return ResponseEntity.badRequest().build();
 		}		

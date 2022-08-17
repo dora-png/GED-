@@ -10,14 +10,12 @@ import com.microservice.ged.beans.Droits;
 
 @Repository
 public interface DroitsRepo extends JpaRepository<Droits, Long>{
-	Droits findByIddroit(Long idDroit);
+	Droits findByIddroit(Long iddroit);
 	Droits findByName(String name);
-	Droits findByAbbr(String abbr);
-	Page<Droits> findByAbbrContaining(String abbr, Pageable pageable);
-	Page<Droits> findByAbbrNotIn(List<String> abbr, Pageable pageable);
+	Droits findByUri(String uri);
+	Droits findByDescription(String description);
 	Page<Droits> findByNameContaining(String name, Pageable pageable);
 	Page<Droits> findByNameNotIn(List<String> name, Pageable pageable);
 	Page<Droits> findByIddroitNotIn(List<Long> ids, Pageable pageable);
 	Page<Droits> findByIddroitNotInAndNameContaining(List<Long> ids, String name, Pageable pageable);
-	Page<Droits> findByIddroitNotInAndAbbrContaining(List<Long> ids, String abbr, Pageable pageable);
 }

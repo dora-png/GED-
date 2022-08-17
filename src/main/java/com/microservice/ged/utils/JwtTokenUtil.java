@@ -47,9 +47,12 @@ public class JwtTokenUtil implements Serializable
         return username;
     }   
     
-    public String generateAuthentificationToken(String userName) {
+    public String generateAuthentificationToken(String userName, String color, String name, String sigle) {
     	String authentificationToken = JWT.create().withSubject(userName)
 				.withExpiresAt(new Date(System.currentTimeMillis() + SecurityConstants.EXPIRATION_TIME_REFRESH))
+				.withClaim("name",name)
+				.withClaim("sigle",sigle)
+				.withClaim("color",color)
 				.sign(Algorithm.HMAC256(SecurityConstants.SECRET));
     	return authentificationToken;
     }

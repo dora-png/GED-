@@ -17,7 +17,8 @@ public interface GroupProfileRepo extends JpaRepository<GroupProfile, Long>{
 	Page<GroupProfile> findByIsactiveTrue(Pageable pageable);
 	Page<GroupProfile> findByGroupuserIdAndIsactiveTrue(GroupUser groupuserId, Pageable pageable);
 	Page<GroupProfile> findByGroupuserId(GroupUser groupuserId, Pageable pageable);
-	GroupProfile findByGroupuserIdAndProfileIdAndIsactiveTrue(GroupUser groupuserId, Profiles profilesId);
+	GroupProfile findByGroupuserIdAndProfileIdAndIsactiveTrueAndDateEndIsNull(GroupUser groupuserId, Profiles profilesId);
+	GroupProfile findByProfileIdAndIsactiveTrueAndDateEndIsNull(Profiles profilesId);
 	List<GroupProfile> findByGroupuserId(GroupUser groupuserId);
 	Page<GroupProfile> findByProfileId(Profiles profilesId, Pageable pageable);
 	Page<GroupProfile> findByProfileIdAndIsactiveTrue(Profiles profilesId, Pageable pageable);

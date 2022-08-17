@@ -10,13 +10,14 @@ import org.springframework.stereotype.Repository;
 
 import com.microservice.ged.beans.LogPosteUser;
 import com.microservice.ged.beans.Postes;
+import com.microservice.ged.beans.Profiles;
 
 @Repository
 public interface LogPosteUserRepo extends JpaRepository<LogPosteUser, Long>{
-	Page<LogPosteUser> findByLdaplogin(String ldaplogin, Pageable pageable);
+	Page<LogPosteUser> findByLdaplogin(Profiles ldaplogin, Pageable pageable);
 	Page<LogPosteUser> findByPosteId(Postes posteId, Pageable pageable);
-	LogPosteUser findByLdaploginAndDateFinIsNull(String ldaplogin);
+	LogPosteUser findByLdaploginAndDateFinIsNull(Profiles ldaplogin);
 	LogPosteUser findByPosteIdAndDateFinIsNull(Postes posteId);
-	LogPosteUser findByLdaploginAndPosteIdAndDateFinIsNull(String ldaplogin, Postes posteId);
+	LogPosteUser findByLdaploginAndPosteIdAndDateFinIsNull(Profiles ldaplogin, Postes posteId);
 	
 }

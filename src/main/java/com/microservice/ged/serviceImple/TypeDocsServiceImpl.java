@@ -22,9 +22,9 @@ public class TypeDocsServiceImpl implements TypeDocsService {
 	
 	@Autowired
 	PosteRepo posteRepo;
-	
+	/*
 	@Autowired
-	LogPosteUserRepo logPosteUserRepo;
+	LogPosteUserRepo logPosteUserRepo;*/
 	
 
 	@Override

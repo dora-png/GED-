@@ -27,9 +27,9 @@ public class StructureServiceImpl implements StructureService {
 
 	@Autowired
 	private PosteRepo posteRepo;
-	
+	/*
 	@Autowired
-	LogPosteUserRepo logPosteUserRepo;
+	LogPosteUserRepo logPosteUserRepo;*/
 	
 	@Override
 	public Structures findById(long id) throws Exception {

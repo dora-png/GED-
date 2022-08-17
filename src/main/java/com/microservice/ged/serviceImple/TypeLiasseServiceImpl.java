@@ -21,9 +21,9 @@ public class TypeLiasseServiceImpl implements TypeLiasseService {
 	
 	@Autowired
 	PosteRepo posteRepo;
-	
+	/*
 	@Autowired
-	LogPosteUserRepo logPosteUserRepo;
+	LogPosteUserRepo logPosteUserRepo;*/
 	
 	
 	@Override

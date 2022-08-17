@@ -54,31 +54,17 @@ public class DroitServiceImpl implements DroitService {
 	@Override
 	public void add(Droits droits) throws Exception {
 		if(droitsRepo.findByName(droits.getName()) != null) {
-			throw new Exception("Droit already exist");
+			throw new Exception("Droit with name "+droits.getName()+" already exist");
 		}
-		if(droitsRepo.findByAbbr(droits.getAbbr()) != null) {
-			throw new Exception("Droit already exist");
+		if(droitsRepo.findByDescription(droits.getDescription()) != null) {
+			throw new Exception("Droit with description "+droits.getDescription()+" already exist");
+		}
+		if(droitsRepo.findByDescription(droits.getUri()) != null) {
+			throw new Exception("Droit with end point "+droits.getUri()+" already exist");
 		}
 		droits.setIddroit(null);
 		droits.setDateCreation(null);
 		droitsRepo.save(droits);		
 	}
-
-	@Override
-	public void update(Long droitsId, String name) throws Exception {
-		Droits droits = droitsRepo.findByIddroit(droitsId);
-		if(droits != null) {
-			throw new Exception("Droit already exist");
-		}
-		if(droitsRepo.findByName(name) != null) {
-			throw new Exception("Droit already exist");
-		}		
-		droits.setName(name);
-		droitsRepo.save(droits);
-		
-	}
-
-	
-
 	
 }

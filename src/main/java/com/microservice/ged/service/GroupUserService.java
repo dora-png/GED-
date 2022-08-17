@@ -8,7 +8,6 @@ import com.microservice.ged.beans.Droits;
 import com.microservice.ged.beans.GroupUser;
 import com.microservice.ged.utils.GroupDroitsBean;
 import com.microservice.ged.utils.GroupProfilesBean;
-import com.microservice.ged.utils.ProfilesDroitBean;
 
 public interface GroupUserService {
 	Page<GroupUser> findGroupToAdd(List<Long> groupUserIdList, int page, int size) throws Exception ;
@@ -22,8 +21,6 @@ public interface GroupUserService {
 	void updateStatusGroupUser(Long idGroup) throws Exception;
 	void addDroitToGroupe(List<GroupDroitsBean> groupDroitsBeanList) throws Exception;
 	void removeDroitToGroupe(GroupDroitsBean groupDroitsBean) throws Exception;
-	void addDroitToProfil(List<ProfilesDroitBean> profilesDroitBeanList) throws Exception;
-	void removeDroitToProfil(ProfilesDroitBean profilesDroitBean) throws Exception;
 	GroupUser findGroupByName(String name) throws Exception;
 	GroupUser findGroupBySigle(String sigle) throws Exception;
 

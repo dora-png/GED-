@@ -1,6 +1,7 @@
 package com.microservice.ged;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,17 +22,14 @@ import com.microservice.ged.repository.LogPosteUserRepo;
 import com.microservice.ged.repository.DroitsRepo;
 import com.microservice.ged.repository.StructureRepo;
 import com.microservice.ged.service.AppUserService;
-import com.microservice.ged.service.DroitProfilesServices;
 import com.microservice.ged.service.GroupProfileService;
 import com.microservice.ged.service.GroupUserService;
 import com.microservice.ged.service.LogPosteUserService;
 import com.microservice.ged.service.PosteService;
 import com.microservice.ged.service.ProfilesService;
 import com.microservice.ged.service.StructureService;
-//import com.microservice.ged.service.UserService;
 import com.microservice.ged.service.WorkFlowService;
 import com.microservice.ged.utils.GroupProfilesBean;
-import com.microservice.ged.utils.ProfilesDroitBean;
 import com.microservice.ged.utils.WorkFlowPosteListe;
 
 @SpringBootApplication
@@ -54,79 +52,38 @@ public class GedApplication {
 			StructureService structureService,
 			PosteService posteService,
 			LogPosteUserService logPosteUserService,
-			DroitProfilesServices droitProfilesServices,
 			GroupUserService groupUserService,
 			WorkFlowService workFlowService
 			) {
 		return arg -> {
 			
-			Droits ap12 = new Droits("CUUSER",  "CUUSER",  true, true, true, false);
-			Droits ap22 = new Droits("RUSER", "RUSER", false, true, false, false);
-			Droits ap42 = new Droits("DUSER", "DUSER", true, true, true, true);
+			Droits ap12 = new Droits("CPROF", "Creer un profile utilisateur", "post","/profile/user");
+			Droits ap22 = new Droits("LPROF", "Lister un profile utilisateur", "get","/profile/all");
+			Droits ap29 = new Droits("LUAPROF", "Lister les users ldap a affecte a un profile utilisateur", "get","/profile/list_User");
+			Droits ap28 = new Droits("STPROF", "Structure du profile utilisateur", "get","/profile/current_S1231tructurebyd");
+			Droits ap23 = new Droits("FPROF", "Rechercher un profile utilisateur", "get","/profile/search-by-name");
+			Droits ap27 = new Droits("FIDPROF", "Information sur un profile utilisateur", "get","/profile/find_by_id");
+			Droits ap24 = new Droits("USPROF", "Modifier le status d'un profile utilisateur", "post","/profile/set_StaTus");
+			Droits ap25 = new Droits("UNPROF", "Modifier le nom d'un profile utilisateur", "post","/profile/set_namekjk2132123");
+			Droits ap26 = new Droits("UUPROF", "Modifier l'utilisateur ldap du profile", "post","/profile/set_userkjk2132123");
+			
 			droitsRepo.save(ap12);
 			droitsRepo.save(ap22);
-			droitsRepo.save(ap42);
-			
-			
-			Droits ap13 = new Droits("CUTYPELIASSE",  "CUTYPELIASSE",  true, true, true, false);
-			Droits ap23 = new Droits("RTYPELIASSE", "RTYPELIASSE", false, true, false, false);
-			Droits ap43 = new Droits("DTYPELIASSE", "DTYPELIASSE", true, true, true, true);
-			droitsRepo.save(ap13);
-			droitsRepo.save(ap23);
-			droitsRepo.save(ap43);
-
-			Droits ap14 = new Droits("CUTYPEDOC",  "CUTYPEDOC",  true, true, true, false);
-			Droits ap24 = new Droits("RTYPEDOC", "RTYPEDOC", false, true, false, false);
-			Droits ap44 = new Droits("DTYPEDOC", "DTYPEDOC", true, true, true, true);
-			droitsRepo.save(ap14);
-			droitsRepo.save(ap24);
-			droitsRepo.save(ap44);
-
-			Droits ap15 = new Droits("CUSTRUCTURE",  "CUSTRUCTURE",  true, true, true, false);
-			Droits ap25 = new Droits("RSTRUCTURE", "RSTRUCTURE", false, true, false, false);
-			Droits ap45 = new Droits("DSTRUCTURE", "DSTRUCTURE", true, true, true, true);
-			droitsRepo.save(ap15);
-			droitsRepo.save(ap25);
-			droitsRepo.save(ap45);
-
-			Droits ap16 = new Droits("RROLE", "RROLE", false, true, false, false);
-			droitsRepo.save(ap16);
-			Droits ap26 = new Droits("PRINT", "PRINT", true, true, true, true);
-			droitsRepo.save(ap26);
-
-			Droits ap17 = new Droits("CUPOSTE",  "CUPOSTE",  true, true, true, false);
-			Droits ap27 = new Droits("RPOSTE", "RPOSTE", false, true, false, false);
-			Droits ap47 = new Droits("DPOSTE", "DPOSTE", true, true, true, true);
-			droitsRepo.save(ap17);
-			droitsRepo.save(ap27);
-			droitsRepo.save(ap47);
-
-			Droits ap18 = new Droits("CULIASSE",  "CULIASSE",  true, true, true, false);
-			Droits ap28 = new Droits("RLIASSE", "RLIASSE", false, true, false, false);
-			Droits ap48 = new Droits("DLIASSE", "DLIASSE", true, true, true, true);
-			droitsRepo.save(ap18);
-			droitsRepo.save(ap28);
-			droitsRepo.save(ap48);
-
-			Droits ap19 = new Droits("CUDOC",  "CUDOC",  true, true, true, false);
-			Droits ap29 = new Droits("RDOC", "RDOC", false, true, false, false);
-			Droits ap49 = new Droits("DDOC", "DDOC", true, true, true, true);
-			droitsRepo.save(ap19);
 			droitsRepo.save(ap29);
-			droitsRepo.save(ap49);
+			droitsRepo.save(ap28);
+			droitsRepo.save(ap23);
+			droitsRepo.save(ap24);
+			droitsRepo.save(ap27);
+			droitsRepo.save(ap25);
+			droitsRepo.save(ap26);
 			
 			Profiles profiles = new Profiles("Maire",null, TypeUser.INTERN_ACTOR, true);
 			profilesService.add(profiles);
 			Profiles profiless = new Profiles("Maires",null, TypeUser.EXTERN_ACTOR, true);
 			profilesService.add(profiless);
 			
-			GroupUser groupUser = new GroupUser("String name", "String sigle", "String couleur", true);
+			GroupUser groupUser = new GroupUser("String name", "String sigle", true);
 			groupUserService.saveGroupUser(groupUser);
-			List<ProfilesDroitBean> profilesDroitBeanList = new ArrayList<>();
-			profilesDroitBeanList.add(new ProfilesDroitBean(new Long(1), new Long(1)));
-			profilesDroitBeanList.add(new ProfilesDroitBean(new Long(2), new Long(1)));
-			profilesDroitBeanList.add(new ProfilesDroitBean(new Long(3), new Long(1)));
-			droitProfilesServices.addDroitToProfiles(profilesDroitBeanList);
 			List<GroupProfilesBean> groupProfilesBeanList = new ArrayList<>();
 			groupProfilesBeanList.add(new GroupProfilesBean(new Long(1), new Long(1)));	
 			groupProfilesBeanList.add(new GroupProfilesBean(new Long(2), new Long(1)));			

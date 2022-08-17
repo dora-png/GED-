@@ -21,7 +21,6 @@ import com.microservice.ged.service.GroupUserService;
 import com.microservice.ged.service.GroupUserServiceBasic;
 import com.microservice.ged.utils.GroupDroitsBean;
 import com.microservice.ged.utils.GroupProfilesBean;
-import com.microservice.ged.utils.ProfilesDroitBean;
 
 @RestController
 @CrossOrigin("*")

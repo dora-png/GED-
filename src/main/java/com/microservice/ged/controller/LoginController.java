@@ -3,9 +3,7 @@ package com.microservice.ged.controller;
 
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -16,20 +14,19 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.microservice.ged.beans.Droits;
+import com.microservice.ged.beans.GroupUser;
+import com.microservice.ged.beans.Postes;
 import com.microservice.ged.beans.Profiles;
 import com.microservice.ged.repository.DroitsRepo;
-import com.microservice.ged.security.config.OpenLdapAuthenticationProvider;
-import com.microservice.ged.service.AppUserService;
-import com.microservice.ged.service.DroitProfilesServices;
+import com.microservice.ged.service.DroitGroupsService;
 import com.microservice.ged.service.GroupProfileService;
+import com.microservice.ged.service.LogPosteUserService;
 import com.microservice.ged.service.ProfilesService;
 import com.microservice.ged.utils.JwtRequest;
 import com.microservice.ged.utils.JwtTokenUtil;
@@ -42,6 +39,8 @@ public class LoginController {
     @Autowired
     private AuthenticationManager authenticationManager;
     
+    @Autowired
+    DroitGroupsService droitGroupsService;
     
 	@Autowired
 	DroitsRepo droitsRepo;
@@ -53,10 +52,7 @@ public class LoginController {
 	GroupProfileService groupProfileService;
 	
 	@Autowired
-	DroitProfilesServices droitProfilesServices;
-
-	@Autowired
-	AppUserService appUserService;
+	LogPosteUserService logPosteUserService;
 	
 	
     @Autowired
@@ -69,34 +65,40 @@ public class LoginController {
         	throw new Exception();
         }
         List<String> authorities = new ArrayList<>();
+        String color = null;
+        String structureName = null;
+        String structureSigle = null;
         if(authenticationRequest.getUsername().equals("root")) {
         	List<Droits> droits =  droitsRepo.findAll();
 			droits.forEach(
 					(droit)->{
-						if(!authorities.contains(droit.getAbbr())) {
-							authorities.add(droit.getAbbr());
+						if(!authorities.contains(droit.getName())) {
+							authorities.add(droit.getName());
 						}
 					}
 				 );
 			authorities.add("ADMIN");
+			color = "#ff4444";
+			structureName = "Super User";
+			structureSigle = "ROOT";
+			
         } else {
         	Profiles profiles = profilesService.findProfileByUserName(authenticationRequest.getUsername());
         	if(profiles != null) {
-        		droitProfilesServices.findListDroit(profiles.getIdProfiles()).forEach(
-        				(droits)->{
-        					if(!authorities.contains(droits.getAbbr())) {
-    							authorities.add(droits.getAbbr());
-    						}
-        				}
-        		);
-        		groupProfileService.findListDroit(profiles.getIdProfiles()).forEach(
-        				(droits)->{
-        					if(!authorities.contains(droits.getAbbr())) {
-    							authorities.add(droits.getAbbr());
-    						}
-        				}
-        		);
-        		
+        		GroupUser groupUser = groupProfileService.findGroupOfProfile(profiles.getIdProfiles());
+        		if(groupUser!= null) {
+        			droitGroupsService.findListDroit(groupUser.getIdgroupes()).forEach(
+            				(droits)->{
+        							authorities.add(droits.getName());
+            				}
+            		);
+        			Postes postes = logPosteUserService.currentPosteOfUser(profiles.getIdProfiles());
+        			if(postes!= null) {
+        				color = postes.getStructure().getColor();
+        				structureSigle = postes.getStructure().getSigle();
+            			structureName = postes.getStructure().getName();
+            		}   
+        		}        		
         	}
         }
         HttpHeaders responseHeaders = new HttpHeaders();
@@ -104,7 +106,7 @@ public class LoginController {
         		SecurityConstants.HEADER_STRING, 
         		SecurityConstants.TOKEN_PREFIX + jwtTokenUtil.generateAuthorizationToken(authenticationRequest.getUsername(), authorities) + SecurityConstants.TOKEN_SUFIX);
         Map<String, String> idToken = new HashMap<>();
-		idToken.put("RefreshToken", jwtTokenUtil.generateAuthentificationToken(authenticationRequest.getUsername()));
+		idToken.put("RefreshToken", jwtTokenUtil.generateAuthentificationToken(authenticationRequest.getUsername(), color, structureName, structureSigle));
         return ResponseEntity.ok().headers(responseHeaders).body(idToken);
     }
 

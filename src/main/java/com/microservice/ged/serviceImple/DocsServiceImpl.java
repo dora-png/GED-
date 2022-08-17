@@ -29,8 +29,8 @@ public class DocsServiceImpl implements DocsService {
 	@Autowired
 	private PosteRepo posteRepo;*/
 	
-	@Autowired
-	LogPosteUserRepo logPosteUserRepo;
+	/*@Autowired
+	LogPosteUserRepo logPosteUserRepo;*/
 
 	@Override
 	public Page<Docs> searchDocsByName(String name, int page, int size) throws Exception {

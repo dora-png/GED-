@@ -17,14 +17,11 @@ import com.microservice.ged.beans.GroupUser;
 import com.microservice.ged.beans.Postes;
 import com.microservice.ged.beans.Profiles;
 import com.microservice.ged.repository.GroupUserRepo;
-import com.microservice.ged.repository.PosteRepo;
 import com.microservice.ged.service.DroitGroupsService;
-import com.microservice.ged.service.DroitProfilesServices;
 import com.microservice.ged.service.GroupUserService;
 import com.microservice.ged.service.ProfilesService;
 import com.microservice.ged.utils.GroupDroitsBean;
 import com.microservice.ged.utils.GroupProfilesBean;
-import com.microservice.ged.utils.ProfilesDroitBean;
 
 @Service
 @Transactional
@@ -35,10 +32,7 @@ public class GroupUserServiceImpl implements GroupUserService {
 	
 	@Autowired
 	DroitGroupsService droitGroupsService;
-	
-	@Autowired
-	DroitProfilesServices droitProfilesServices;
-	
+		
 	@Autowired
 	 ProfilesService profilesService;
 	
@@ -126,15 +120,7 @@ public class GroupUserServiceImpl implements GroupUserService {
 		droitGroupsService.removeDroitToGroup(groupDroitsBean);
 	}
 
-	@Override
-	public void addDroitToProfil(List<ProfilesDroitBean> profilesDroitBeanList) throws Exception {
-		droitProfilesServices.addDroitToProfiles(profilesDroitBeanList);
-	}
 
-	@Override
-	public void removeDroitToProfil(ProfilesDroitBean profilesDroitBean) throws Exception {
-		droitProfilesServices.removeDroitToProfiles(profilesDroitBean);
-	}
 
 	@Override
 	public GroupUser findGroupByName(String name) throws Exception {

@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import com.microservice.ged.beans.GroupUser;
 import com.microservice.ged.beans.LogPosteUser;
 import com.microservice.ged.beans.Postes;
+import com.microservice.ged.beans.Profiles;
 import com.microservice.ged.beans.Structures;
 import com.microservice.ged.repository.LogPosteUserRepo;
 import com.microservice.ged.repository.PosteRepo;
@@ -120,11 +121,11 @@ public class PosteServiceImpl implements PosteService{
 	private OrganigramStructure getUserInPoste(Postes postes) {
 		OrganigramStructure organigramStructure = new OrganigramStructure();
 		organigramStructure.setName(postes.getName());
-		String users = null;
+		Profiles users = null;
 		try {
 			users = logPosteUserService.currentUserOfPoste(postes.getIdposte());
 			if(users != null){
-				organigramStructure.setTitle(users);
+				organigramStructure.setTitle(users.getCurrentUser());
 			} else{
 				organigramStructure.setTitle("Emplty");
 			}

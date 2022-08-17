@@ -14,6 +14,7 @@ public interface GroupProfileService {
 	Page<GroupProfile> findGrouptOfProfilesActive(Long idProfiles, int page, int size)throws Exception;
 	Page<GroupProfile> findAllProfilesInGroup(Long idGroup, int page, int size) throws Exception;
 	Page<GroupProfile> findProfilesInGroupActive(Long idGroup, int page, int size)throws Exception;
+	GroupUser findGroupOfProfile(Long idProfiles)throws Exception;
 	Page<GroupUser> findListGroupUserToAdd(Long idProfiles, int page, int size)throws Exception;
 	List<Droits> findListDroit(Long idProfiles)throws Exception;
 	void addGroupToProfiles(List<GroupProfilesBean> groupProfilesList) throws Exception;

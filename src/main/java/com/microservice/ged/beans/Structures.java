@@ -51,6 +51,9 @@ public class Structures implements Serializable {
     @Column(name = "sigle", nullable = false, unique = true)
     private String sigle;
     
+    @Column(name = "color", unique = true, nullable = false)
+    private String color;
+    
     @Column(name = "description", nullable = false)
     private String description;
     
@@ -83,157 +86,134 @@ public class Structures implements Serializable {
 		// TODO Auto-generated constructor stub
 	}
 
-	/**
-	 * @param idstructure
-	 */
-	public Structures(Long idstructure) {
-		super();
-		this.idstructure = idstructure;
-	}
 
-	/**
-	 * @param name
-	 * @param sigle
-	 * @param description
-	 */
-	public Structures(String name, String sigle, String description) {
+	public Structures(String name, String sigle, String color, String description) {
 		super();
 		this.name = name;
 		this.sigle = sigle;
+		this.color = color;
 		this.description = description;
 	}
 
-	/**
-	 * @return the idstructure
-	 */
+
 	public Long getIdstructure() {
 		return idstructure;
 	}
 
-	/**
-	 * @param idstructure the idstructure to set
-	 */
+
 	public void setIdstructure(Long idstructure) {
 		this.idstructure = idstructure;
 	}
 
-	/**
-	 * @return the name
-	 */
+
 	public String getName() {
 		return name;
 	}
 
-	/**
-	 * @param name the name to set
-	 */
+
 	public void setName(String name) {
 		this.name = name;
 	}
 
-	/**
-	 * @return the sigle
-	 */
+
 	public String getSigle() {
 		return sigle;
 	}
 
-	/**
-	 * @param sigle the sigle to set
-	 */
+
 	public void setSigle(String sigle) {
 		this.sigle = sigle;
 	}
 
-	/**
-	 * @return the description
-	 */
+
+	public String getColor() {
+		return color;
+	}
+
+
+	public void setColor(String color) {
+		this.color = color;
+	}
+
+
 	public String getDescription() {
 		return description;
 	}
 
-	/**
-	 * @param description the description to set
-	 */
+
 	public void setDescription(String description) {
 		this.description = description;
 	}
 
-	
-	/**
-	 * @return the postes
-	 */
-	public Set<Postes> getPostes() {
-		return postes;
-	}
 
-	/**
-	 * @param postes the postes to set
-	 */
-	public void setPostes(Set<Postes> postes) {
-		this.postes = postes;
-	}
-
-	/**
-	 * @return the structureSuperieur
-	 */
-	public Structures getStructureSuperieur() {
-		return structureSuperieur;
-	}
-
-	/**
-	 * @param structureSuperieur the structureSuperieur to set
-	 */
-	public void setStructureSuperieur(Structures structureSuperieur) {
-		this.structureSuperieur = structureSuperieur;
-	}
-
-	/**
-	 * @return the sousStructure
-	 */
-	public Set<Structures> getSousStructure() {
-		return sousStructure;
-	}
-
-	/**
-	 * @param sousStructure the sousStructure to set
-	 */
-	public void setSousStructure(Set<Structures> sousStructure) {
-		this.sousStructure = sousStructure;
-	}
-
-	/**
-	 * @return the active
-	 */
 	public boolean isActive() {
 		return active;
 	}
 
-	/**
-	 * @param active the active to set
-	 */
+
 	public void setActive(boolean active) {
 		this.active = active;
 	}
 
-	
+
+	public Set<Postes> getPostes() {
+		return postes;
+	}
+
+
+	public void setPostes(Set<Postes> postes) {
+		this.postes = postes;
+	}
+
+
+	public Structures getStructureSuperieur() {
+		return structureSuperieur;
+	}
+
+
+	public void setStructureSuperieur(Structures structureSuperieur) {
+		this.structureSuperieur = structureSuperieur;
+	}
+
+
+	public Set<Structures> getSousStructure() {
+		return sousStructure;
+	}
+
+
+	public void setSousStructure(Set<Structures> sousStructure) {
+		this.sousStructure = sousStructure;
+	}
+
 
 	public Date getDateCreation() {
 		return dateCreation;
 	}
 
+
 	public void setDateCreation(Date dateCreation) {
 		this.dateCreation = dateCreation;
 	}
+
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(active, color, dateCreation, description, idstructure, name, postes, sigle, sousStructure,
+				structureSuperieur);
+	}
+
 
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (!(obj instanceof Structures))
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
 			return false;
 		Structures other = (Structures) obj;
-		return active == other.active && Objects.equals(description, other.description)
+		return active == other.active && Objects.equals(color, other.color)
+				&& Objects.equals(dateCreation, other.dateCreation) && Objects.equals(description, other.description)
 				&& Objects.equals(idstructure, other.idstructure) && Objects.equals(name, other.name)
 				&& Objects.equals(postes, other.postes) && Objects.equals(sigle, other.sigle)
 				&& Objects.equals(sousStructure, other.sousStructure)
@@ -241,8 +221,6 @@ public class Structures implements Serializable {
 	}
 
 
-
-	
 
 	
 }

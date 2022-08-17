@@ -15,5 +15,4 @@ public interface DroitService {
 	public Droits findDroitsById(Long id) throws Exception ;
 	public Droits findDroitsByName(String name) throws Exception ;
 	public void add(Droits droits) throws Exception ;
-	public void update(Long droitsId, String name) throws Exception ;
 }

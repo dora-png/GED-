@@ -101,7 +101,7 @@ public class DroitGroupsServiceImpl implements DroitGroupsService {
 		List<Long> droitsIdList = new ArrayList<>();
 		droitGroupsRepo.findByGroupuserIdAndIsactiveTrue(groupUser).forEach(
 				(droitGroup)->{
-					droitsIdList.add(droitGroup.getDroitId().getIdDroit());
+					droitsIdList.add(droitGroup.getDroitId().getIddroit());
 				}
 		);		
 		return droitService.findDroitsToAdd(droitsIdList, page, size);

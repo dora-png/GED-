@@ -46,9 +46,9 @@ public class WorkFlowServiceImpl implements WorkFlowService {
 	
 	@Autowired
 	LiassesRepo liassesRepo;
-	
+	/*
 	@Autowired
-	LogPosteUserRepo logPosteUserRepo;
+	LogPosteUserRepo logPosteUserRepo;*/
 	
 
 	

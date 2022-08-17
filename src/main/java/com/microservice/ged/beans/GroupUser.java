@@ -45,12 +45,8 @@ public class GroupUser implements Serializable {
     private String name;
     
     @Column(name = "sigle", unique = true, nullable = false)
-    private String sigle;
-    
-    @Column(name = "couleur", nullable = false)
-    private String couleur;
-    
-    
+    private String sigle; 
+        
     @Column(name = "status")
     private Boolean status;
     
@@ -63,11 +59,10 @@ public class GroupUser implements Serializable {
 		super();
 	}
 
-	public GroupUser(String name, String sigle, String couleur, Boolean status) {
+	public GroupUser(String name, String sigle, Boolean status) {
 		super();
 		this.name = name;
 		this.sigle = sigle;
-		this.couleur = couleur;
 		this.status = status;
 	}
 
@@ -85,14 +80,6 @@ public class GroupUser implements Serializable {
 
 	public void setSigle(String sigle) {
 		this.sigle = sigle;
-	}
-
-	public String getCouleur() {
-		return couleur;
-	}
-
-	public void setCouleur(String couleur) {
-		this.couleur = couleur;
 	}
 
 	public Boolean getStatus() {
@@ -119,6 +106,9 @@ public class GroupUser implements Serializable {
 	public void setDateCreation(Date dateCreation) {
 		this.dateCreation = dateCreation;
 	}
+
+	
+	
 
 
 }

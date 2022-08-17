@@ -12,15 +12,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.microservice.ged.beans.DroitGroups;
-import com.microservice.ged.beans.DroitProfiles;
 import com.microservice.ged.beans.Droits;
 import com.microservice.ged.beans.GroupProfile;
 import com.microservice.ged.beans.GroupUser;
 import com.microservice.ged.beans.Profiles;
-import com.microservice.ged.repository.DroitProfilesRepo;
 import com.microservice.ged.repository.GroupProfileRepo;
 import com.microservice.ged.service.DroitGroupsService;
-import com.microservice.ged.service.DroitProfilesServices;
 import com.microservice.ged.service.GroupProfileService;
 import com.microservice.ged.service.GroupUserService;
 import com.microservice.ged.service.GroupUserServiceBasic;
@@ -105,7 +102,7 @@ public class GroupProfileServiceImpl implements GroupProfileService {
 						GroupUser groupUser = groupUserServiceBasic.findGroupById(groupProfiles.getGroupe());
 						Profiles profiles = profilesService.findProfileById(groupProfiles.getProfile());
 						if(groupUser!=null && profiles != null) {
-							if(groupProfileRepo.findByGroupuserIdAndProfileIdAndIsactiveTrue(groupUser, profiles) == null) {
+							if(groupProfileRepo.findByGroupuserIdAndProfileIdAndIsactiveTrueAndDateEndIsNull(groupUser, profiles) == null) {
 								groupProfileRepo.save(new GroupProfile(profiles, groupUser, true));							
 							}
 						}
@@ -128,7 +125,7 @@ public class GroupProfileServiceImpl implements GroupProfileService {
 		if(profiles==null) {
 			throw new Exception("profiles not exist");
 		}
-		GroupProfile groupProfile = groupProfileRepo.findByGroupuserIdAndProfileIdAndIsactiveTrue(groupUser, profiles);
+		GroupProfile groupProfile = groupProfileRepo.findByGroupuserIdAndProfileIdAndIsactiveTrueAndDateEndIsNull(groupUser, profiles);
 		if(groupProfile != null) {
 			groupProfile.setIsactive(false);
 			groupProfileRepo.save(groupProfile);							
@@ -165,6 +162,15 @@ public class GroupProfileServiceImpl implements GroupProfileService {
 				}
 		);	
 		return droitsList;
+	}
+
+	@Override
+	public GroupUser findGroupOfProfile(Long idProfiles) throws Exception {
+		Profiles profiles = profilesService.findProfileById(idProfiles);
+		if(profiles==null) {
+			throw new Exception("profiles not exist");
+		}
+		return groupProfileRepo.findByProfileIdAndIsactiveTrueAndDateEndIsNull(profiles).getGroupuserId();
 	}
 
 }

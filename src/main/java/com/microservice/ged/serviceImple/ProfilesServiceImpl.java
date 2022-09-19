@@ -1,11 +1,7 @@
 package com.microservice.ged.serviceImple;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.transaction.Transactional;
 
@@ -13,28 +9,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.microservice.ged.beans.GroupProfile;
 import com.microservice.ged.beans.GroupUser;
-import com.microservice.ged.beans.LogPosteUser;
-import com.microservice.ged.beans.Postes;
 import com.microservice.ged.beans.Profiles;
 import com.microservice.ged.beans.ProfilesStructure;
+import com.microservice.ged.beans.Structures;
 import com.microservice.ged.beans.TypeUser;
-import com.microservice.ged.beans.Profiles;
-import com.microservice.ged.repository.GroupUserRepo;
-import com.microservice.ged.repository.LogPosteUserRepo;
-import com.microservice.ged.repository.PosteRepo;
+import com.microservice.ged.repository.GroupProfileRepo;
 import com.microservice.ged.repository.ProfilesRepo;
 import com.microservice.ged.repository.ProfilesStructureRepo;
 import com.microservice.ged.service.AppUserService;
+import com.microservice.ged.service.GroupUserServiceBasic;
 import com.microservice.ged.service.ProfilesService;
+import com.microservice.ged.service.StructureService;
 import com.microservice.ged.utils.ProfileStructureBean;
 
 @Transactional
@@ -45,19 +34,47 @@ public class ProfilesServiceImpl implements ProfilesService {
 	ProfilesRepo profilesRepo;
 	
 	@Autowired
+	GroupProfileRepo groupProfileRepo;
+	
+	@Autowired
 	ProfilesStructureRepo profilesStructureRepo;
 	
 	@Autowired 
 	AppUserService appUserService;
+	
+	@Autowired
+	StructureService structureService;
+	
+	@Autowired
+	GroupUserServiceBasic groupUserServiceBasic;
 
+	
 	@Override
-	public Page<Profiles> findAllProfiles(int page, int size) throws Exception {
-		return profilesRepo.findAll(PageRequest.of(page, size,Sort.by("idprofiles").descending()));
+	public Page<Profiles> findAllProfiles(int page, int size, int status) throws Exception {
+		switch (status) {
+		case 0:
+			return profilesRepo.findByStatusFalse(PageRequest.of(page, size,Sort.by("idprofiles").descending()));					
+		case 1:
+			return profilesRepo.findByStatusTrue(PageRequest.of(page, size,Sort.by("idprofiles").descending()));	
+		case 2:
+			return profilesRepo.findAll(PageRequest.of(page, size,Sort.by("idprofiles").descending()));
+		default:
+			throw new Exception("Bad request");
+		}
 	}
 
 	@Override
-	public Page<Profiles> searchByProfilesName(String name, int page, int size) throws Exception {
-		return profilesRepo.findByNameContaining(name,PageRequest.of(page, size,Sort.by("idprofiles").descending()));
+	public Page<Profiles> searchByProfilesName(String name, int page, int size, int status) throws Exception {
+		switch (status) {
+			case 0:
+				return profilesRepo.findByNameContainingAndStatusFalse(name , PageRequest.of(page, size,Sort.by("idprofiles").descending()));				
+			case 1:
+				return profilesRepo.findByNameContainingAndStatusTrue(name , PageRequest.of(page, size,Sort.by("idprofiles").descending()));	
+			case 2:
+				return profilesRepo.findByNameContaining(name, PageRequest.of(page, size,Sort.by("idprofiles").descending()));
+			default:
+				throw new Exception("Bad request");
+		}
 	}
 
 	@Override
@@ -79,11 +96,28 @@ public class ProfilesServiceImpl implements ProfilesService {
 	}
 
 	@Override
-	public void add(Profiles profiles) throws Exception {
+	public void add(Profiles profiles, Long idStructure, Long idGroupUser) throws Exception {
+		Structures structures = structureService.findByIdStructure(idStructure);
+		if(structures==null) {
+			throw new Exception("structure non existante");
+		}
+		if(appUserService.findUserByName(profiles.getCurrentUser())==null){
+			throw new Exception("User "+profiles.getCurrentUser()+" don't exist");
+		}
 		profiles.setIdProfiles(null);
 		profiles.setDateCreation(null);
 		profiles.setStatus(true);
-		profilesRepo.save(profiles);
+		profiles.setStructure(structures);
+		profiles = profilesRepo.save(profiles);
+		GroupUser groupUser = groupUserServiceBasic.findGroupById(idGroupUser);
+		if(groupUser==null) {
+			throw new Exception("Profile creer sans le groupe (groupe user inexistant)");
+		}else {
+			if(groupProfileRepo.findByGroupuserIdAndProfileIdAndIsactiveTrueAndDateEndIsNull(groupUser, profiles) == null) {
+				groupProfileRepo.save(new GroupProfile(profiles, groupUser, true));							
+			}
+		}
+				
 	}
 	
 	@Override
@@ -132,10 +166,6 @@ public class ProfilesServiceImpl implements ProfilesService {
 		
 	}
 
-	@Override
-	public Profiles findProfileById(Long id) throws Exception {
-		return profilesRepo.findByIdprofiles(id);
-	}
 
 	@Override
 	public Profiles findProfileByName(String name) throws Exception {
@@ -145,6 +175,12 @@ public class ProfilesServiceImpl implements ProfilesService {
 	@Override
 	public Profiles findProfileByUserName(String currentUser) throws Exception {
 		return profilesRepo.findByCurrentUser(currentUser);
+	}
+	
+	@Override
+	public Profiles findProfileByUserLogin(String login) throws Exception {
+		String name = appUserService.findUserByLogin(login);
+		return profilesRepo.findByCurrentUser(name);
 	}
 
 	@Override
@@ -168,14 +204,8 @@ public class ProfilesServiceImpl implements ProfilesService {
 	}
 
 	@Override
-	public void add(Long profileId, Long structureId) throws Exception {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public void addUserInProfiles(Long idProfiles, String userName) throws Exception {
-		Profiles profiles = this.findProfileById(idProfiles);
+		Profiles profiles = profilesRepo.findByIdprofiles(idProfiles);
 		if(profiles==null) {
 			throw new Exception("profiles id error");
 		}
@@ -186,6 +216,73 @@ public class ProfilesServiceImpl implements ProfilesService {
 		profiles.setCurrentUser(user);
 		profilesRepo.save(profiles);
 		
+	}
+
+	@Override
+	public void update(Profiles profiles, Long idGroupUser, Long lastGroupUser) throws Exception {
+		
+		if(appUserService.findUserByName(profiles.getCurrentUser())==null){
+			throw new Exception("User "+profiles.getCurrentUser()+" don't exist");
+		}
+		Profiles profile = profilesRepo.findByIdprofiles(profiles.getIdProfiles());
+		if(profile==null) {
+			throw new Exception("le profile es inexistant");
+		}
+		GroupUser groupUserLast = groupUserServiceBasic.findGroupById(lastGroupUser);
+		GroupUser groupUserNew = groupUserServiceBasic.findGroupById(idGroupUser);
+		if(groupUserNew==null) {
+			throw new Exception("new groupe user inexistant");
+		}
+		if(groupUserLast==null) {
+			throw new Exception("Last groupe user inexistant");
+		}		
+		if(groupUserLast.getIdgroupes() != groupUserNew.getIdgroupes()) {
+			GroupProfile groupProfileLast =  groupProfileRepo.findByGroupuserIdAndProfileIdAndIsactiveTrueAndDateEndIsNull(groupUserLast, profile);
+			if(groupProfileLast == null) {
+				throw new Exception("new groupe user inexistant");						
+			}
+			groupProfileLast.setIsactive(false);
+			groupProfileRepo.save(groupProfileLast);
+			List<TypeUser> listTypeUser = new ArrayList<>();
+			listTypeUser.add(TypeUser.EXTERN_ACTOR);
+			listTypeUser.add(TypeUser.INTERN_ACTOR);
+			if(!listTypeUser.contains(profiles.getTypeprofil())) {
+				throw new Exception("Type de profile inexistant");
+			}
+			profile.setCurrentUser(profiles.getCurrentUser());
+			profile.setName(profiles.getName() );
+			profile.setTypeprofil(profiles.getTypeprofil());
+			profiles = profilesRepo.save(profiles);
+			groupProfileRepo.save(new GroupProfile(profile, groupUserNew, true));	
+		}else {
+			profile.setCurrentUser(profiles.getCurrentUser());
+			profile.setName(profiles.getName() );
+			profile.setTypeprofil(profiles.getTypeprofil());
+			profiles = profilesRepo.save(profiles);			
+		}
+		
+	}
+
+	@Override
+	public Page<Profiles> findProfilesToAdd(List<Long> profilesIdList, int page, int size) throws Exception {
+		return profilesRepo.findByIdprofilesNotInAndStatusTrue(profilesIdList, PageRequest.of(page, size));
+	}
+
+	@Override
+	public Page<Profiles> findProfilesToGroup(List<Long> profilesIdList, int page, int size) throws Exception {
+		return profilesRepo.findByIdprofilesInAndStatusTrue(profilesIdList, PageRequest.of(page, size));
+	}
+
+	@Override
+	public Page<Profiles> findProfilesToGroupName(List<Long> profilesIdList, String name, int page, int size)
+			throws Exception {
+		return profilesRepo.findByIdprofilesInAndNameContainingAndStatusTrue(profilesIdList, name, PageRequest.of(page, size));
+	}
+
+	@Override
+	public Page<Profiles> findProfilesToAddName(List<Long> profilesIdList, String name, int page, int size)
+			throws Exception {
+		return profilesRepo.findByIdprofilesNotInAndNameContainingAndStatusTrue(profilesIdList, name, PageRequest.of(page, size, Sort.by("iddroit").descending()));
 	}
 	
 

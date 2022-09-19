@@ -18,6 +18,7 @@ import com.microservice.ged.service.AppUserService;
 import com.microservice.ged.service.LogPosteUserService;
 import com.microservice.ged.service.PosteServiceBasic;
 import com.microservice.ged.service.ProfilesService;
+import com.microservice.ged.service.ProfilesServiceBasic;
 
 @Service
 @Transactional
@@ -30,12 +31,15 @@ public class LogPosteUserServiceImpl implements LogPosteUserService {
 	ProfilesService profilesService;
 	
 	@Autowired
+	ProfilesServiceBasic profilesServiceBasic;
+	
+	@Autowired
 	PosteServiceBasic posteServiceBasic;
 	
 
 	@Override
 	public Page<LogPosteUser> logUser(Long iduser, int page, int size) throws Exception {
-		Profiles profiles =  profilesService.findProfileById(iduser);
+		Profiles profiles =  profilesServiceBasic.findProfileById(iduser);
 		if(profiles==null) {
 			throw new Exception("profiles id error");
 		}
@@ -53,7 +57,7 @@ public class LogPosteUserServiceImpl implements LogPosteUserService {
 
 	@Override
 	public Postes currentPosteOfUser(Long iduser) throws Exception {
-		Profiles profiles =  profilesService.findProfileById(iduser);
+		Profiles profiles =  profilesServiceBasic.findProfileById(iduser);
 		if(profiles==null) {
 			throw new Exception("profiles id error");
 		}
@@ -66,19 +70,25 @@ public class LogPosteUserServiceImpl implements LogPosteUserService {
 	
 	@Override
 	public void add(Long postesId, Long iduser) throws Exception {
+		System.err.println("eeeeeeeeeeeeee");
 		Postes poste = posteServiceBasic.findPosteById(postesId);
 		if(poste==null) {
 			throw new Exception("postes id error");
 		}
-		Profiles profiles =  profilesService.findProfileById(iduser);
+		Profiles profiles =  profilesServiceBasic.findProfileById(iduser);
 		if(profiles==null) {
 			throw new Exception("profiles id error");
 		}
 		if(logPosteUserRepo.findByPosteIdAndDateFinIsNull(poste)==null) {//poste non occupe
+
+			System.err.println("poste non occupe");
 			if(logPosteUserRepo.findByLdaploginAndDateFinIsNull(profiles)==null) {//user sans poste
+
+				System.err.println("user sans poste");
 				LogPosteUser logPosteUser = new LogPosteUser(poste, profiles);
 				logPosteUserRepo.save(logPosteUser);						
 			}else {//user avec poste
+				System.err.println("user avec poste");
 				LogPosteUser logPosteUsers = logPosteUserRepo.findByLdaploginAndDateFinIsNull(profiles);				
 				logPosteUsers.setDateFin(new Date());
 				LogPosteUser logPosteUser = new LogPosteUser(poste, profiles);
@@ -87,6 +97,7 @@ public class LogPosteUserServiceImpl implements LogPosteUserService {
 				
 			}
 		}else {//poste occupe
+			System.err.println("poste occupe");
 			if(logPosteUserRepo.findByLdaploginAndDateFinIsNull(profiles)==null) {//user sans poste
 				LogPosteUser logPosteUsers = logPosteUserRepo.findByPosteIdAndDateFinIsNull(poste);
 			

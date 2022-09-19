@@ -41,10 +41,10 @@ public class GroupUser implements Serializable {
     @Column(name = "idgroupes", nullable = false)
     private Long idgroupes;
     
-    @Column(name = "name", unique = true, nullable = false)
+    @Column(name = "name", nullable = false)
     private String name;
     
-    @Column(name = "sigle", unique = true, nullable = false)
+    @Column(name = "sigle", nullable = false)
     private String sigle; 
         
     @Column(name = "status")

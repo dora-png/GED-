@@ -2,6 +2,7 @@ package com.microservice.ged.serviceImple;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.transaction.Transactional;
 
@@ -17,6 +18,7 @@ import com.microservice.ged.beans.GroupUser;
 import com.microservice.ged.repository.DroitGroupsRepo;
 import com.microservice.ged.service.DroitGroupsService;
 import com.microservice.ged.service.DroitService;
+import com.microservice.ged.service.DroitServiceBasic;
 import com.microservice.ged.service.GroupUserServiceBasic;
 import com.microservice.ged.utils.GroupDroitsBean;
 
@@ -26,100 +28,89 @@ public class DroitGroupsServiceImpl implements DroitGroupsService {
 	
 	@Autowired
 	DroitGroupsRepo droitGroupsRepo;
-	
-	@Autowired
-	GroupUserServiceBasic groupUserServiceBasic;
-	
-
-	@Autowired
-	DroitService droitService;
-
-	
-	@Override
-	public Page<DroitGroups> findAllDroitOfGroup(Long idGroupusers, int page, int size) throws Exception {
-		GroupUser groupUser = groupUserServiceBasic.findGroupById(idGroupusers);
-		if(groupUser==null) {
-			throw new Exception("Groupe id error");
-		}
-		return droitGroupsRepo.findByGroupuserId(groupUser, PageRequest.of(page, size, Sort.by("iddroitgroups").descending()));
-	}
 
 	@Override
-	public Page<DroitGroups> findDroitOfGroupActive(Long idGroupusers, int page, int size) throws Exception {
-		GroupUser groupUser = groupUserServiceBasic.findGroupById(idGroupusers);
-		if(groupUser==null) {
-			throw new Exception("Groupe id error");
-		}
-		return droitGroupsRepo.findByGroupuserIdAndIsactiveTrue(groupUser, PageRequest.of(page, size, Sort.by("iddroitgroups").descending()));
-	}
-
-	@Override
-	public void addDroitToGroup(List<GroupDroitsBean> groupDroitsBeanList) throws Exception {
-		groupDroitsBeanList.forEach(
-				(groupDroitsBean)->{
-					try {
-						Droits droits = droitService.findDroitsById(groupDroitsBean.getDroit());
-						GroupUser groupUser = groupUserServiceBasic.findGroupById(groupDroitsBean.getGroupe());
-						if(droits!=null && groupUser != null) {
-							if(droitGroupsRepo.findByDroitIdAndGroupuserIdAndIsactiveTrue(droits, groupUser) == null) {
-								droitGroupsRepo.save(new DroitGroups(droits, groupUser, true));							
-							}
-						}
-						
-					}catch (Exception e) {
-						////////
-					}					
+	public void addDroitToGroupBasic(GroupUser groupUser, List<Droits> droits) throws Exception {
+		droits.forEach(
+				(droitGroup)->{
+					droitGroupsRepo.save(new DroitGroups(droitGroup, groupUser, true));
 				}
 		);
-		
 	}
 
 	@Override
-	public void removeDroitToGroup(GroupDroitsBean groupDroitsBean) throws Exception {
-		Droits droits = droitService.findDroitsById(groupDroitsBean.getDroit());
-		GroupUser groupUser = groupUserServiceBasic.findGroupById(groupDroitsBean.getGroupe());
-		if(droits==null) {
-			throw new Exception("Droit not exist");
+	public Page<DroitGroups> findAllDroitOfGroup(GroupUser groupUser, int page, int size, int status) throws Exception {
+		switch (status) {
+			case 0:
+				return droitGroupsRepo.findByGroupuserIdAndIsactiveFalse(groupUser , PageRequest.of(page, size,Sort.by("iddroitgroups").descending()));				
+			case 1:
+				return droitGroupsRepo.findByGroupuserIdAndIsactiveTrue(groupUser , PageRequest.of(page, size,Sort.by("iddroitgroups").descending()));	
+			case 2:
+				return droitGroupsRepo.findByGroupuserId(groupUser, PageRequest.of(page, size,Sort.by("iddroitgroups").descending()));
+			default:
+				throw new Exception("Bad request");
 		}
-		if(groupUser==null) {
-			throw new Exception("groupUser not exist");
-		}
-		DroitGroups droitGroups = droitGroupsRepo.findByDroitIdAndGroupuserIdAndIsactiveTrue(droits, groupUser);
-		if(droitGroups != null) {
-			droitGroups.setIsactive(false);
-			droitGroupsRepo.save(droitGroups);							
-		}
-		
 	}
 
 	@Override
-	public Page<Droits> findListDroitToAdd(Long idGroupusers, int page, int size) throws Exception {
-		GroupUser groupUser = groupUserServiceBasic.findGroupById(idGroupusers);
-		if(groupUser==null) {
-			throw new Exception("groupUser not exist");
-		}
+	public List<Long> findListDroit(GroupUser groupUser, int status) throws Exception {
 		List<Long> droitsIdList = new ArrayList<>();
-		droitGroupsRepo.findByGroupuserIdAndIsactiveTrue(groupUser).forEach(
+		List<DroitGroups> droitsGroups = new ArrayList<>();
+		switch (status) {
+			case 0:
+				droitsGroups = droitGroupsRepo.findByGroupuserIdAndIsactiveFalse(groupUser);				
+			case 1:
+				droitsGroups = droitGroupsRepo.findByGroupuserIdAndIsactiveTrue(groupUser);	
+			default:
+				//throw new Exception("Bad request");
+		}
+		droitsGroups.forEach(
 				(droitGroup)->{
 					droitsIdList.add(droitGroup.getDroitId().getIddroit());
 				}
-		);		
-		return droitService.findDroitsToAdd(droitsIdList, page, size);
+		);	
+		return droitsIdList;
 	}
 
 	@Override
-	public List<Droits> findListDroit(Long idGroupusers) throws Exception {
-		GroupUser groupUser = groupUserServiceBasic.findGroupById(idGroupusers);
-		if(groupUser==null) {
-			throw new Exception("groupUser not exist");
+	public void removeDroitToGroup(GroupUser groupUser, Droits droits) throws Exception {
+		DroitGroups droitGroups = droitGroupsRepo.findByDroitIdAndGroupuserIdAndIsactiveTrue(droits, groupUser);
+		if(droitGroups != null) {
+			if(droitGroups.isIsactive()) {
+				droitGroups.setIsactive(false);
+				droitGroupsRepo.save(droitGroups);							
+			}
 		}
-		List<Droits> droitsIdList = new ArrayList<>();
-		droitGroupsRepo.findByGroupuserIdAndIsactiveTrue(groupUser).forEach(
+	}
+
+	@Override
+	public void addDroitToGroup(GroupUser groupUser, Droits droits) throws Exception {
+		if(droitGroupsRepo.findByDroitIdAndGroupuserIdAndIsactiveTrue(droits, groupUser) == null)
+			droitGroupsRepo.save(new DroitGroups(droits, groupUser, true));	
+	}
+
+	@Override
+	public List<Droits> findDroitOfGroup(GroupUser groupUser, int status) throws Exception {
+		List<Droits> droits = new ArrayList<>();
+		droitGroupsRepo.findByGroupuserId(groupUser).forEach(
 				(droitGroup)->{
-					droitsIdList.add(droitGroup.getDroitId());
+					switch(status) {
+						case 0:
+							if(!droitGroup.isIsactive())
+								droits.add(droitGroup.getDroitId());							
+						case 1:
+							if(droitGroup.isIsactive())
+								droits.add(droitGroup.getDroitId());							
+						case 2:
+							droits.add(droitGroup.getDroitId());
+						default:
+						
+					}
+					
 				}
-		);		
-		return droitsIdList;
+				
+		);
+		return droits;
 	}
 
 }

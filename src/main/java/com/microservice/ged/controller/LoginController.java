@@ -83,22 +83,24 @@ public class LoginController {
 			structureSigle = "ROOT";
 			
         } else {
-        	Profiles profiles = profilesService.findProfileByUserName(authenticationRequest.getUsername());
+        	Profiles profiles = profilesService.findProfileByUserLogin(authenticationRequest.getUsername());
         	if(profiles != null) {
-        		GroupUser groupUser = groupProfileService.findGroupOfProfile(profiles.getIdProfiles());
+        		if(!profiles.isStatus()) {
+                    throw new Exception("This user is ban");
+                }
+        		GroupUser groupUser = groupProfileService.findGroupOfProfile(profiles);
         		if(groupUser!= null) {
-        			droitGroupsService.findListDroit(groupUser.getIdgroupes()).forEach(
-            				(droits)->{
-        							authorities.add(droits.getName());
-            				}
-            		);
-        			Postes postes = logPosteUserService.currentPosteOfUser(profiles.getIdProfiles());
-        			if(postes!= null) {
-        				color = postes.getStructure().getColor();
-        				structureSigle = postes.getStructure().getSigle();
-            			structureName = postes.getStructure().getName();
-            		}   
-        		}        		
+        			if(groupUser.getStatus()) {
+        				droitGroupsService.findDroitOfGroup(groupUser,1).forEach(
+                				(droits)->{
+            							authorities.add(droits.getName());
+                				}
+                		);
+        			}
+        		}
+        		color = profiles.getStructure().getColor();
+				structureSigle = profiles.getStructure().getSigle();
+				structureName = profiles.getStructure().getName();
         	}
         }
         HttpHeaders responseHeaders = new HttpHeaders();

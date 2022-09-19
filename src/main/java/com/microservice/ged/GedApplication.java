@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -18,9 +17,7 @@ import com.microservice.ged.beans.Droits;
 import com.microservice.ged.beans.Structures;
 import com.microservice.ged.beans.TypeUser;
 import com.microservice.ged.beans.WorkFlow;
-import com.microservice.ged.repository.LogPosteUserRepo;
 import com.microservice.ged.repository.DroitsRepo;
-import com.microservice.ged.repository.StructureRepo;
 import com.microservice.ged.service.AppUserService;
 import com.microservice.ged.service.GroupProfileService;
 import com.microservice.ged.service.GroupUserService;
@@ -53,7 +50,8 @@ public class GedApplication {
 			PosteService posteService,
 			LogPosteUserService logPosteUserService,
 			GroupUserService groupUserService,
-			WorkFlowService workFlowService
+			WorkFlowService workFlowService,
+			AppUserService appUserService
 			) {
 		return arg -> {
 			
@@ -66,7 +64,13 @@ public class GedApplication {
 			Droits ap24 = new Droits("USPROF", "Modifier le status d'un profile utilisateur", "post","/profile/set_StaTus");
 			Droits ap25 = new Droits("UNPROF", "Modifier le nom d'un profile utilisateur", "post","/profile/set_namekjk2132123");
 			Droits ap26 = new Droits("UUPROF", "Modifier l'utilisateur ldap du profile", "post","/profile/set_userkjk2132123");
-			
+			Droits ap30 = new Droits("CUSTRUCTURE", "Creer et modifier une structure", "post","/structures/update");
+			Droits ap31 = new Droits("RSTRUCTURE", "Lister les structures", "get","/structures/all");
+			Droits ap32 = new Droits("DSTRUCTURE", "Supprimer une structure", "delete","/structures");
+			Droits ap33 = new Droits("CUPOSTE", "Creer et modifier un poste", "post","/postes/update");
+			Droits ap34 = new Droits("RPOSTE", "Lister les postes", "get","/postes/all");
+			Droits ap35 = new Droits("DPOSTE", "Supprimer une poste", "delete","/postes");
+
 			droitsRepo.save(ap12);
 			droitsRepo.save(ap22);
 			droitsRepo.save(ap29);
@@ -76,18 +80,83 @@ public class GedApplication {
 			droitsRepo.save(ap27);
 			droitsRepo.save(ap25);
 			droitsRepo.save(ap26);
+			droitsRepo.save(ap30);
+			droitsRepo.save(ap31);
+			droitsRepo.save(ap32);
+			droitsRepo.save(ap33);
+			droitsRepo.save(ap34);
+			droitsRepo.save(ap35);
 			
-			Profiles profiles = new Profiles("Maire",null, TypeUser.INTERN_ACTOR, true);
-			profilesService.add(profiles);
-			Profiles profiless = new Profiles("Maires",null, TypeUser.EXTERN_ACTOR, true);
-			profilesService.add(profiless);
+			Structures structures = new Structures("Mairie", "MRIE","blue", "description");
+			structureService.add(structures);
 			
-			GroupUser groupUser = new GroupUser("String name", "String sigle", true);
-			groupUserService.saveGroupUser(groupUser);
-			List<GroupProfilesBean> groupProfilesBeanList = new ArrayList<>();
-			groupProfilesBeanList.add(new GroupProfilesBean(new Long(1), new Long(1)));	
-			groupProfilesBeanList.add(new GroupProfilesBean(new Long(2), new Long(1)));			
-			groupProfileService.addGroupToProfiles(groupProfilesBeanList);
+			GroupUser groupUser = new GroupUser("GroupUser name", "GroupUser sigle", true);
+			List<Long> ids = List.of(
+					new Long(1), 
+					new Long(2), 
+					new Long(3), 
+					new Long(4),
+					new Long(5),
+					new Long(6),
+					new Long(7),
+					new Long(8),
+					new Long(9),
+					new Long(10),
+					new Long(11),
+					new Long(12),
+					new Long(13),
+					new Long(14));
+			groupUserService.saveGroupUser(groupUser, ids);	
+			
+			GroupUser groupUser1 = new GroupUser("GroupUser 1", "GroupUser sigle 1", true);
+			groupUserService.saveGroupUser(groupUser1, ids);		
+			
+			GroupUser groupUser2 = new GroupUser("GroupUser 2", "GroupUser sigle 2", true);
+			groupUserService.saveGroupUser(groupUser2, ids);		
+			
+			GroupUser groupUser3 = new GroupUser("GroupUser 3", "GroupUser sigle 3", true);
+			groupUserService.saveGroupUser(groupUser3, ids);		
+			
+			GroupUser groupUser4 = new GroupUser("GroupUser 4", "GroupUser sigle 4", true);
+			groupUserService.saveGroupUser(groupUser4, ids);		
+			
+			GroupUser groupUser5 = new GroupUser("GroupUser 5", "GroupUser sigle 5", true);
+			groupUserService.saveGroupUser(groupUser5, ids);		
+			
+			GroupUser groupUser6 = new GroupUser("GroupUser 6", "GroupUser sigle 6", true);
+			groupUserService.saveGroupUser(groupUser6, ids);		
+			
+			GroupUser groupUser7 = new GroupUser("GroupUser 7", "GroupUser sigle 7", true);
+			groupUserService.saveGroupUser(groupUser7, ids);		
+			
+			GroupUser groupUser8 = new GroupUser("GroupUser 8", "GroupUser sigle 8", true);
+			groupUserService.saveGroupUser(groupUser8, ids);		
+			
+			GroupUser groupUser9 = new GroupUser("GroupUser 9", "GroupUser sigle 9", true);
+			groupUserService.saveGroupUser(groupUser9, ids);		
+			
+			GroupUser groupUser10 = new GroupUser("GroupUser 10", "GroupUser sigle 10", true);
+			groupUserService.saveGroupUser(groupUser10, ids);			
+			Postes postes = new Postes("Maire", "description", structureService.findByName(structures.getName()));
+			posteService.addPoste(postes);
+			Profiles profiles = new Profiles("Maire","Bob Hamilton", TypeUser.INTERN_ACTOR, true);
+			profilesService.add(profiles, structureService.findByName(structures.getName()).getIdstructure(),groupUserService.findGroupByName(groupUser.getName()).getIdgroupes());
+			
+			Profiles profile1 = new Profiles("Secretaire Generale","Joe Smeth", TypeUser.INTERN_ACTOR, true);
+			profilesService.add(profile1, structureService.findByName(structures.getName()).getIdstructure(),groupUserService.findGroupByName(groupUser.getName()).getIdgroupes());
+			
+			Profiles profile2 = new Profiles("Secretaire","Mouse Jerry", TypeUser.INTERN_ACTOR, true);
+			profilesService.add(profile2, structureService.findByName(structures.getName()).getIdstructure(),groupUserService.findGroupByName(groupUser.getName()).getIdgroupes());
+			
+			Profiles profile3 = new Profiles("Adjoint N°1","slash guy", TypeUser.INTERN_ACTOR, true);
+			profilesService.add(profile3, structureService.findByName(structures.getName()).getIdstructure(),groupUserService.findGroupByName(groupUser.getName()).getIdgroupes());
+
+			Profiles profile4 = new Profiles("Adjoint N°2","Ben Alex", TypeUser.INTERN_ACTOR, true);
+			profilesService.add(profile4, structureService.findByName(structures.getName()).getIdstructure(),groupUserService.findGroupByName(groupUser.getName()).getIdgroupes());
+			
+			
+			
+			
 			
 			/*Appusers appusers = new Appusers("ROOT", "root","1234");
 			userRepo.addUser(appusers);

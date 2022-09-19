@@ -8,12 +8,20 @@ import com.microservice.ged.beans.Postes;
 import com.microservice.ged.beans.Structures;
 
 public interface StructureRepo extends JpaRepository<Structures, Long> {
-	Structures findByIdstructureAndActiveTrue(Long idstructure);
+	Structures findByIdstructure(Long idstructure);
+	Structures findByName(String name);
+	Structures findBySigle(String sigle);
 	Structures findByNameAndActiveTrue(String name);
 	Structures findBySigleAndActiveTrue(String sigle);
+	Structures findByColor(String color);
+	Page<Structures> findByActiveFalse(Pageable pageable);
 	Page<Structures> findByActiveTrue(Pageable pageable);
+	Page<Structures> findByNameContaining(String name, Pageable pageable);
+	Page<Structures> findBySigleContaining(String sigle, Pageable pageable);
 	Page<Structures> findByNameContainingAndActiveTrue(String name, Pageable pageable);
 	Page<Structures> findBySigleContainingAndActiveTrue(String sigle, Pageable pageable);
+	Page<Structures> findByNameContainingAndActiveFalse(String name, Pageable pageable);
+	Page<Structures> findBySigleContainingAndActiveFalse(String sigle, Pageable pageable);
 	Structures findByStructureSuperieurIsNullAndActiveTrue();
 
 }

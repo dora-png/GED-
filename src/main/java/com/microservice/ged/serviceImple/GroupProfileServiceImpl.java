@@ -1,6 +1,7 @@
 package com.microservice.ged.serviceImple;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -22,6 +23,7 @@ import com.microservice.ged.service.GroupProfileService;
 import com.microservice.ged.service.GroupUserService;
 import com.microservice.ged.service.GroupUserServiceBasic;
 import com.microservice.ged.service.ProfilesService;
+import com.microservice.ged.service.ProfilesServiceBasic;
 import com.microservice.ged.utils.GroupProfilesBean;
 
 @Service
@@ -30,147 +32,141 @@ public class GroupProfileServiceImpl implements GroupProfileService {
 	
 	@Autowired
 	GroupProfileRepo groupProfileRepo;
-	
-	@Autowired
-	ProfilesService profilesService;
-	
-	@Autowired
-	DroitGroupsService droitGroupsService ;
-
-	@Autowired
-	GroupUserService groupUserService;
-	
-	@Autowired
-	GroupUserServiceBasic groupUserServiceBasic;
 
 	@Override
-	public Page<GroupProfile> findAllGroupOfProfiles(Long idProfiles, int page, int size) throws Exception {
-		Profiles profiles = profilesService.findProfileById(idProfiles);
-		if(profiles==null) {
-			throw new Exception("profiles id error");
+	public Page<GroupProfile> findAllGroupOfProfiles(Profiles profile, int page, int size, int status) throws Exception {
+		switch (status) {
+			case 0:
+				return groupProfileRepo.findByProfileIdAndIsactiveFalse(profile , PageRequest.of(page, size,Sort.by("idgroupprofile").descending()));				
+			case 1:
+				return groupProfileRepo.findByProfileIdAndIsactiveTrue(profile , PageRequest.of(page, size,Sort.by("idgroupprofile").descending()));	
+			case 2:
+				return groupProfileRepo.findByProfileId(profile, PageRequest.of(page, size,Sort.by("idgroupprofile").descending()));
+			default:
+				throw new Exception("Bad request");
 		}
-		return groupProfileRepo.findByProfileId(profiles, PageRequest.of(page, size, Sort.by("idgroupprofile").descending()));
 	}
 
 	@Override
-	public Page<GroupProfile> findGrouptOfProfilesActive(Long idProfiles, int page, int size) throws Exception {
-		Profiles profiles = profilesService.findProfileById(idProfiles);
-		if(profiles==null) {
-			throw new Exception("profiles id error");
+	public Page<GroupProfile> findAllProfilesInGroup(GroupUser groupUser, int page, int size, int status) throws Exception {
+
+		switch (status) {
+			case 0:
+				return groupProfileRepo.findByGroupuserIdAndIsactiveFalse(groupUser , PageRequest.of(page, size,Sort.by("idgroupprofile").descending()));				
+			case 1:
+				return groupProfileRepo.findByGroupuserIdAndIsactiveTrue(groupUser , PageRequest.of(page, size,Sort.by("idgroupprofile").descending()));	
+			case 2:
+				return groupProfileRepo.findByGroupuserId(groupUser, PageRequest.of(page, size,Sort.by("idgroupprofile").descending()));
+			default:
+				throw new Exception("Bad request");
 		}
-		return groupProfileRepo.findByProfileIdAndIsactiveTrue(profiles, PageRequest.of(page, size));
 	}
 
 	@Override
-	public Page<GroupProfile> findAllProfilesInGroup(Long idGroup, int page, int size) throws Exception {
-		GroupUser groupUser = groupUserServiceBasic.findGroupById(idGroup);
-		if(groupUser==null) {
-			throw new Exception("groupUser id error");
-		}
-		return groupProfileRepo.findByGroupuserId(groupUser, PageRequest.of(page, size, Sort.by("idgroupprofile").descending()));
+	public GroupUser findGroupOfProfile(Profiles profile) throws Exception {
+		return groupProfileRepo.findByProfileIdAndIsactiveTrueAndDateEndIsNull(profile).getGroupuserId();
 	}
 
 	@Override
-	public Page<GroupProfile> findProfilesInGroupActive(Long idGroup, int page, int size) throws Exception {
-		GroupUser groupUser = groupUserServiceBasic.findGroupById(idGroup);
-		if(groupUser==null) {
-			throw new Exception("groupUser id error");
-		}
-		return groupProfileRepo.findByGroupuserIdAndIsactiveTrue(groupUser, PageRequest.of(page, size, Sort.by("idgroupprofile").descending()));
-	}
-
-	@Override
-	public Page<GroupUser> findListGroupUserToAdd(Long idProfiles, int page, int size) throws Exception {
-		Profiles profiles = profilesService.findProfileById(idProfiles);
-		if(profiles==null) {
-			throw new Exception("profiles id error");
-		}
-		List<Long> groupProfileIdList = new ArrayList<>();
-		groupProfileRepo.findByProfileIdAndIsactiveTrue(profiles).forEach(
-				(groupProfile)->{
-					groupProfileIdList.add(groupProfile.getGroupuserId().getIdgroupes());
+	public void addGroupToProfilesBasic(GroupUser groupUser, List<Profiles> profiles) throws Exception {
+		profiles.forEach(
+				(profile)->{
+					groupProfileRepo.save(new GroupProfile(profile, groupUser, true));
 				}
-		);		
-		return groupUserService.findGroupToAdd(groupProfileIdList, page, size);
+		);
 	}
 
 	@Override
-	public void addGroupToProfiles(List<GroupProfilesBean> groupProfilesList) throws Exception {
-		groupProfilesList.forEach(
-				(groupProfiles)->{
-					try {
-						GroupUser groupUser = groupUserServiceBasic.findGroupById(groupProfiles.getGroupe());
-						Profiles profiles = profilesService.findProfileById(groupProfiles.getProfile());
-						if(groupUser!=null && profiles != null) {
-							if(groupProfileRepo.findByGroupuserIdAndProfileIdAndIsactiveTrueAndDateEndIsNull(groupUser, profiles) == null) {
-								groupProfileRepo.save(new GroupProfile(profiles, groupUser, true));							
-							}
-						}
+	public void removeGroupToProfiles(GroupUser groupUser, Profiles profiles) throws Exception {
+		GroupProfile groupProfiles = groupProfileRepo.findByGroupuserIdAndProfileIdAndIsactiveTrueAndDateEndIsNull(groupUser, profiles);
+		if(groupProfiles != null) {
+			if(groupProfiles.isIsactive()) {
+				groupProfiles.setIsactive(false);
+				groupProfiles.setDateEnd(new Date());
+				groupProfileRepo.save(groupProfiles);							
+			}
+		}
+	}
+
+	@Override
+	public void addGroupToProfilesBasic(GroupUser groupUser, Profiles profiles) throws Exception {
+		GroupProfile groupProfiles = groupProfileRepo.findByGroupuserIdAndProfileIdAndIsactiveTrueAndDateEndIsNull(groupUser, profiles);
+		if(groupProfiles == null) 
+			groupProfileRepo.save(new GroupProfile(profiles, groupUser, true));
+		
+	}
+	
+	@Override
+	public void addGroupToProfiles(GroupUser groupUser, List<Profiles> profiles) throws Exception {
+		List<GroupProfile> gpList = groupProfileRepo.findByGroupuserId(groupUser);
+		if(gpList.isEmpty()) {
+			profiles.forEach(
+					(profile)->{
+						try {
+							groupProfileRepo.save(new GroupProfile(profile, groupUser, true));														
+						}catch (Exception e) {
+						}					
+					}
+			);
+		} else {
+			for(GroupProfile gp : gpList) {}
+			
+		}
+		
+				
+	}
+
+	@Override
+	public Page<Profiles> findAllProfilesInGroupPage(GroupUser groupUser, int page, int size, int status) throws Exception {
+		return null;
+	}
+
+	@Override
+	public List<Profiles> findAllProfilesInGroupList(GroupUser groupUser, int status) throws Exception {
+		List<GroupProfile> groupProfiles = new ArrayList<>();
+		switch (status) {
+			case 0:
+				groupProfiles = groupProfileRepo.findByGroupuserIdAndIsactiveFalse(groupUser);				
+			case 1:
+				groupProfiles = groupProfileRepo.findByGroupuserIdAndIsactiveTrue(groupUser);	
+			case 2:
+				groupProfiles = groupProfileRepo.findByGroupuserId(groupUser);
+			default:
+				//throw new Exception("Bad request");
+		}
+		List<Profiles> list = new ArrayList<>();
+		groupProfiles.forEach(
+				(groupProfile)->{
+					if(groupProfile.isIsactive()) {
+						if(!list.contains(groupProfile.getProfileId()))
+							list.add(groupProfile.getProfileId());
 						
-					}catch (Exception e) {
-						////////
-					}					
+					}
 				}
 		);
 		
-	}
-
-	@Override
-	public void removeGroupToProfiles(GroupProfilesBean groupProfilesBean) throws Exception {
-		GroupUser groupUser =  groupUserServiceBasic.findGroupById(groupProfilesBean.getGroupe());
-		Profiles profiles = profilesService.findProfileById(groupProfilesBean.getProfile());
-		if(groupUser==null) {
-			throw new Exception("groupUser not exist");
-		}
-		if(profiles==null) {
-			throw new Exception("profiles not exist");
-		}
-		GroupProfile groupProfile = groupProfileRepo.findByGroupuserIdAndProfileIdAndIsactiveTrueAndDateEndIsNull(groupUser, profiles);
-		if(groupProfile != null) {
-			groupProfile.setIsactive(false);
-			groupProfileRepo.save(groupProfile);							
-		}
 		
+		return list;
 	}
 
 	@Override
-	public List<Droits> findListDroit(Long idProfiles) throws Exception {
-		Profiles profiles = profilesService.findProfileById(idProfiles);
-		if(profiles==null) {
-			throw new Exception("profiles id error");
+	public List<Long> findAllIdProfilesInGroupList(GroupUser groupUser, int status) throws Exception {
+		List<Long> profilesIdList = new ArrayList<>();
+		List<GroupProfile> groupProfiles = new ArrayList<>();
+		switch (status) {
+			case 0:
+				groupProfiles = groupProfileRepo.findByGroupuserIdAndIsactiveFalse(groupUser);				
+			case 1:
+				groupProfiles = groupProfileRepo.findByGroupuserIdAndIsactiveTrue(groupUser);	
+			default:
+				//throw new Exception("Bad request");
 		}
-		List<Long> groupIdList = new ArrayList<>();
-		groupProfileRepo.findByProfileIdAndIsactiveTrue(profiles).forEach(
+		groupProfiles.forEach(
 				(groupProfile)->{
-					groupIdList.add(groupProfile.getGroupuserId().getIdgroupes());
+					profilesIdList.add(groupProfile.getProfileId().getIdProfiles());
 				}
 		);	
-		List<Droits> droitsList = new ArrayList<>();
-		groupIdList.forEach(
-				(groupProfile)->{
-					try {
-						droitGroupsService.findListDroit(groupProfile).forEach(
-								(droits)->{
-									if(!droitsList.contains(droits))
-										droitsList.add(droits);
-								}
-						);
-					} catch (Exception e) {
-						
-					}
-					
-				}
-		);	
-		return droitsList;
-	}
-
-	@Override
-	public GroupUser findGroupOfProfile(Long idProfiles) throws Exception {
-		Profiles profiles = profilesService.findProfileById(idProfiles);
-		if(profiles==null) {
-			throw new Exception("profiles not exist");
-		}
-		return groupProfileRepo.findByProfileIdAndIsactiveTrueAndDateEndIsNull(profiles).getGroupuserId();
+		return profilesIdList;
 	}
 
 }

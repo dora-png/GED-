@@ -62,7 +62,7 @@ public class Postes implements Serializable {
         
     @ManyToOne
 	@JoinColumn(nullable = false)
-	@JsonIncludeProperties(value = {"idstructure", "name", "sigle","active" })
+	@JsonIncludeProperties(value = {"idstructure", "name", "sigle","active", "color" })
 	private Structures structure;
 
 	@OneToMany(mappedBy = "posteSuperieur", fetch = FetchType.LAZY)
@@ -84,11 +84,10 @@ public class Postes implements Serializable {
 	}
 
 
-	public Postes(String name, String description, boolean active, Structures structure) {
+	public Postes(String name, String description,Structures structure) {
 		super();
 		this.name = name;
 		this.description = description;
-		this.active = active;
 		this.structure = structure;
 	}
 
@@ -171,7 +170,6 @@ public class Postes implements Serializable {
 	public void setDateCreation(Date dateCreation) {
 		this.dateCreation = dateCreation;
 	}
-	
-	
+
 	
 }

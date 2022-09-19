@@ -55,12 +55,14 @@ public class PosteServiceImpl implements PosteService{
 	}
 	
 	@Override
-	public void updatePosteName(Long idPoste, String name) throws Exception {
-		Postes poste = posteRepo.findByIdposteAndActiveTrue(idPoste);
-		if(poste == null) {
+	public void updatePoste(Postes poste) throws Exception {
+		Postes postes = posteRepo.findByIdposte(poste.getIdposte());
+		if(postes == null) {
 			throw new Exception("Poste not exist");
 		}
-		poste.setName(name);
+		postes.setName(poste.getName());
+		postes.setDescription(poste.getDescription());
+		postes.setActive(poste.isActive());
 		posteRepo.save(poste);
 	}
 	
@@ -99,7 +101,11 @@ public class PosteServiceImpl implements PosteService{
 	}
 	
 	@Override
-	public Page<Postes> findAllStructurePoste(Structures structures, int page, int size) throws Exception {
+	public Page<Postes> findAllStructurePoste(Long id, int page, int size) throws Exception {
+		Structures structures = structureService.findByIdStructure(id);
+		if(structures==null) {
+			throw new Exception("Structure don't exist");
+		}
 		return posteRepo.findByStructureAndActiveTrue(structures, PageRequest.of(page, size, Sort.by("idposte").descending()));
 	}
 	
@@ -142,6 +148,14 @@ public class PosteServiceImpl implements PosteService{
 				);	
 		}		
 		return organigramStructure;
+	}
+
+	@Override
+	public Postes findPosteById(Long id) throws Exception {
+		Postes poste = posteRepo.findByIdposteAndActiveTrue(id);
+		if(poste == null)
+			throw new Exception("Poste not found");
+		return poste;
 	}
 
 }

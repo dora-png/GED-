@@ -30,6 +30,16 @@ public class DroitServiceImpl implements DroitService {
 		return droitsRepo.findByIddroitNotIn(droitsIdList, PageRequest.of(page, size));
 	}
 	
+	@Override
+	public Page<Droits> findDroitsToGroup(List<Long> droitsIdList, int page, int size) throws Exception {
+		return droitsRepo.findByIddroitIn(droitsIdList, PageRequest.of(page, size));
+	}
+	
+	@Override
+	public Page<Droits> findDroitsToGroupName(List<Long> droitsIdList, String name, int page, int size) throws Exception {
+		return droitsRepo.findByIddroitInAndNameContaining(droitsIdList, name, PageRequest.of(page, size));
+	}
+	
 
 	@Override
 	public Page<Droits> findDroitsToAddName(List<Long> droitsIdList, String name, int page, int size) throws Exception {
@@ -39,16 +49,6 @@ public class DroitServiceImpl implements DroitService {
 	@Override
 	public Page<Droits> searchDroits(String role, int page, int size) throws Exception {
 		return droitsRepo.findByNameContaining(role, PageRequest.of(page, size, Sort.by("iddroit").descending()));
-	}
-
-	@Override
-	public Droits findDroitsById(Long id) throws Exception {
-		return droitsRepo.findByIddroit(id);
-	}
-
-	@Override
-	public Droits findDroitsByName(String name) throws Exception {
-		return droitsRepo.findByName(name);
 	}
 
 	@Override
@@ -65,6 +65,11 @@ public class DroitServiceImpl implements DroitService {
 		droits.setIddroit(null);
 		droits.setDateCreation(null);
 		droitsRepo.save(droits);		
+	}
+
+	@Override
+	public Page<Droits> findDroitsByDescription(String description, int page, int size) throws Exception {
+		return droitsRepo.findByDescriptionContaining(description, PageRequest.of(page, size, Sort.by("iddroit").descending()));
 	}
 	
 }

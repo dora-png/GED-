@@ -10,11 +10,15 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.CreationTimestamp;
+
+import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 
 @Entity
 @Table(name = "profiles")
@@ -37,6 +41,11 @@ public class Profiles {
 	 	 	 
 	 @Column(name = "status")
 	 private boolean status;
+	 
+	 @ManyToOne
+	 @JoinColumn(nullable = false)
+	 @JsonIncludeProperties(value = {"idstructure", "name", "sigle","active", "color" })
+	 private Structures structure;
 	 
 	 @Column(name = "datecreation", insertable = true, updatable = false)
 	 @Temporal(TemporalType.TIMESTAMP)
@@ -103,14 +112,12 @@ public class Profiles {
 		this.dateCreation = dateCreation;
 	}
 
-	@Override
-	public String toString() {
-		return "Profiles [idprofiles=" + idprofiles + ", name=" + name + ", currentUser=" + currentUser
-				+ ", typeprofil=" + typeprofil + ", status=" + status + ", dateCreation=" + dateCreation + "]";
+	public Structures getStructure() {
+		return structure;
 	}
-	
-	
-	
 
+	public void setStructure(Structures structure) {
+		this.structure = structure;
+	}
 	
 }

@@ -61,7 +61,7 @@ public class AppUserServiceImpl implements AppUserService {
                 .and("cn").like(cn)
                 .and("sn").like(sn)
                 .and("uid").like(uid);
-        return ldapTemplate.search(query, new PersonAttributesMapper());
+        return ldapTemplate.search(query, new PersonAttributesMapper("cn"));
     }
 	
 	private List<String> getAllUserLDAPListNotLike(String cn, String sn, String uid) {
@@ -75,7 +75,19 @@ public class AppUserServiceImpl implements AppUserService {
                 .and("cn").not().like(cn)
                 .and("sn").like(sn)
                 .and("uid").like(uid);
-        return ldapTemplate.search(query, new PersonAttributesMapper());
+        return ldapTemplate.search(query, new PersonAttributesMapper("cn"));
+    }
+	
+	private List<String> getUserLDAPNameByLogin(String uid) {
+		this.initUser();
+        LdapQuery query = query()
+                .searchScope(SearchScope.SUBTREE)
+                .timeLimit(3000)
+                .attributes("uid")
+                .base(LdapUtils.emptyLdapName())
+                .where("objectclass").is("person")
+                .and("uid").like(uid);
+        return ldapTemplate.search(query, new PersonAttributesMapper("uid"));
     }
 	
 	/*private void getAllGroupLDAPList() {
@@ -91,16 +103,25 @@ public class AppUserServiceImpl implements AppUserService {
     }*/
 
 	 private class PersonAttributesMapper implements AttributesMapper<String> {
+		 private String attribute;
+		 PersonAttributesMapper(String attribute){
+			 this.attribute = attribute;
+		 }
 	        public String mapFromAttributes(Attributes attrs) throws NamingException {
-	            String name = (String) attrs.get("cn").get();
+	            String name = (String) attrs.get(this.attribute).get();
 	            return name;
 	        }
 	    }
 
 	@Override
 	public List<String> findAllUserByNameNotLike(String name) {
-		name="Bob*";
+		name=name+"*";
 		return this.getAllUserLDAPListNotLike(name, "*", "*");
+	}
+
+	@Override
+	public String findUserByLogin(String login) {		
+		return this.getAllUserLDAPList("*", "*", login).isEmpty() ? null : this.getAllUserLDAPList("*", "*", login).get(0) ;
 	}
 
 }

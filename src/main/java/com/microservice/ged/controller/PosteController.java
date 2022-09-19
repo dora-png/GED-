@@ -17,12 +17,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.microservice.ged.beans.GroupUser;
 import com.microservice.ged.beans.Postes;
+import com.microservice.ged.beans.Profiles;
 import com.microservice.ged.beans.Structures;
 import com.microservice.ged.service.GroupUserService;
 import com.microservice.ged.service.LogPosteUserService;
 import com.microservice.ged.service.PosteService;
+import com.microservice.ged.service.ProfilesService;
 import com.microservice.ged.service.StructureService;
-//import com.microservice.ged.service.UserService;
 import com.microservice.ged.utils.OrganigramStructure;
 import com.microservice.ged.utils.OrganigramSystem;
 import com.microservice.ged.utils.PosteRoleBean;
@@ -30,17 +31,13 @@ import com.microservice.ged.utils.PosteRoleBean;
 @RestController
 @CrossOrigin("*")
 public class PosteController {
-/*	
+	
 	@Autowired
 	private PosteService posteservice;
 
 	@Autowired
-	private UserService userService;
+	private ProfilesService profilesService;
 	
-
-	@Autowired
-	private GroupUserService groupUserService;
-
 	@Autowired
 	private StructureService structureService;
 	
@@ -63,50 +60,21 @@ public class PosteController {
 		}	
 	}
 
-	@GetMapping("/postes/search-by-structure-and-niveau")
-	public ResponseEntity<Page<Postes>> searchPosteByStructureAndNiveau(
-			@RequestBody Structures structures,
-			@RequestParam(name = "niveau") int niveau,
-			@RequestParam(name = "page", defaultValue = "0") int page,
-			@RequestParam(name = "size", defaultValue = "5") int size) {
-		try {
-			Page<Postes> postes = posteservice.searchPosteByStructureAndNiveau(niveau, structures, page, size);
-			if(postes.isEmpty()) {
-				return  ResponseEntity.noContent().build();
-			}else {
-				return  ResponseEntity.ok().body(postes);
-			}			
-		} catch (Exception e) {
-			return ResponseEntity.badRequest().build();
-		}	
-	}
-
 	@GetMapping("/postes/search-by-structure")
 	public ResponseEntity<Page<Postes>> findAllStructurePoste(
-			@RequestParam(name = "structure")Long structure,
+			@RequestParam(name = "structure", required = true)Long structure,
 			@RequestParam(name = "page", defaultValue = "0") int page,
-			@RequestParam(name = "size", defaultValue = "5") int size) {
-		try {
-			Structures structures = structureService.findByIdStructure(structure);
-			if(structures==null) {
-				return ResponseEntity.badRequest().build();
-			}else {
-				Page<Postes> postes = posteservice.findAllStructurePoste(structures, page, size);
-				if(postes.isEmpty()) {
-					return  ResponseEntity.noContent().build();
-				}else {
-					return  ResponseEntity.ok().body(postes);
-				}	
-			}
-			
-					
-		} catch (Exception e) {
-			return ResponseEntity.badRequest().build();
-		}	
+			@RequestParam(name = "size", defaultValue = "5") int size) throws Exception{
+		Page<Postes> postes = posteservice.findAllStructurePoste(structure, page, size);
+		if(postes.isEmpty()) {
+			return  ResponseEntity.noContent().build();
+		}else {
+			return  ResponseEntity.ok().body(postes);
+		}
 	}
 	
 	@GetMapping("/postes/fing-by-id")
-	public ResponseEntity<Postes> findPosteById(@RequestParam(name = "id") Long id) throws Exception {
+	public ResponseEntity<Postes> findPosteById(@RequestParam(name = "id", required = true) Long id) throws Exception {
 
 		return  ResponseEntity.ok().body(posteservice.findPosteById(id));
 	}
@@ -144,45 +112,6 @@ public class PosteController {
 			return ResponseEntity.badRequest().build();
 		}	
 	}
-	
-	@GetMapping("/poste/cant-be-add")
-	public ResponseEntity<Page<Postes>> findPosteToAdd(
-			@RequestParam(name = "idGroup", required = true) Long idGroup,
-			@RequestParam(name = "page", defaultValue = "0") int page,
-			@RequestParam(name = "size", defaultValue = "5") int size) throws Exception {
-		GroupUser groupUser = groupUserService.findById(idGroup);
-		if(groupUser==null) {
-			throw new Exception("Group don't exist");
-		}
-		Page<Postes> postes = posteservice.listPosteNotIn(groupUser, page, size);
-		if(postes.isEmpty()) {
-			throw new Exception("Poste empty");
-		}
-		return  ResponseEntity.ok().body(postes);	
-	}
-	
-	@GetMapping("/poste/cant-be-add-name")
-	public ResponseEntity<Page<Postes>> findPosteToAddByName(
-			@RequestParam(name = "idGroup", required = true) Long idGroup,
-			@RequestParam(name = "name") String name,
-			@RequestParam(name = "page", defaultValue = "0") int page,
-			@RequestParam(name = "size", defaultValue = "5") int size) throws Exception {
-		GroupUser groupUser = groupUserService.findById(idGroup);
-		if(groupUser==null) {
-			throw new Exception("Group don't exist");
-		}
-		if(name.isBlank()) {
-			throw new Exception("Search value is blank");
-		}
-		if(name.isEmpty()) {
-			throw new Exception("Search value is empty");
-		}
-		Page<Postes> postes = posteservice.listPosteNotInByName(groupUser, name, page, size);
-		if(postes.isEmpty()) {
-			throw new Exception("Poste empty");
-		}
-		return  ResponseEntity.ok().body(postes);	
-	}
 
 	@PostMapping("/postes/update")
 	public ResponseEntity<?> updatePoste(
@@ -199,30 +128,19 @@ public class PosteController {
 	}
 
 	
-	@PostMapping("/poste/delete-subposte")
+	/*@PostMapping("/poste/delete-subposte")
 	public ResponseEntity<?> removeSubPoste(
 			@RequestBody Postes postes) throws Exception {
 		posteservice.removeSubPoste(postes);
 		return  ResponseEntity.ok().build();	
-	}
+	}*/
 
-	@DeleteMapping("/postes/delete")
-	public ResponseEntity<?> deletePoste(
-			@RequestParam(name = "id") long id) throws Exception {
-		posteservice.deletePoste(id);
-		return  ResponseEntity.ok().build();
-	}
 
 	@PostMapping("/postes/add-user")
 	public ResponseEntity<?> addUser(
-			@RequestParam(name = "idpostes") long idpostes,
-			@RequestParam(name = "idusers") long idusers) throws Exception {
-		Postes postes = posteservice.findPosteById(idpostes);
-		Users users = userService.findById(idusers);
-		if(users==null) {
-			throw new Exception("User "+users.getName()+" Dont exist");
-		}
-		logPosteUserService.add(postes, users);
+			@RequestParam(name = "idpostes", required = true) Long idpostes,
+			@RequestParam(name = "idusers", required = true) Long idusers) throws Exception {
+		logPosteUserService.add(idpostes, idusers);
 		return  ResponseEntity.ok().build();
 	}
 	
@@ -235,6 +153,6 @@ public class PosteController {
 			return  ResponseEntity.ok().body(organigramStructure);
 		}		
 	}
-*/
+
 
 }

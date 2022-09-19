@@ -13,15 +13,20 @@ import com.microservice.ged.beans.Profiles;
 
 @Repository
 public interface GroupProfileRepo extends JpaRepository<GroupProfile, Long>{
-	GroupProfile findByIdgroupprofileAndIsactiveTrue(Long idgroupprofile);
+	GroupProfile findByIdgroupprofile(Long idgroupprofile);
 	Page<GroupProfile> findByIsactiveTrue(Pageable pageable);
+	List<GroupProfile> findByGroupuserIdAndIsactiveTrue(GroupUser groupuserId);
+	List<GroupProfile> findByGroupuserIdAndIsactiveFalse(GroupUser groupuserId);
+	List<GroupProfile> findByGroupuserId(GroupUser groupuserId);
 	Page<GroupProfile> findByGroupuserIdAndIsactiveTrue(GroupUser groupuserId, Pageable pageable);
+	Page<GroupProfile> findByGroupuserIdAndIsactiveFalse(GroupUser groupuserId, Pageable pageable);
 	Page<GroupProfile> findByGroupuserId(GroupUser groupuserId, Pageable pageable);
+	GroupProfile findByGroupuserIdAndProfileId(GroupUser groupuserId, Profiles profilesId);
 	GroupProfile findByGroupuserIdAndProfileIdAndIsactiveTrueAndDateEndIsNull(GroupUser groupuserId, Profiles profilesId);
 	GroupProfile findByProfileIdAndIsactiveTrueAndDateEndIsNull(Profiles profilesId);
-	List<GroupProfile> findByGroupuserId(GroupUser groupuserId);
 	Page<GroupProfile> findByProfileId(Profiles profilesId, Pageable pageable);
 	Page<GroupProfile> findByProfileIdAndIsactiveTrue(Profiles profilesId, Pageable pageable);
+	Page<GroupProfile> findByProfileIdAndIsactiveFalse(Profiles profilesId, Pageable pageable);
 	List<GroupProfile> findByProfileIdAndIsactiveTrue(Profiles profilesId);
 
 }

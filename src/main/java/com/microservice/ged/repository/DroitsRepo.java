@@ -14,8 +14,11 @@ public interface DroitsRepo extends JpaRepository<Droits, Long>{
 	Droits findByName(String name);
 	Droits findByUri(String uri);
 	Droits findByDescription(String description);
+	Page<Droits> findByDescriptionContaining(String description, Pageable pageable);
 	Page<Droits> findByNameContaining(String name, Pageable pageable);
 	Page<Droits> findByNameNotIn(List<String> name, Pageable pageable);
 	Page<Droits> findByIddroitNotIn(List<Long> ids, Pageable pageable);
+	Page<Droits> findByIddroitIn(List<Long> ids, Pageable pageable);
+	Page<Droits> findByIddroitInAndNameContaining(List<Long> ids, String name, Pageable pageable);
 	Page<Droits> findByIddroitNotInAndNameContaining(List<Long> ids, String name, Pageable pageable);
 }

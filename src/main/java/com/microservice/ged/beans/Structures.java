@@ -64,6 +64,10 @@ public class Structures implements Serializable {
 	@JsonIncludeProperties(value = { "idposte", "name", "active", "posteSubalterne", "posteSuperieur"})
 	private Set<Postes> postes;
     
+    @OneToMany(mappedBy = "structure", fetch = FetchType.LAZY)
+   	@JsonIncludeProperties(value = { "idprofiles", "name", "currentUser", "typeprofil", "status", "dateCreation"})
+   	private Set<Profiles> profiles;
+    
 	@ManyToOne
 	@JsonIncludeProperties(value = { "idstructure", "name", "sigle" })
 	private Structures structureSuperieur;
@@ -196,31 +200,15 @@ public class Structures implements Serializable {
 	}
 
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(active, color, dateCreation, description, idstructure, name, postes, sigle, sousStructure,
-				structureSuperieur);
+	public Set<Profiles> getProfiles() {
+		return profiles;
 	}
 
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Structures other = (Structures) obj;
-		return active == other.active && Objects.equals(color, other.color)
-				&& Objects.equals(dateCreation, other.dateCreation) && Objects.equals(description, other.description)
-				&& Objects.equals(idstructure, other.idstructure) && Objects.equals(name, other.name)
-				&& Objects.equals(postes, other.postes) && Objects.equals(sigle, other.sigle)
-				&& Objects.equals(sousStructure, other.sousStructure)
-				&& Objects.equals(structureSuperieur, other.structureSuperieur);
+	public void setProfiles(Set<Profiles> profiles) {
+		this.profiles = profiles;
 	}
-
-
-
+	
+	
 	
 }

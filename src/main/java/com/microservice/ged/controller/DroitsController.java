@@ -56,6 +56,15 @@ public class DroitsController {
 			@RequestParam(name = "size", defaultValue = "5") int size) throws Exception {		
 		return  ResponseEntity.ok().body(droitService.findAllDroits(page, size));		
 	}
+	
+	@GetMapping("/droit/allfromgroup2542")
+	public ResponseEntity<Page<Droits>> findAllDroitFromGroup(
+			@RequestBody List<Long> ids,
+			@RequestParam(name = "page", defaultValue = "0") int page,
+			@RequestParam(name = "size", defaultValue = "5") int size) throws Exception {
+		return  ResponseEntity.ok().body(droitService.findDroitsToGroup(ids, page, size));		
+	}
+	
 	@PostMapping("/droit/profile/list4212165droittoad54564d")
 	public ResponseEntity<Page<Droits>> findListDroitToAddInGroup( 
 			@RequestBody List<Long> idDroits,
@@ -64,8 +73,55 @@ public class DroitsController {
 		return  ResponseEntity.ok().body(droitService.findDroitsToAdd(idDroits, page, size));	
 	}
 	
+	@GetMapping("/droit/searchdroit")
+	public ResponseEntity<Page<Droits>> findDroitByDescription(
+			@RequestParam(name = "page", defaultValue = "0") int page,
+			@RequestParam(name = "description", required = true) String description,
+			@RequestParam(name = "size", defaultValue = "5") int size) throws Exception {	
+		if(description.trim().isEmpty()) {
+			return ResponseEntity.badRequest().build();
+		}else if(description.isBlank()) {
+			return ResponseEntity.badRequest().build();
+		}else {
+			try {
+				Page<Droits> droits = droitService.findDroitsByDescription(description, page, size);
+				if(droits.isEmpty()) {
+					return  ResponseEntity.noContent().build();
+				}else {
+					return  ResponseEntity.ok().body(droits);
+				}			
+			} catch (Exception e) {
+				return ResponseEntity.badRequest().build();
+			}	
+		}		
+	}
 	
-	@GetMapping("/droit/profile")
+	@GetMapping("/droit/searchdroitsd")
+	public ResponseEntity<Page<Droits>> findDroitByDescriptionAndNoContain( 
+			@RequestBody List<Long> idDroits,
+			@RequestParam(name = "page", defaultValue = "0") int page,
+			@RequestParam(name = "description", required = true) String description,
+			@RequestParam(name = "size", defaultValue = "5") int size) throws Exception {	
+		if(description.trim().isEmpty()) {
+			return ResponseEntity.badRequest().build();
+		}else if(description.isBlank()) {
+			return ResponseEntity.badRequest().build();
+		}else {
+			try {
+				Page<Droits> droits = droitService.findDroitsToAddName(idDroits,description, page, size);
+				if(droits.isEmpty()) {
+					return  ResponseEntity.noContent().build();
+				}else {
+					return  ResponseEntity.ok().body(droits);
+				}			
+			} catch (Exception e) {
+				return ResponseEntity.badRequest().build();
+			}	
+		}		
+	}
+	
+	
+	/*@GetMapping("/droit/profile")
 	public ResponseEntity<List<Droits>> findAllDroitUser( 
 			@RequestParam(name = "id", required = true) Long idGroupe,
 			@RequestParam(name = "page", defaultValue = "0") int page,
@@ -86,7 +142,7 @@ public class DroitsController {
 		} catch (Exception e) {
 			return ResponseEntity.badRequest().build();
 		}		
-	}
+	}*/
 	
 	/*@GetMapping("/droi/groupe")
 	public ResponseEntity<Page<Droits>> findRoleToAdd(

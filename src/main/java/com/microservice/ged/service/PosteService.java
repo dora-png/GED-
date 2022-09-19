@@ -12,10 +12,11 @@ import com.microservice.ged.utils.OrganigramSystem;
 
 public interface PosteService {
 	public Page<Postes> findAllPoste(int page, int size) throws Exception ;
-	public Page<Postes> findAllStructurePoste(Structures structures, int page, int size) throws Exception ;
+	public Page<Postes> findAllStructurePoste(Long structuresId, int page, int size) throws Exception ;
 	public Page<Postes> searchPosteByName(String titre, int page, int size) throws Exception ;
 	public Postes findPosteByName(String name) throws Exception ;
-	public void updatePosteName(Long idPoste, String name) throws Exception ;
+	public Postes findPosteById(Long id) throws Exception ;
+	public void updatePoste(Postes poste) throws Exception ;
 	public void addPoste(Postes poste) throws Exception ;
 	public void updatePosteStatus(long id) throws Exception ;
 	public void addSubPoste(Postes supPostes) throws Exception ;

@@ -21,6 +21,6 @@ public class GroupUserServiceBasicImpl implements GroupUserServiceBasic {
 	@Override
 	public GroupUser findGroupById(Long id) throws Exception {
 		// TODO Auto-generated method stub
-		return groupUserRepo.findByIdgroupesAndStatusTrue(id);
+		return groupUserRepo.findByIdgroupes(id);
 	}
 }

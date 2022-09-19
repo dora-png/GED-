@@ -21,6 +21,7 @@ import com.microservice.ged.beans.Profiles;
 import com.microservice.ged.beans.TypeUser;
 import com.microservice.ged.service.AppUserService;
 import com.microservice.ged.service.ProfilesService;
+import com.microservice.ged.service.ProfilesServiceBasic;
 import com.microservice.ged.utils.ProfileStructureBean;
 
 @RestController
@@ -31,13 +32,30 @@ public class UsersController {
 	private AppUserService appUserService;
 	
 	@Autowired
+	ProfilesServiceBasic profilesServiceBasic;
+	
+	@Autowired
 	private ProfilesService profilesService;
 
 	@GetMapping("/profile/all")
 	public ResponseEntity<Page<Profiles>> findAllProfiles(
 			@RequestParam(name = "page", defaultValue = "0") int page,
+			@RequestParam(name = "status", required = true) int status,
 			@RequestParam(name = "size", defaultValue = "5") int size) throws Exception {
-		Page<Profiles> users = profilesService.findAllProfiles(page, size);
+		Page<Profiles> users = profilesService.findAllProfiles(page, size, status);
+		if(users.isEmpty()) {
+			return  ResponseEntity.noContent().build();
+		}else {
+			return  ResponseEntity.ok().body(users);
+		}		
+	}
+	
+	@GetMapping("/profile/list-to-add-in-poste")
+	public ResponseEntity<Page<Profiles>> findAllProfilesToAddInPoste(
+			@RequestParam(name = "idProfile", required = true) Long id,
+			@RequestParam(name = "page", defaultValue = "0") int page,
+			@RequestParam(name = "size", defaultValue = "5") int size) throws Exception {
+		Page<Profiles> users = profilesService.findProfilesToAdd(List.of(id),page, size);
 		if(users.isEmpty()) {
 			return  ResponseEntity.noContent().build();
 		}else {
@@ -83,6 +101,7 @@ public class UsersController {
 	public ResponseEntity<Page<Profiles>> searchUsersByName(
 			@RequestParam(name = "name", required = true) String name,
 			@RequestParam(name = "page", defaultValue = "0") int page,
+			@RequestParam(name = "status", required = true) int status,
 			@RequestParam(name = "size", defaultValue = "5") int size) throws Exception {
 		if(name.trim().isEmpty()) {
 			throw new Exception("Name to search is empty");
@@ -90,7 +109,7 @@ public class UsersController {
 		if(name.isBlank()) {
 			throw new Exception("Name to search is blank");
 		}
-		Page<Profiles> users = profilesService.searchByProfilesName(name, page, size);
+		Page<Profiles> users = profilesService.searchByProfilesName(name, page, size, status);
 		if(users.isEmpty()) {
 			return  ResponseEntity.noContent().build();
 		}else {
@@ -125,8 +144,10 @@ public class UsersController {
 	
 	@PostMapping("/profile/create")
 	public ResponseEntity<?> addUsers(
+			@RequestParam(name = "idstructure", required = true) Long idStructure,
+			@RequestParam(name = "idgroupuser", defaultValue = "0") Long idGroupUser,
 			@RequestBody Profiles profiles) throws Exception {
-		profilesService.add(profiles);
+		profilesService.add(profiles, idStructure, idGroupUser);
 		return  ResponseEntity.ok().build();
 	}
 	
@@ -146,10 +167,11 @@ public class UsersController {
 	}
 	
 	@PostMapping("/profile/set_userkjk2132123")
-	public ResponseEntity<?> setProfileUser(
-			@RequestParam(name = "id", required = true) Long idProfile,
-			@RequestParam(name = "username", required = true) String username) throws Exception {
-		profilesService.updateUser(idProfile, username);
+	public ResponseEntity<?> setProfile(
+			@RequestParam(name = "idlastGroupUser", required = true) Long idLastGroupUser,
+			@RequestParam(name = "idgroupuser", required = true) Long idGroupUser,
+			@RequestBody Profiles profiles) throws Exception {
+		profilesService.update(profiles, idGroupUser, idLastGroupUser);
 		return  ResponseEntity.ok().build();
 	}
 	
@@ -158,6 +180,6 @@ public class UsersController {
 			@RequestParam(name = "id", required = true) Long idProfile,
 			@RequestParam(name = "page", defaultValue = "0") int page,
 			@RequestParam(name = "size", defaultValue = "5") int size) throws Exception {
-		return  ResponseEntity.ok().body(profilesService.findProfileById(idProfile));	
+		return  ResponseEntity.ok().body(profilesServiceBasic.findProfileById(idProfile));	
 	}
 }

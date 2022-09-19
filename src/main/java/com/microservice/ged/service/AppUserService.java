@@ -8,5 +8,6 @@ public interface AppUserService {
 	public List<String> findAllUser();
 	public List<String> findAllUserByNameNotLike(String name);
 	public String findUserByName(String name);
+	public String findUserByLogin(String login);
 
 }

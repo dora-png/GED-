@@ -16,6 +16,8 @@ import com.microservice.ged.beans.Structures;
 public interface PosteRepo extends JpaRepository<Postes, Long>{
 	Postes findByIdposteAndActiveTrue(Long idposte);
 	Postes findByNameAndActiveTrue(String name);
+	Postes findByIdposte(Long idposte);
+	Postes findByName(String name);
 	Page<Postes> findByNameContainingAndActiveTrue(String name, Pageable pageable);
 	Page<Postes> findByStructureAndActiveTrue(Structures structures,  Pageable pageable);
 	Page<Postes> findByActiveTrue(Pageable pageable);

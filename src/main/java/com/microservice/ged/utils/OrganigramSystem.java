@@ -20,8 +20,8 @@ public class OrganigramSystem {
 	}
 
 	private String name;
-	final private String cssClass="ngx-org-ceo'";
-	final private String image ="https://icons.veryicon.com/png/o/business/multi-color-financial-and-business-icons/user-139.png";
+	final private String cssClass="ngx-org-ceo";
+	final private String image ="";//../../../../../assets/node.svg
 	private String title;
 	private List<OrganigramSystem> childs = new ArrayList<>();
 	

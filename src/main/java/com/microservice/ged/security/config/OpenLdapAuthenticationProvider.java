@@ -42,18 +42,6 @@ public class OpenLdapAuthenticationProvider implements AuthenticationProvider {
 
     private LdapTemplate ldapTemplate;
     
-    /*
-     * auth.ldapAuthentication()
-			.userDnPatterns("uid={0},ou=people")
-			.groupSearchBase("ou=groups")
-			.contextSource()
-			.url("ldap://localhost:8389/dc=springframework,dc=org")
-			.and()
-			.passwordCompare()
-			.passwordEncoder(new LdapShaPasswordEncoder())
-			.passwordAttribute("userPassword");
-     * */
-
     @PostConstruct
     private void initContext() {
         contextSource.setUrl("ldap://localhost:8389");
@@ -69,13 +57,21 @@ public class OpenLdapAuthenticationProvider implements AuthenticationProvider {
         Boolean authenticate = ldapTemplate.authenticate(LdapUtils.emptyLdapName(), filter.encode(),
                 authentication.getCredentials().toString());
         if (authenticate) {
-        	requestLoginService.deleteRequestLogin("ip address", authentication.getName());
         	List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
             grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_USER"));
             UserDetails userDetails = new User(authentication.getName() ,authentication.getCredentials().toString()
                     ,grantedAuthorities);
             Authentication auth = new UsernamePasswordAuthenticationToken(userDetails,
-                    authentication.getCredentials().toString() , grantedAuthorities);   
+                    authentication.getCredentials().toString() , grantedAuthorities);  
+            List<RequestLogin> requestLogin = requestLoginService.getRequestLogin("ip address", authentication.getName());
+            if(!requestLogin.isEmpty()) {
+            	if(requestLogin.size()<3) {
+            		requestLoginService.deleteRequestLogin("ip address", authentication.getName());
+            	}
+            	else {
+            		throw new DisabledException("Account is lock, contact administrator to unlock your account");
+            	}
+            }
             return auth;
 
         } else {

@@ -51,7 +51,7 @@ public class Structures implements Serializable {
     @Column(name = "sigle", nullable = false, unique = true)
     private String sigle;
     
-    @Column(name = "color", unique = true, nullable = false)
+    @Column(name = "color"/*, unique = true*/, nullable = false)
     private String color;
     
     @Column(name = "description", nullable = false)

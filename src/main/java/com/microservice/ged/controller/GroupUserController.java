@@ -70,8 +70,6 @@ public class GroupUserController {
 			@RequestParam(name = "size", defaultValue = "5") int size)  throws Exception {
 		if(name.trim().isEmpty()) {
 			return ResponseEntity.badRequest().build();
-		}else if(name.isBlank()) {
-			return ResponseEntity.badRequest().build();
 		}else {
 			try {
 				Page<GroupUser> groupUser = groupUserService.findGroupByNameContaining(name,page, size, status);
@@ -212,8 +210,6 @@ public class GroupUserController {
 			) throws Exception {
 		if(name.trim().isEmpty()) {
 			return ResponseEntity.badRequest().build();
-		}else if(name.isBlank()) {
-			return ResponseEntity.badRequest().build();
 		}else {
 			try {
 				Page<Droits> groupUser = groupUserService.listDroitInGroupUserPageName(id,name,page, size, status);
@@ -248,8 +244,6 @@ public class GroupUserController {
 			@RequestParam(name = "size", defaultValue = "5") int size
 			) throws Exception {
 		if(name.trim().isEmpty()) {
-			return ResponseEntity.badRequest().build();
-		}else if(name.isBlank()) {
 			return ResponseEntity.badRequest().build();
 		}else {
 			try {
@@ -292,8 +286,6 @@ public class GroupUserController {
 			) throws Exception {
 		if(name.trim().isEmpty()) {
 			return ResponseEntity.badRequest().build();
-		}else if(name.isBlank()) {
-			return ResponseEntity.badRequest().build();
 		}else {
 			try {
 				Page<Profiles> profiles = groupUserService.listProfilesInGroupUserPageName(id,name,page, size, status);
@@ -328,8 +320,6 @@ public class GroupUserController {
 			@RequestParam(name = "size", defaultValue = "5") int size
 			) throws Exception {
 		if(name.trim().isEmpty()) {
-			return ResponseEntity.badRequest().build();
-		}else if(name.isBlank()) {
 			return ResponseEntity.badRequest().build();
 		}else {
 			try {

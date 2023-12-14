@@ -179,6 +179,12 @@ public class StructureServiceImpl implements StructureService {
 		}
 		supStructures = structureRepo.findByIdstructure(supStructures.getIdstructure());
 		subStructures.setStructureSuperieur(supStructures);
+		subStructures.setActive(true);
+		subStructures.setDateCreation(null);
+		subStructures.setIdstructure(null);
+		subStructures.setPostes(null);
+		subStructures.setProfiles(null);
+		subStructures.setSousStructure(null);
 		subStructures = structureRepo.save(subStructures);
 		supStructures.getSousStructure().add(subStructures);
 		structureRepo.save(supStructures);

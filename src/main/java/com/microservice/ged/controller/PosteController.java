@@ -86,8 +86,6 @@ public class PosteController {
 			@RequestParam(name = "size", defaultValue = "5") int size) {
 		if(name.trim().isEmpty()) {
 			return ResponseEntity.badRequest().build();
-		}else if(name.isBlank()) {
-			return ResponseEntity.badRequest().build();
 		}else {
 			try {
 				Page<Postes> postes = posteservice.searchPosteByName(name,page, size);

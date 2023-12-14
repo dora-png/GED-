@@ -29,22 +29,16 @@ public class DocsController {
 			@RequestParam(name = "sigle") String name,
 			@RequestParam(name = "page", defaultValue = "0") int page,
 			@RequestParam(name = "size", defaultValue = "5") int size) {
-		if(name.trim().isEmpty()) {
+		try {
+			Page<Docs> docs = docsService.searchDocsByName(name,page, size);
+			if(docs.isEmpty()) {
+				return  ResponseEntity.noContent().build();
+			}else {
+				return  ResponseEntity.ok().body(docs);
+			}
+		} catch (Exception e) {
 			return ResponseEntity.badRequest().build();
-		}else if(name.isBlank()) {
-			return ResponseEntity.badRequest().build();
-		}else {
-			try {
-				Page<Docs> docs = docsService.searchDocsByName(name,page, size);
-				if(docs.isEmpty()) {
-					return  ResponseEntity.noContent().build();
-				}else {
-					return  ResponseEntity.ok().body(docs);
-				}			
-			} catch (Exception e) {
-				return ResponseEntity.badRequest().build();
-			}	
-		}	
+		}
 	}
 
 	

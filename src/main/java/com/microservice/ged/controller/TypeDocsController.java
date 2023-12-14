@@ -45,8 +45,6 @@ public class TypeDocsController {
 			@RequestParam(name = "size", defaultValue = "10") int size) {
 		if(name.trim().isEmpty()) {
 			return ResponseEntity.badRequest().build();
-		}else if(name.isBlank()) {
-			return ResponseEntity.badRequest().build();
 		}else {
 			try {
 				Page<TypeDocs> typeDocs = typeDocsService.searchByName(name,page, size);
@@ -61,14 +59,20 @@ public class TypeDocsController {
 		}	
 	}
 
+	/**
+	 * Il recherche un typedocs par son sigle.
+	 *
+	 * @param sigle Le sigle du typeDocs que vous souhaitez rechercher.
+	 * @param page Le numéro de page, à partir de 0.
+	 * @param size Le nombre de résultats à renvoyer.
+	 * @return Une liste de TypeDocs
+	 */
 	@GetMapping("/typedocs/search-by-sigle")
 	public ResponseEntity<Page<TypeDocs>> searchBySigle(
 			@RequestParam(name = "sigle", defaultValue = "") String sigle,
 			@RequestParam(name = "page", defaultValue = "0") int page,
 			@RequestParam(name = "size", defaultValue = "10") int size) {
 		if(sigle.trim().isEmpty()) {
-			return ResponseEntity.badRequest().build();
-		}else if(sigle.isBlank()) {
 			return ResponseEntity.badRequest().build();
 		}else {
 			try {

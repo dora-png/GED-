@@ -33,10 +33,10 @@ public class Profiles {
 	 @Column(name = "name")
 	 private String name;
 	 
-	 @Column(name = "currentuser")
+	 @Column(name = "currentuser", updatable = false, nullable = false)
 	 private String currentUser;
 	 
-	 @Column(name = "typeprofil", nullable = false)
+	 @Column(name = "typeprofil", updatable = false, nullable = false)
 	 private TypeUser typeprofil;
 	 	 	 
 	 @Column(name = "status")

@@ -12,6 +12,7 @@ import com.microservice.ged.utils.ProfileStructureBean;
 public interface ProfilesService {
 	public Page<Profiles> findAllProfiles(int page, int size, int status) throws Exception;
 	public Page<Profiles> searchByProfilesName(String name,int page, int size, int status) throws Exception;
+	public Page<Profiles> searchByProfilesUserName(String username,int page, int size, int status) throws Exception;
 	public Page<Profiles> searchByProfilesType(TypeUser typeprofil,int page, int size) throws Exception;	
 	void addUserInProfiles(Long idProfiles, String userName) throws Exception;
 	public Page<ProfilesStructure> histotiqueProfilee(Long profileId,int page, int size) throws Exception;

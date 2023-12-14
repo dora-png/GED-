@@ -10,6 +10,9 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.*;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
@@ -36,9 +39,11 @@ import com.microservice.ged.utils.SecurityConstants;
 @RequestMapping("/login")
 public class LoginController {
 
-    @Autowired
+    // Utilisé pour authentifier l'utilisateur.
+     @Autowired
     private AuthenticationManager authenticationManager;
     
+    // Service utilisé pour obtenir les droits d'un groupe.
     @Autowired
     DroitGroupsService droitGroupsService;
     
@@ -58,61 +63,70 @@ public class LoginController {
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
 
+ 
     @PostMapping
+    //@PreAuthorize("hasRole('ADMIN')")
+    //@PostAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest) throws Exception
-    {    	
-        if(!authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword())){
-        	throw new Exception();
-        }
-        List<String> authorities = new ArrayList<>();
-        String color = null;
-        String structureName = null;
-        String structureSigle = null;
-        if(authenticationRequest.getUsername().equals("root")) {
-        	List<Droits> droits =  droitsRepo.findAll();
-			droits.forEach(
-					(droit)->{
-						if(!authorities.contains(droit.getName())) {
-							authorities.add(droit.getName());
-						}
-					}
-				 );
-			authorities.add("ADMIN");
-			color = "#ff4444";
-			structureName = "Super User";
-			structureSigle = "ROOT";
-			
-        } else {
-        	Profiles profiles = profilesService.findProfileByUserLogin(authenticationRequest.getUsername());
-        	if(profiles != null) {
-        		if(!profiles.isStatus()) {
-                    throw new Exception("This user is ban");
-                }
-        		GroupUser groupUser = groupProfileService.findGroupOfProfile(profiles);
-        		if(groupUser!= null) {
-        			if(groupUser.getStatus()) {
-        				droitGroupsService.findDroitOfGroup(groupUser,1).forEach(
-                				(droits)->{
-            							authorities.add(droits.getName());
-                				}
-                		);
-        			}
-        		}
-        		color = profiles.getStructure().getColor();
-				structureSigle = profiles.getStructure().getSigle();
-				structureName = profiles.getStructure().getName();
-        	}
-        }
-        HttpHeaders responseHeaders = new HttpHeaders();
-        responseHeaders.set(
-        		SecurityConstants.HEADER_STRING, 
-        		SecurityConstants.TOKEN_PREFIX + jwtTokenUtil.generateAuthorizationToken(authenticationRequest.getUsername(), authorities) + SecurityConstants.TOKEN_SUFIX);
-        Map<String, String> idToken = new HashMap<>();
-		idToken.put("RefreshToken", jwtTokenUtil.generateAuthentificationToken(authenticationRequest.getUsername(), color, structureName, structureSigle));
-        return ResponseEntity.ok().headers(responseHeaders).body(idToken);
+    {  
+    	
+        try {
+        	if(!authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword())){
+            	throw new Exception();
+            }
+	        List<String> authorities = new ArrayList<>();
+	        String color = null;
+	        String structureName = null;
+	        String structureSigle = null;
+            if(authenticationRequest.getUsername().equals("root")) {
+            	List<Droits> droits =  droitsRepo.findAll();
+    			droits.forEach(
+    					(droit)->{
+    						if(!authorities.contains(droit.getName())) {
+    							authorities.add(droit.getName());
+    						}
+    					}
+    				 );
+    			//authorities.add("ADMIN");
+    			color = "#ff4444";
+    			structureName = "Super User";
+    			structureSigle = "ROOT";
+    			
+            } else {
+            	Profiles profiles = profilesService.findProfileByUserLogin(authenticationRequest.getUsername());
+            	if(profiles != null) {
+            		if(!profiles.isStatus()) {
+                        throw new Exception("This user is ban");
+                    }
+            		GroupUser groupUser = groupProfileService.findGroupOfProfile(profiles);
+            		if(groupUser!= null) {
+            			if(groupUser.getStatus()) {
+            				droitGroupsService.findDroitOfGroup(groupUser,1).forEach(
+                    				(droits)->{
+                							authorities.add(droits.getName());
+                    				}
+                    		);
+            			}
+            		}
+            		color = profiles.getStructure().getColor();
+    				structureSigle = profiles.getStructure().getSigle();
+    				structureName = profiles.getStructure().getName();
+            	}
+            }
+            HttpHeaders responseHeaders = new HttpHeaders();
+            responseHeaders.set(
+            		SecurityConstants.HEADER_STRING, 
+            		SecurityConstants.TOKEN_PREFIX + jwtTokenUtil.generateAuthorizationToken(authenticationRequest.getUsername(), authorities) + SecurityConstants.TOKEN_SUFIX);
+            Map<String, String> idToken = new HashMap<>();
+    		idToken.put("RefreshToken", jwtTokenUtil.generateAuthentificationToken(authenticationRequest.getUsername(), color, structureName, structureSigle));
+            return ResponseEntity.ok().headers(responseHeaders).body(idToken);			
+		} catch (Exception e) {
+			return ResponseEntity.badRequest().body(e.getLocalizedMessage());
+		}        
     }
 
     
+
     private Boolean authenticate(String username, String password) throws Exception {
     	Boolean userExist = false;
         try {

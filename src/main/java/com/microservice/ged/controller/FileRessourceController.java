@@ -4,16 +4,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.microservice.ged.beans.Profiles;
 import com.microservice.ged.service.FileRessourceService;
+import com.microservice.ged.service.ProfilesService;
+
 //import com.microservice.ged.service.UserService;
 import java.util.List;
 
 @RestController
 @CrossOrigin("*")
 public class FileRessourceController {
-	/*
+	
 	@Autowired
-	UserService userService;
+	ProfilesService profilesService;
 	
 	
 	@Autowired
@@ -26,11 +30,24 @@ public class FileRessourceController {
 			@RequestParam(name = "login", required = true) String login,
 			@RequestParam(name = "path", defaultValue = "default/") String path
 			) throws Exception {
-		Users user = userService.findByUsername(login);
-		if(user==null) {
+		Profiles user = profilesService.findProfileByUserLogin(login);
+		if(user==null || !user.isStatus()) {
 			throw new Exception("User "+login+" don't exist");
 		}
         return ResponseEntity.ok().body(fileRessourceService.uploadFilesUser(multipartFiles, user, path));
+	}
+	
+	@PostMapping("/uploadmultifile-user")
+	public ResponseEntity<List<String>> uploadMultiFilesUser(
+			@RequestParam(name = "files", required = true) MultipartFile multipartFiles,
+			@RequestParam(name = "login", required = true) String login,
+			@RequestParam(name = "path", defaultValue = "default/") String path
+			) throws Exception {
+		Profiles user = profilesService.findProfileByUserLogin(login);
+		if(user==null || !user.isStatus()) {
+			throw new Exception("User "+login+" don't exist");
+		}
+        return ResponseEntity.ok().body(fileRessourceService.uploadMultiFilesUser(multipartFiles, user, path));
 	}
 	
 	@PostMapping("/uploadfile-workflow")
@@ -43,7 +60,7 @@ public class FileRessourceController {
 	}
 	
 	 // Define a method to download files
-    @GetMapping("download/{filename}")
+   /* @GetMapping("download/{filename}")
     public ResponseEntity<Resource> downloadFiles(@PathVariable("filename") String filename) throws IOException {
         Path filePath = get(SecurityConstants.LOCAL_STORAGE).toAbsolutePath().normalize().resolve(filename);
         if(!Files.exists(filePath)) {

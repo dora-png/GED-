@@ -49,9 +49,6 @@ public class WorkFlowController {
 		if(name.trim().isEmpty()) {
 			throw new Exception("Name is Empty");
 		}
-		if(name.isBlank()) {
-			throw new Exception("Name is Blank");
-		}
 		Page<WorkFlow> workFlow = workFlowService.searchWorkFlowByName(name,page, size);
 		if(workFlow.isEmpty()) {
 			return  ResponseEntity.noContent().build();
@@ -67,9 +64,6 @@ public class WorkFlowController {
 			@RequestParam(name = "size", defaultValue = "5") int size) throws Exception {
 		if(sigle.trim().isEmpty()) {
 			throw new Exception("Sige is Empty");
-		}
-		if(sigle.isBlank()) {
-			throw new Exception("Sigle is Blank");
 		}
 		Page<WorkFlow> workFlow = workFlowService.searchWorkFlowBySigle(sigle,page, size);
 		if(workFlow.isEmpty()) {

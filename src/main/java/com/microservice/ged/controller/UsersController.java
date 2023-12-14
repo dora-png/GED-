@@ -9,6 +9,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,7 +25,9 @@ import com.microservice.ged.service.ProfilesService;
 import com.microservice.ged.service.ProfilesServiceBasic;
 import com.microservice.ged.utils.ProfileStructureBean;
 
-@RestController
+import javax.validation.constraints.NotNull;
+
+   @RestController
 @CrossOrigin("*")
 public class UsersController {
 	
@@ -38,10 +41,11 @@ public class UsersController {
 	private ProfilesService profilesService;
 
 	@GetMapping("/profile/all")
+    //@PostAuthorize("hasAuthority('ADMIN')")
 	public ResponseEntity<Page<Profiles>> findAllProfiles(
 			@RequestParam(name = "page", defaultValue = "0") int page,
 			@RequestParam(name = "status", required = true) int status,
-			@RequestParam(name = "size", defaultValue = "5") int size) throws Exception {
+			@RequestParam(name = "size", defaultValue = "2") int size) throws Exception {
 		Page<Profiles> users = profilesService.findAllProfiles(page, size, status);
 		if(users.isEmpty()) {
 			return  ResponseEntity.noContent().build();
@@ -106,10 +110,24 @@ public class UsersController {
 		if(name.trim().isEmpty()) {
 			throw new Exception("Name to search is empty");
 		}
-		if(name.isBlank()) {
-			throw new Exception("Name to search is blank");
-		}
 		Page<Profiles> users = profilesService.searchByProfilesName(name, page, size, status);
+		if(users.isEmpty()) {
+			return  ResponseEntity.noContent().build();
+		}else {
+			return  ResponseEntity.ok().body(users);
+		}		
+	}
+	
+	@GetMapping("/profile/search-by-user-name")
+	public ResponseEntity<Page<Profiles>> searchUsersByUserName(
+			@RequestParam(name = "name", required = true) String username,
+			@RequestParam(name = "page", defaultValue = "0") int page,
+			@RequestParam(name = "status", required = true) int status,
+			@RequestParam(name = "size", defaultValue = "5") int size) throws Exception {
+		if(username.trim().isEmpty()) {
+			throw new Exception("Name to search is empty");
+		}
+		Page<Profiles> users = profilesService.searchByProfilesUserName(username, page, size, status);
 		if(users.isEmpty()) {
 			return  ResponseEntity.noContent().build();
 		}else {

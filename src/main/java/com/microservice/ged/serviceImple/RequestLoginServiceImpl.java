@@ -28,6 +28,7 @@ public class RequestLoginServiceImpl implements RequestLoginService{
 
     @Override
     public void saveRequestLogin(RequestLogin requestLogin) {
+    	requestLogin.setActive(true);
         requestLoginRepository.save(requestLogin);
     }
 
@@ -52,6 +53,12 @@ public class RequestLoginServiceImpl implements RequestLoginService{
 	public Page<RequestLogin> getAllRequestLoginUser(String account, int page, int size) {
 		// TODO Auto-generated method stub
 		return requestLoginRepository.findByAccount(account, PageRequest.of(page, size,Sort.by("id").descending()));
+	}
+
+	@Override
+	public List<RequestLogin> getRequest(String account) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 

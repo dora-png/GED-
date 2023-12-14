@@ -40,6 +40,24 @@ public class FileRessourceServiceImpl implements FileRessourceService{
 		List<String> filesNames = new ArrayList<>();
 		String fileName = "";
 		String fileDir = "";
+		//if(file.getOriginalFilename().contains("/")) {
+		//	fileName = file.getOriginalFilename().substring(StringUtils.cleanPath(file.getOriginalFilename()).lastIndexOf("/") + "/".length());
+		//	fileDir = path+file.getOriginalFilename().substring(0, StringUtils.cleanPath(file.getOriginalFilename()).lastIndexOf("/"));
+		//}else {
+			fileName = StringUtils.cleanPath(file.getOriginalFilename());
+			fileDir = path.replace("/", "");
+		//}
+		Path fileStorage = get(this.createFolderUser(profile,fileDir).trim(), fileName).toAbsolutePath().normalize();
+		copy(file.getInputStream(), fileStorage, REPLACE_EXISTING);
+		filesNames.add(fileName);
+		return filesNames;
+	}
+	
+	@Override
+	public List<String> uploadMultiFilesUser(MultipartFile file, Profiles profile, String path) throws Exception {
+		List<String> filesNames = new ArrayList<>();
+		String fileName = "";
+		String fileDir = "";
 		if(file.getOriginalFilename().contains("/")) {
 			fileName = file.getOriginalFilename().substring(StringUtils.cleanPath(file.getOriginalFilename()).lastIndexOf("/") + "/".length());
 			fileDir = path+file.getOriginalFilename().substring(0, StringUtils.cleanPath(file.getOriginalFilename()).lastIndexOf("/"));
@@ -51,7 +69,6 @@ public class FileRessourceServiceImpl implements FileRessourceService{
 		copy(file.getInputStream(), fileStorage, REPLACE_EXISTING);
 		filesNames.add(fileName);
 		return filesNames;
-		
 	}
 
 	@Override
@@ -74,7 +91,7 @@ public class FileRessourceServiceImpl implements FileRessourceService{
 	@Override
 	public String createFolderUser(Profiles profile, String path) throws Exception {
 		// TODO Auto-generated method stub
-		String pathToCreate="UserId"+profile+"/"+path.trim();
+		String pathToCreate=profile.getCurrentUser()+"/"+path.trim();
 		return this.createUserDir(pathToCreate);		
 	}
 

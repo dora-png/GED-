@@ -44,8 +44,6 @@ public class StructureController {
 			@RequestParam(name = "size", defaultValue = "5") int size) throws Exception {
 		if(name.trim().isEmpty()) {
 			return ResponseEntity.badRequest().build();
-		}else if(name.isBlank()) {
-			return ResponseEntity.badRequest().build();
 		}else {
 			Page<Structures> structures = structureservice.searchByName(name,page, size, status);
 			if(structures.isEmpty()) {
@@ -63,8 +61,6 @@ public class StructureController {
 			@RequestParam(name = "status", required = true) int status,
 			@RequestParam(name = "size", defaultValue = "5") int size) throws Exception {
 		if(sigle.trim().isEmpty()) {
-			return ResponseEntity.badRequest().build();
-		}else if(sigle.isBlank()) {
 			return ResponseEntity.badRequest().build();
 		}else {
 			Page<Structures> structures = structureservice.searchBySigle(sigle, page, size,status);

@@ -51,6 +51,7 @@ public class ProfilesServiceImpl implements ProfilesService {
 	
 	@Override
 	public Page<Profiles> findAllProfiles(int page, int size, int status) throws Exception {
+
 		switch (status) {
 		case 0:
 			return profilesRepo.findByStatusFalse(PageRequest.of(page, size,Sort.by("idprofiles").descending()));					
@@ -221,38 +222,28 @@ public class ProfilesServiceImpl implements ProfilesService {
 	@Override
 	public void update(Profiles profiles, Long idGroupUser, Long lastGroupUser) throws Exception {
 		
-		if(appUserService.findUserByName(profiles.getCurrentUser())==null){
-			throw new Exception("User "+profiles.getCurrentUser()+" don't exist");
-		}
 		Profiles profile = profilesRepo.findByIdprofiles(profiles.getIdProfiles());
 		if(profile==null) {
-			throw new Exception("le profile es inexistant");
+			throw new Exception("Error: le profile est inexistant");
 		}
 		GroupUser groupUserLast = groupUserServiceBasic.findGroupById(lastGroupUser);
 		GroupUser groupUserNew = groupUserServiceBasic.findGroupById(idGroupUser);
 		if(groupUserNew==null) {
-			throw new Exception("new groupe user inexistant");
+			throw new Exception("Error: new groupe user inexistant");
 		}
 		if(groupUserLast==null) {
-			throw new Exception("Last groupe user inexistant");
+			throw new Exception("Error: Last groupe user inexistant");
 		}		
 		if(groupUserLast.getIdgroupes() != groupUserNew.getIdgroupes()) {
 			GroupProfile groupProfileLast =  groupProfileRepo.findByGroupuserIdAndProfileIdAndIsactiveTrueAndDateEndIsNull(groupUserLast, profile);
 			if(groupProfileLast == null) {
-				throw new Exception("new groupe user inexistant");						
+				throw new Exception("Error: New groupe user inexistant");						
 			}
 			groupProfileLast.setIsactive(false);
 			groupProfileRepo.save(groupProfileLast);
-			List<TypeUser> listTypeUser = new ArrayList<>();
-			listTypeUser.add(TypeUser.EXTERN_ACTOR);
-			listTypeUser.add(TypeUser.INTERN_ACTOR);
-			if(!listTypeUser.contains(profiles.getTypeprofil())) {
-				throw new Exception("Type de profile inexistant");
-			}
-			profile.setCurrentUser(profiles.getCurrentUser());
 			profile.setName(profiles.getName() );
-			profile.setTypeprofil(profiles.getTypeprofil());
-			profiles = profilesRepo.save(profiles);
+			profile.setStatus(profiles.isStatus() );
+			profiles = profilesRepo.save(profile);
 			groupProfileRepo.save(new GroupProfile(profile, groupUserNew, true));	
 		}else {
 			profile.setCurrentUser(profiles.getCurrentUser());
@@ -283,6 +274,20 @@ public class ProfilesServiceImpl implements ProfilesService {
 	public Page<Profiles> findProfilesToAddName(List<Long> profilesIdList, String name, int page, int size)
 			throws Exception {
 		return profilesRepo.findByIdprofilesNotInAndNameContainingAndStatusTrue(profilesIdList, name, PageRequest.of(page, size, Sort.by("iddroit").descending()));
+	}
+
+	@Override
+	public Page<Profiles> searchByProfilesUserName(String username, int page, int size, int status) throws Exception {
+		switch (status) {
+		case 0:
+			return profilesRepo.findByCurrentUserContainingAndStatusFalse(username , PageRequest.of(page, size,Sort.by("idprofiles").descending()));				
+		case 1:
+			return profilesRepo.findByCurrentUserContainingAndStatusTrue(username , PageRequest.of(page, size,Sort.by("idprofiles").descending()));	
+		case 2:
+			return profilesRepo.findByCurrentUserContaining(username, PageRequest.of(page, size,Sort.by("idprofiles").descending()));
+		default:
+			throw new Exception("Bad request");
+	}
 	}
 	
 

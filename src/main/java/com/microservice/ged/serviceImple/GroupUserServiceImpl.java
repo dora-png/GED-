@@ -238,7 +238,7 @@ public class GroupUserServiceImpl implements GroupUserService {
 
 	@Override
 	public Page<Droits> listDroitInGroupUserPage(Long groupId, int page, int size, int status) throws Exception {
-		List<Long> list = this.listDroitInGroupUser(groupId, status);		
+		List<Long> list = this.listDroitInGroupUser(groupId, status);
 		return droitService.findDroitsToGroup(list,page,size);
 	}
 	

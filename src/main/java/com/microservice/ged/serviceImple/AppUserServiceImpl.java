@@ -115,8 +115,7 @@ public class AppUserServiceImpl implements AppUserService {
 
 	@Override
 	public List<String> findAllUserByNameNotLike(String name) {
-		name=name+"*";
-		return this.getAllUserLDAPListNotLike(name, "*", "*");
+		return this.getAllUserLDAPListNotLike(name+"*", "*", "*");
 	}
 
 	@Override
